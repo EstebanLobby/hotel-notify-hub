@@ -116,6 +116,7 @@ select:focus {
 
 .search-box input {
   padding-left: 2.5rem;
+  width: 100%;
 }
 
 .search-box svg {
@@ -132,7 +133,7 @@ select:focus {
 .filters-section {
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: flex-start;
   margin-bottom: 1.5rem;
   gap: 1rem;
 }
@@ -236,7 +237,7 @@ select:focus {
 .modal-header {
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
   padding: 1.5rem;
   border-bottom: 1px solid var(--border-light);
 }
@@ -274,7 +275,7 @@ select:focus {
 .pagination {
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
   margin-top: 1rem;
 }
 
@@ -350,6 +351,17 @@ select:focus {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--foreground);
+}
+
+/* Fix report chart canvas sizing to prevent overflow and giant heights */
+.report-card {
+  position: relative;
+}
+
+.report-card canvas {
+  display: block;
+  width: 100% !important;
+  height: 320px !important;
 }
 
 /* Responsive Tables */

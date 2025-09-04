@@ -7,6 +7,7 @@ let serviceUsageChart = null;
 
 function initializeCharts() {
   createNotificationsChart();
+  // Ejecutar de forma asíncrona sin bloquear UI
   createServicesChart();
 }
 
@@ -58,11 +59,26 @@ function createNotificationsChart() {
   });
 }
 
-function createServicesChart() {
+async function createServicesChart() {
   const ctx = document.getElementById('services-chart');
   if (!ctx) return;
   
-  const data = getServiceUsage();
+  let data = [];
+  try {
+    // Intentar usar datos reales del webhook (últimos 7 días por defecto)
+    const today = new Date();
+    const lastWeek = new Date(today);
+    lastWeek.setDate(today.getDate() - 7);
+    data = await getServiceUsageAsync({
+      from: lastWeek.toISOString().split('T')[0],
+      to: today.toISOString().split('T')[0]
+    });
+    if (!Array.isArray(data) || data.length === 0) {
+      data = getServiceUsage();
+    }
+  } catch (_) {
+    data = getServiceUsage();
+  }
   
   if (servicesChart) {
     servicesChart.destroy();
@@ -150,11 +166,33 @@ function createHotelsMetricsChart() {
   });
 }
 
-function createServiceUsageChart() {
+async function createServiceUsageChart() {
   const ctx = document.getElementById('service-usage-chart');
   if (!ctx) return;
   
-  const data = getServiceUsage();
+  // Intentar leer fechas del filtro si existen en la vista de reportes
+  const dateFrom = document.getElementById('date-from')?.value;
+  const dateTo = document.getElementById('date-to')?.value;
+  
+  let data = [];
+  try {
+    if (dateFrom && dateTo) {
+      data = await getServiceUsageAsync({ from: dateFrom, to: dateTo });
+    } else {
+      const today = new Date();
+      const lastWeek = new Date(today);
+      lastWeek.setDate(today.getDate() - 7);
+      data = await getServiceUsageAsync({
+        from: lastWeek.toISOString().split('T')[0],
+        to: today.toISOString().split('T')[0]
+      });
+    }
+    if (!Array.isArray(data) || data.length === 0) {
+      data = getServiceUsage();
+    }
+  } catch (_) {
+    data = getServiceUsage();
+  }
   
   if (serviceUsageChart) {
     serviceUsageChart.destroy();
@@ -207,7 +245,7 @@ function updateDashboardCharts() {
   createServicesChart();
 }
 
-function updateReportsCharts() {
+async function updateReportsCharts() {
   createHotelsMetricsChart();
-  createServiceUsageChart();
+  await createServiceUsageChart();
 }

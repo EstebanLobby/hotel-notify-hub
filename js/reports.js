@@ -47,8 +47,8 @@ function handleApplyFilters() {
   showToast('Aplicando filtros...', 'info');
   
   // Simulate loading delay
-  setTimeout(() => {
-    updateReportsCharts();
+  setTimeout(async () => {
+    await updateReportsCharts();
     showToast('Reportes actualizados', 'success');
   }, 1000);
 }

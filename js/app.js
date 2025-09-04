@@ -21,9 +21,6 @@ function initializeApp() {
   // Initialize dashboard metrics
   updateDashboardMetrics();
   
-  // Initialize components based on current view
-  initializeCurrentView();
-  
   // Setup periodic updates (every 30 seconds)
   setInterval(updateDashboardMetrics, 30000);
 }

@@ -132,7 +132,7 @@ body {
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
   padding: 1rem 2rem;
 }
 
@@ -170,7 +170,7 @@ body {
 .page-header {
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
   margin-bottom: 2rem;
 }
 
@@ -197,7 +197,7 @@ body {
   transition: var(--transition-smooth);
   display: flex;
   align-items: center;
-  justify-content: between;
+  justify-content: space-between;
 }
 
 .metric-card:hover {
@@ -267,6 +267,17 @@ body {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--foreground);
+}
+
+/* Fix chart canvas sizing to prevent overflow and giant heights */
+.chart-card {
+  position: relative;
+}
+
+.chart-card canvas {
+  display: block;
+  width: 100% !important;
+  height: 320px !important;
 }
 
 /* Responsive Design */

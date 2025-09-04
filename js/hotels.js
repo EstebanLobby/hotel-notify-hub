@@ -3,7 +3,9 @@
 let currentHotelsPage = 1;
 let hotelsPerPage = 10;
 let filteredHotels = [];
+let hotelsCache = [];
 let editingHotel = null;
+let hotelsListenersInitialized = false;
 
 function initializeHotels() {
   renderHotelsTable();
@@ -11,11 +13,23 @@ function initializeHotels() {
 }
 
 function setupHotelsEventListeners() {
+  if (hotelsListenersInitialized) return;
   // Search functionality
   const searchInput = document.getElementById('hotel-search');
+  const searchBtn = document.getElementById('hotel-search-btn');
   if (searchInput) {
-    const debouncedSearch = debounce(handleHotelSearch, 300);
-    searchInput.addEventListener('input', debouncedSearch);
+    // Buscar solo al presionar Enter
+    searchInput.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        await handleHotelSearch({ target: searchInput });
+      }
+    });
+  }
+  if (searchBtn) {
+    searchBtn.addEventListener('click', async () => {
+      await handleHotelSearch({ target: document.getElementById('hotel-search') });
+    });
   }
   
   // Add hotel button
@@ -51,24 +65,29 @@ function setupHotelsEventListeners() {
       }
     });
   }
+  hotelsListenersInitialized = true;
 }
 
-function handleHotelSearch(e) {
+async function handleHotelSearch(e) {
   const query = e.target.value;
-  filteredHotels = searchHotels(query);
   currentHotelsPage = 1;
-  renderHotelsTable();
+  await renderHotelsTable(query);
 }
 
-function renderHotelsTable() {
+async function renderHotelsTable(query = '') {
   const tbody = document.getElementById('hotels-tbody');
   const countElement = document.getElementById('hotels-count');
   
   if (!tbody) return;
-  
-  // Get filtered hotels if search is active, otherwise all hotels
-  const searchQuery = document.getElementById('hotel-search')?.value || '';
-  filteredHotels = searchQuery ? searchHotels(searchQuery) : getHotels();
+  // Obtener hoteles desde el servicio (con filtro q si aplica)
+  try {
+    const searchQuery = typeof query === 'string' ? query : (document.getElementById('hotel-search')?.value || '');
+    hotelsCache = await getHotelsAsync({ limit: 1000, offset: 0, q: searchQuery });
+  } catch (_) {
+    // Fallback a datos locales si el servicio falla
+    hotelsCache = getHotels();
+  }
+  filteredHotels = hotelsCache;
   
   // Paginate results
   const paginatedData = paginate(filteredHotels, hotelsPerPage, currentHotelsPage);
@@ -98,7 +117,7 @@ function renderHotelsTable() {
     const emptyRow = document.createElement('tr');
     emptyRow.innerHTML = `
       <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-        ${searchQuery ? 'No se encontraron hoteles con ese criterio' : 'No hay hoteles registrados'}
+        ${(document.getElementById('hotel-search')?.value || '') ? 'No se encontraron hoteles con ese criterio' : 'No hay hoteles registrados'}
       </td>
     `;
     tbody.appendChild(emptyRow);
@@ -196,7 +215,7 @@ function openAddHotelModal() {
 }
 
 function editHotel(id) {
-  const hotel = getHotels().find(h => h.id === id);
+  const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
   editingHotel = hotel;
@@ -261,22 +280,19 @@ function handleHotelSubmit(e) {
 }
 
 function deleteHotel(id) {
-  const hotel = getHotels().find(h => h.id === id);
+  const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
   if (confirm(`¿Estás seguro de que quieres eliminar el hotel "${hotel.hotel_name}"?`)) {
-    try {
-      deleteHotel(id);
-      showToast('Hotel eliminado correctamente', 'success');
-      renderHotelsTable();
-    } catch (error) {
-      showToast('Error al eliminar el hotel', 'error');
-    }
+    // Sin endpoint de borrado en el servicio, solo actualizar UI local por ahora
+    hotelsCache = hotelsCache.filter(h => h.id !== id);
+    showToast('Hotel eliminado en la vista (no persistido)', 'info');
+    renderHotelsTable(document.getElementById('hotel-search')?.value || '');
   }
 }
 
 function viewHotelServices(id) {
-  const hotel = getHotels().find(h => h.id === id);
+  const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
   showToast(`Ver servicios de ${hotel.hotel_name} - Funcionalidad pendiente de implementar`, 'info');

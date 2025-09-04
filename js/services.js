@@ -4,21 +4,35 @@ function initializeServices() {
   renderServicesTable();
 }
 
-function renderServicesTable() {
+async function renderServicesTable() {
   const tbody = document.getElementById('services-tbody');
   if (!tbody) return;
   
-  const services = getServices();
-  const hotels = getHotels();
+  let services = [];
+  let hotels = [];
+  try {
+    services = await getServicesAsync();
+  } catch (_) {
+    services = getServices();
+  }
+  // Si el backend ya devuelve hotels_subscribed, evitamos pedir hoteles
+  const hasBackendSubscribed = services.some(s => s && s.hasOwnProperty('hotels_subscribed'));
+  if (!hasBackendSubscribed) {
+    try {
+      hotels = await getHotelsAsync({ limit: 1000, offset: 0 });
+    } catch (_) {
+      hotels = getHotels();
+    }
+  }
   
   // Clear table
   tbody.innerHTML = '';
   
   // Render services
   services.forEach(service => {
-    const subscribedHotels = hotels.filter(hotel => 
-      hotel.active_services?.some(as => as.service_code === service.service_code)
-    ).length;
+    const subscribedHotels = hasBackendSubscribed
+      ? Number(service.hotels_subscribed) || 0
+      : hotels.filter(hotel => hotel.active_services?.some(as => as.service_code === service.service_code)).length;
     
     const row = createServiceRow(service, subscribedHotels);
     tbody.appendChild(row);

@@ -200,3 +200,83 @@ function deleteHotel(id) {
   }
   return null;
 }
+
+// =============================================
+// Webhook integration (GET with func/method)
+// =============================================
+
+const WEBHOOK_BASE_URL = 'https://automate.golobby.ai/webhook-test/8486e672-cf9e-4fd6-8eea-09f48babbf1a';
+
+function buildWebhookUrl(params) {
+  const url = new URL(WEBHOOK_BASE_URL);
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      url.searchParams.set(key, String(value));
+    }
+  });
+  return url.toString();
+}
+
+async function fetchWebhook(params) {
+  const url = buildWebhookUrl(params);
+  const response = await fetch(url, { method: 'GET' });
+  if (!response.ok) {
+    throw new Error(`Webhook HTTP ${response.status}`);
+  }
+  let payload = await response.json();
+  // Normalizar caso donde el backend responde un array con un único objeto
+  if (Array.isArray(payload)) {
+    payload = payload[0] || {};
+  }
+  if (payload && payload.ok === false) {
+    const message = payload.error || 'Error en webhook';
+    throw new Error(message);
+  }
+  return payload;
+}
+
+// Asynchronous getters (no rompen las funciones síncronas existentes)
+
+async function getHotelsAsync(options = {}) {
+  const { limit = 100, offset = 0, q = '' } = options;
+  const res = await fetchWebhook({ func: 'hotels', method: 'list', limit, offset, q });
+  // Estructura flexible: admite data.items o data directo
+  const data = res?.data?.items || res?.data || [];
+  return Array.isArray(data) ? data : [];
+}
+
+async function getHotelDetailAsync(id) {
+  const res = await fetchWebhook({ func: 'hotels', method: 'detail', id });
+  return res?.data || null;
+}
+
+async function getServicesAsync() {
+  const res = await fetchWebhook({ func: 'services', method: 'list' });
+  const data = res?.data || [];
+  return Array.isArray(data) ? data : [];
+}
+
+async function getServiceUsageAsync({ from, to }) {
+  const res = await fetchWebhook({ func: 'reports', method: 'serviceUsage', from, to });
+  const data = res?.data || [];
+  return Array.isArray(data) ? data : [];
+}
+
+async function getDashboardMetricsAsync() {
+  // Intenta obtener datos remotos mínimos para construir métricas
+  try {
+    const [hotels, services] = await Promise.all([
+      getHotelsAsync({ limit: 100, offset: 0 }),
+      getServicesAsync()
+    ]);
+    const activeHotels = hotels.filter(h => h.active).length;
+    const activeServices = services.filter(s => s.active).length;
+    // Si tu webhook ofrece notificaciones, cámbialo a remoto
+    const totalNotifications = mockNotifications.reduce((sum, n) => sum + n.count, 0);
+    const successRate = 94.5;
+    return { activeHotels, totalNotifications, successRate, activeServices };
+  } catch (e) {
+    // Fallback a mocks si falla el remoto
+    return getDashboardMetrics();
+  }
+}
