@@ -24,6 +24,35 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				
+				// Hotel Dashboard Theme
+				surface: 'hsl(var(--surface))',
+				'surface-hover': 'hsl(var(--surface-hover))',
+				'border-light': 'hsl(var(--border-light))',
+				'text-muted': 'hsl(var(--text-muted))',
+				
+				'primary-light': 'hsl(var(--primary-light))',
+				'primary-dark': 'hsl(var(--primary-dark))',
+				'primary-glow': 'hsl(var(--primary-glow))',
+				
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					light: 'hsl(var(--success-light))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					light: 'hsl(var(--warning-light))'
+				},
+				error: {
+					DEFAULT: 'hsl(var(--error))',
+					light: 'hsl(var(--error-light))'
+				},
+				
+				// Dashboard specific
+				'sidebar-bg': 'hsl(var(--sidebar-bg))',
+				'sidebar-hover': 'hsl(var(--sidebar-hover))',
+				'sidebar-active': 'hsl(var(--sidebar-active))',
+				
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
