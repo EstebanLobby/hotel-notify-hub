@@ -86,6 +86,70 @@ function setupHotelsEventListeners() {
       }
     });
   }
+  
+  // Hotel Services Modal events
+  const closeServicesBtn = document.getElementById('close-services-modal');
+  const closeServicesFooterBtn = document.getElementById('close-services-btn');
+  const servicesModal = document.getElementById('hotel-services-modal');
+  
+  if (closeServicesBtn) {
+    closeServicesBtn.addEventListener('click', () => closeModal('hotel-services-modal'));
+  }
+  
+  if (closeServicesFooterBtn) {
+    closeServicesFooterBtn.addEventListener('click', () => closeModal('hotel-services-modal'));
+  }
+  
+    if (servicesModal) {
+    servicesModal.addEventListener('click', (e) => {
+      if (e.target === servicesModal) {
+        closeModal('hotel-services-modal');
+      }
+    });
+  }
+
+  // Add Service Modal events
+  const addServiceBtn = document.getElementById('add-service-btn');
+  const closeAddServiceBtn = document.getElementById('close-add-service-modal');
+  const cancelAddServiceBtn = document.getElementById('cancel-add-service-btn');
+  const addServiceModal = document.getElementById('add-service-modal');
+  const addServiceForm = document.getElementById('add-service-form');
+
+  if (addServiceBtn) {
+    addServiceBtn.addEventListener('click', () => {
+      if (currentHotelIdForServices) {
+        openAddServiceModal(currentHotelIdForServices);
+      }
+    });
+  }
+
+  if (closeAddServiceBtn) {
+    closeAddServiceBtn.addEventListener('click', () => {
+      closeModal('add-service-modal');
+      resetAddServiceForm();
+    });
+  }
+
+  if (cancelAddServiceBtn) {
+    cancelAddServiceBtn.addEventListener('click', () => {
+      closeModal('add-service-modal');
+      resetAddServiceForm();
+    });
+  }
+
+  if (addServiceModal) {
+    addServiceModal.addEventListener('click', (e) => {
+      if (e.target === addServiceModal) {
+        closeModal('add-service-modal');
+        resetAddServiceForm();
+      }
+    });
+  }
+
+  if (addServiceForm) {
+    addServiceForm.addEventListener('submit', handleAddServiceSubmit);
+  }
+   
   hotelsListenersInitialized = true;
 }
 
@@ -434,11 +498,281 @@ async function deleteHotel(id) {
   }
 }
 
-function viewHotelServices(id) {
+async function viewHotelServices(id) {
   const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
-  showToast(`Ver servicios de ${hotel.hotel_name} - Funcionalidad pendiente de implementar`, 'info');
+  console.log('Viendo servicios del hotel:', hotel.hotel_name, 'ID:', id);
+  
+  // Actualizar título del modal
+  document.getElementById('hotel-services-title').textContent = `Servicios de ${hotel.hotel_name}`;
+  
+  // Mostrar modal con spinner de carga
+  const contentDiv = document.getElementById('hotel-services-content');
+  contentDiv.innerHTML = '<div class="loading-spinner">Cargando servicios...</div>';
+  openModal('hotel-services-modal');
+  
+  try {
+    // Obtener servicios del hotel desde el servicio
+    console.log('Consultando servicios del hotel ID:', id);
+    const hotelData = await fetchWebhook({ 
+      func: 'hotels', 
+      method: 'services',
+      id: id
+    });
+    console.log('Datos del hotel obtenidos:', hotelData);
+    
+    const services = hotelData?.data?.active_services || [];
+    console.log('Servicios obtenidos:', services);
+    
+    if (services && services.length > 0) {
+      // Crear header con información del hotel
+      const hotelInfo = document.createElement('div');
+      hotelInfo.className = 'hotel-info';
+      hotelInfo.innerHTML = `
+        <div style="background: var(--surface); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h4 style="margin: 0; color: var(--foreground);">${hotelData.data.hotel_name}</h4>
+            <span class="badge badge-success">${services.length} servicios activos</span>
+          </div>
+          <div style="font-size: 0.875rem; color: var(--text-muted);">
+            <div>Código: ${hotelData.data.hotel_code}</div>
+            <div>Email: ${hotelData.data.email}</div>
+            ${hotelData.data.phone ? `<div>Teléfono: ${hotelData.data.phone}</div>` : ''}
+            <div>Idioma: ${getLanguageLabel(hotelData.data.language)}</div>
+          </div>
+        </div>
+      `;
+      
+      // Renderizar lista de servicios
+      const servicesList = document.createElement('div');
+      servicesList.className = 'hotel-services-list';
+      
+      services.forEach(service => {
+        const serviceItem = document.createElement('div');
+        serviceItem.className = 'service-item';
+        
+        const channels = [];
+        if (service.send_by_email) channels.push('Email');
+        if (service.send_by_whatsapp) channels.push('WhatsApp');
+        
+        serviceItem.innerHTML = `
+          <div class="service-info">
+            <div class="service-name">${getServiceName(service.service_code)}</div>
+            <div class="service-code">ID: ${service.service_id} | ${service.service_code}</div>
+            <div class="service-channels">
+              ${channels.map(channel => `<span class="channel-badge">${channel}</span>`).join('')}
+            </div>
+          </div>
+          <div class="service-status">
+            <span class="status-badge active">Activo</span>
+            <div class="service-actions">
+              <button class="service-action-btn edit" onclick="editHotelService(${id}, ${service.service_id}, '${service.service_code}')" title="Editar canales">
+                ✏️
+              </button>
+              <button class="service-action-btn remove" onclick="removeHotelService(${id}, ${service.service_id})" title="Quitar servicio">
+                🗑️
+              </button>
+            </div>
+          </div>
+        `;
+        
+        servicesList.appendChild(serviceItem);
+      });
+      
+      contentDiv.innerHTML = '';
+      contentDiv.appendChild(hotelInfo);
+      contentDiv.appendChild(servicesList);
+    } else {
+      // Mostrar mensaje si no hay servicios
+      contentDiv.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+          <p>Este hotel no tiene servicios configurados.</p>
+          <p style="font-size: 0.875rem; margin-top: 0.5rem;">Hotel: ${hotelData.data.hotel_name} (${hotelData.data.hotel_code})</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Error obteniendo servicios del hotel:', error);
+    contentDiv.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: var(--error);">
+        <p>Error al cargar los servicios: ${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// Función auxiliar para obtener el nombre del servicio
+function getServiceName(serviceCode) {
+  const serviceNames = {
+    'BOENGINE': 'Booking Engine',
+    'WL': 'Waitlist',
+    'LATE_IN': 'Late Check-in',
+    'LATE_OUT': 'Late Check-out',
+    'BL': 'Blacklist',
+    'SELF_IN': 'Self Check-in'
+  };
+  return serviceNames[serviceCode] || serviceCode;
+}
+
+// Función para abrir modal de agregar servicio
+async function openAddServiceModal(hotelId) {
+  currentHotelIdForServices = hotelId;
+  
+  const hotel = hotelsCache.find(h => h.id === hotelId);
+  if (!hotel) return;
+  
+  document.getElementById('add-service-title').textContent = `Agregar Servicio - ${hotel.hotel_name}`;
+  
+  // Resetear formulario
+  resetAddServiceForm();
+  
+  openModal('add-service-modal');
+}
+
+// Función para quitar servicio de un hotel
+async function removeHotelService(hotelId, serviceId) {
+  const hotel = hotelsCache.find(h => h.id === hotelId);
+  if (!hotel) return;
+
+  if (confirm(`¿Estás seguro de que quieres quitar este servicio del hotel "${hotel.hotel_name}"?`)) {
+    try {
+      console.log('Quitando servicio:', serviceId, 'del hotel:', hotelId);
+      const result = await removeHotelServiceAsync(hotelId, serviceId);
+      if (result) {
+        showToast('Servicio quitado correctamente', 'success');
+        // Recargar servicios del hotel
+        await viewHotelServices(hotelId);
+      } else {
+        showToast('Error al quitar el servicio', 'error');
+      }
+    } catch (error) {
+      console.error('Error quitando servicio:', error);
+      showToast(`Error al quitar el servicio: ${error.message}`, 'error');
+    }
+  }
+}
+
+// Variables globales para gestión de servicios
+let currentHotelIdForServices = null;
+
+// Función para manejar el envío del formulario de servicios
+async function handleAddServiceSubmit(e) {
+  e.preventDefault();
+
+  if (!currentHotelIdForServices) {
+    showToast('Error: No se ha seleccionado un hotel', 'error');
+    return;
+  }
+
+  const formData = getFormData('add-service-form');
+  const serviceId = e.target.dataset.serviceId;
+
+  if (!formData.service_code) {
+    showToast('Debe seleccionar un servicio', 'error');
+    return;
+  }
+
+  if (!formData.send_by_email && !formData.send_by_whatsapp) {
+    showToast('Debe seleccionar al menos un canal de notificación', 'error');
+    return;
+  }
+
+  const channels = {
+    email: formData.send_by_email,
+    whatsapp: formData.send_by_whatsapp
+  };
+
+  try {
+    let result;
+    if (serviceId) {
+      // Actualizar servicio existente
+      console.log('Actualizando servicio:', serviceId);
+      result = await updateHotelServiceAsync(currentHotelIdForServices, parseInt(serviceId), channels);
+    } else {
+      // Agregar nuevo servicio
+      console.log('Agregando nuevo servicio:', formData.service_code);
+      result = await addHotelServiceAsync(currentHotelIdForServices, formData.service_code, channels);
+    }
+
+    if (result) {
+      showToast(serviceId ? 'Servicio actualizado correctamente' : 'Servicio agregado correctamente', 'success');
+      closeModal('add-service-modal');
+      resetAddServiceForm();
+      // Recargar servicios del hotel
+      await viewHotelServices(currentHotelIdForServices);
+    } else {
+      showToast(serviceId ? 'Error al actualizar el servicio' : 'Error al agregar el servicio', 'error');
+    }
+  } catch (error) {
+    console.error('Error en handleAddServiceSubmit:', error);
+    showToast(`Error: ${error.message}`, 'error');
+  }
+}
+
+// Función para resetear el formulario de servicios
+function resetAddServiceForm() {
+  const form = document.getElementById('add-service-form');
+  if (form) {
+    // Resetear formulario
+    resetForm('add-service-form');
+    
+    // Restaurar estado inicial
+    document.getElementById('service-select').disabled = false;
+    const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.textContent = 'Agregar Servicio';
+    }
+    
+    // Limpiar dataset
+    delete form.dataset.serviceId;
+    
+    // Restaurar título
+    document.getElementById('add-service-title').textContent = 'Agregar Servicio';
+  }
+}
+
+// Función para editar canales de un servicio
+async function editHotelService(hotelId, serviceId, serviceCode) {
+  const hotel = hotelsCache.find(h => h.id === hotelId);
+  if (!hotel) return;
+
+  // Obtener datos actuales del servicio
+  try {
+    const hotelData = await fetchWebhook({ 
+      func: 'hotels', 
+      method: 'services',
+      id: hotelId
+    });
+    
+    const service = hotelData?.data?.active_services?.find(s => s.service_id === serviceId);
+    if (!service) {
+      showToast('No se pudo encontrar el servicio', 'error');
+      return;
+    }
+
+    // Configurar modal para edición
+    currentHotelIdForServices = hotelId;
+    document.getElementById('add-service-title').textContent = `Editar ${getServiceName(serviceCode)} - ${hotel.hotel_name}`;
+    
+    // Llenar formulario con datos actuales
+    document.getElementById('service-select').value = serviceCode;
+    document.getElementById('service-select').disabled = true; // No permitir cambiar el servicio
+    document.getElementById('send-email').checked = service.send_by_email;
+    document.getElementById('send-whatsapp').checked = service.send_by_whatsapp;
+    
+    // Cambiar texto del botón
+    const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
+    submitBtn.textContent = 'Actualizar Servicio';
+    
+    // Guardar ID del servicio para la actualización
+    document.getElementById('add-service-form').dataset.serviceId = serviceId;
+    
+    openModal('add-service-modal');
+  } catch (error) {
+    console.error('Error obteniendo datos del servicio:', error);
+    showToast(`Error al obtener datos del servicio: ${error.message}`, 'error');
+  }
 }
 
 // Make functions globally available for onclick handlers
@@ -446,3 +780,7 @@ window.toggleDropdown = toggleDropdown;
 window.editHotel = editHotel;
 window.viewHotelServices = viewHotelServices;
 window.deleteHotel = deleteHotel;
+window.openAddServiceModal = openAddServiceModal;
+window.removeHotelService = removeHotelService;
+window.editHotelService = editHotelService;
+window.handleAddServiceSubmit = handleAddServiceSubmit;

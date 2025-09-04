@@ -340,3 +340,70 @@ window.createHotelAsync = createHotelAsync;
 window.updateHotelAsync = updateHotelAsync;
 window.deleteHotelAsync = deleteHotelAsync;
 window.getHotelsAsync = getHotelsAsync;
+
+// =============================================
+// Hotel Services operations with webhook
+// =============================================
+
+async function getHotelServicesAsync(hotelId) {
+  console.log('Obteniendo servicios del hotel:', hotelId);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'services',
+    id: hotelId
+  });
+  console.log('Respuesta de getHotelServicesAsync:', res);
+  return res?.data?.active_services || [];
+}
+
+// Make hotel services function globally available
+window.getHotelServicesAsync = getHotelServicesAsync;
+
+// =============================================
+// Hotel Service Management operations with webhook
+// =============================================
+
+async function addHotelServiceAsync(hotelId, serviceCode, channels = {}) {
+  console.log('Agregando servicio al hotel:', hotelId, 'servicio:', serviceCode, 'canales:', channels);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'add_service',
+    id: hotelId,
+    service_code: serviceCode,
+    send_by_email: channels.email || false,
+    send_by_whatsapp: channels.whatsapp || false
+  });
+  console.log('Respuesta de addHotelServiceAsync:', res);
+  return res?.data || null;
+}
+
+async function removeHotelServiceAsync(hotelId, serviceId) {
+  console.log('Quitando servicio del hotel:', hotelId, 'service_id:', serviceId);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'remove_service',
+    id: hotelId,
+    service_id: serviceId
+  });
+  console.log('Respuesta de removeHotelServiceAsync:', res);
+  return res?.data || null;
+}
+
+async function updateHotelServiceAsync(hotelId, serviceId, channels = {}) {
+  console.log('Actualizando servicio del hotel:', hotelId, 'service_id:', serviceId, 'canales:', channels);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'update_service',
+    id: hotelId,
+    service_id: serviceId,
+    send_by_email: channels.email || false,
+    send_by_whatsapp: channels.whatsapp || false
+  });
+  console.log('Respuesta de updateHotelServiceAsync:', res);
+  return res?.data || null;
+}
+
+// Make hotel service management functions globally available
+window.addHotelServiceAsync = addHotelServiceAsync;
+window.removeHotelServiceAsync = removeHotelServiceAsync;
+window.updateHotelServiceAsync = updateHotelServiceAsync;
