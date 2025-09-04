@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Dashboard - Sistema de Notificaciones</title>
+    <meta name="description" content="Dashboard profesional para la gestión de notificaciones hoteleras">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div id="app" class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Hotel Dashboard</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li><a href="#dashboard" class="nav-link active" data-route="dashboard">
+                        <span data-lucide="bar-chart-3"></span>
+                        Dashboard
+                    </a></li>
+                    <li><a href="#hotels" class="nav-link" data-route="hotels">
+                        <span data-lucide="building"></span>
+                        Hoteles
+                    </a></li>
+                    <li><a href="#services" class="nav-link" data-route="services">
+                        <span data-lucide="settings"></span>
+                        Servicios
+                    </a></li>
+                    <li><a href="#reports" class="nav-link" data-route="reports">
+                        <span data-lucide="file-text"></span>
+                        Reportes
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <h1 id="page-title">Dashboard</h1>
+                    <button id="sidebar-toggle" class="sidebar-toggle">
+                        <span data-lucide="menu"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="view active">
+                    <div class="metrics-grid">
+                        <div class="metric-card metric-card-primary">
+                            <div class="metric-content">
+                                <div class="metric-value" id="total-hotels">0</div>
+                                <div class="metric-label">Hoteles Activos</div>
+                            </div>
+                            <div class="metric-icon">
+                                <span data-lucide="building"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card metric-card-success">
+                            <div class="metric-content">
+                                <div class="metric-value" id="total-notifications">0</div>
+                                <div class="metric-label">Notificaciones (Mes)</div>
+                            </div>
+                            <div class="metric-icon">
+                                <span data-lucide="send"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card metric-card-info">
+                            <div class="metric-content">
+                                <div class="metric-value" id="success-rate">0%</div>
+                                <div class="metric-label">Tasa de Éxito</div>
+                            </div>
+                            <div class="metric-icon">
+                                <span data-lucide="check-circle"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-content">
+                                <div class="metric-value" id="active-services">0</div>
+                                <div class="metric-label">Servicios Activos</div>
+                            </div>
+                            <div class="metric-icon">
+                                <span data-lucide="settings"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Notificaciones por Día</h3>
+                            <canvas id="notifications-chart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Distribución de Servicios</h3>
+                            <canvas id="services-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotels View -->
+                <div id="hotels-view" class="view">
+                    <div class="page-header">
+                        <h2>Gestión de Hoteles</h2>
+                        <button id="add-hotel-btn" class="btn btn-primary">
+                            <span data-lucide="plus"></span>
+                            Nuevo Hotel
+                        </button>
+                    </div>
+
+                    <div class="filters-section">
+                        <div class="search-box">
+                            <input type="text" id="hotel-search" placeholder="Buscar por nombre, código o email...">
+                            <span data-lucide="search"></span>
+                        </div>
+                        <div class="results-info">
+                            <span id="hotels-count">0 hoteles</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table" id="hotels-table">
+                            <thead>
+                                <tr>
+                                    <th>Hotel</th>
+                                    <th>Contacto</th>
+                                    <th>Idioma</th>
+                                    <th>Estado</th>
+                                    <th>Servicios</th>
+                                    <th>Creado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hotels-tbody">
+                                <!-- Hotels will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="pagination" class="pagination">
+                        <!-- Pagination will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Services View -->
+                <div id="services-view" class="view">
+                    <div class="page-header">
+                        <h2>Gestión de Servicios</h2>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table" id="services-table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th>Hoteles Suscritos</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="services-tbody">
+                                <!-- Services will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports View -->
+                <div id="reports-view" class="view">
+                    <div class="page-header">
+                        <h2>Reportes y Métricas</h2>
+                    </div>
+                    
+                    <div class="filters-section">
+                        <div class="date-filters">
+                            <input type="date" id="date-from" class="form-input">
+                            <input type="date" id="date-to" class="form-input">
+                            <button id="apply-filters" class="btn btn-primary">Aplicar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3>Métricas por Hotel</h3>
+                            <canvas id="hotels-metrics-chart"></canvas>
+                        </div>
+                        <div class="report-card">
+                            <h3>Uso de Servicios</h3>
+                            <canvas id="service-usage-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Hotel Form Modal -->
+    <div id="hotel-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nuevo Hotel</h3>
+                <button class="modal-close" id="close-modal">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <form id="hotel-form" class="modal-body">
+                <div class="form-group">
+                    <label for="hotel-code">Código Hotel *</label>
+                    <input type="text" id="hotel-code" name="hotel_code" required>
+                </div>
+                <div class="form-group">
+                    <label for="hotel-name">Nombre Hotel *</label>
+                    <input type="text" id="hotel-name" name="hotel_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="hotel-email">Email *</label>
+                    <input type="email" id="hotel-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="hotel-phone">Teléfono</label>
+                    <input type="tel" id="hotel-phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="hotel-language">Idioma</label>
+                    <select id="hotel-language" name="language">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                        <option value="pt">Português</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="hotel-active" name="active" checked>
+                        <span class="checkmark"></span>
+                        Hotel Activo
+                    </label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/hotels.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

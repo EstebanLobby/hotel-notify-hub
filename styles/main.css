@@ -1,0 +1,305 @@
+/* Hotel Dashboard Design System - Professional Blue Theme */
+
+:root {
+  /* Core Brand Colors */
+  --background: hsl(220, 13%, 97%);
+  --foreground: hsl(215, 25%, 27%);
+  
+  /* Brand Primary - Professional Blue */
+  --primary: hsl(217, 91%, 60%);
+  --primary-light: hsl(217, 91%, 70%);
+  --primary-dark: hsl(217, 91%, 45%);
+  --primary-glow: hsl(217, 91%, 85%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  
+  /* Success/Warning/Error States */
+  --success: hsl(142, 76%, 36%);
+  --success-light: hsl(142, 76%, 91%);
+  --warning: hsl(43, 96%, 56%);
+  --warning-light: hsl(43, 96%, 93%);
+  --error: hsl(0, 84%, 60%);
+  --error-light: hsl(0, 84%, 95%);
+  
+  /* Neutral Grays */
+  --surface: hsl(0, 0%, 100%);
+  --surface-hover: hsl(220, 13%, 95%);
+  --border-light: hsl(220, 13%, 91%);
+  --text-muted: hsl(215, 16%, 47%);
+  
+  /* Dashboard Specific */
+  --sidebar-bg: hsl(217, 33%, 17%);
+  --sidebar-hover: hsl(217, 33%, 22%);
+  --sidebar-active: hsl(217, 91%, 60%);
+  --metric-card: hsl(0, 0%, 100%);
+  
+  /* Shadows */
+  --shadow-card: 0 4px 6px -1px hsl(220, 13%, 69%, 0.1), 0 2px 4px -1px hsl(220, 13%, 69%, 0.06);
+  --shadow-hover: 0 10px 15px -3px hsl(220, 13%, 69%, 0.1), 0 4px 6px -2px hsl(220, 13%, 69%, 0.05);
+  
+  /* Transitions */
+  --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  line-height: 1.6;
+}
+
+/* Layout */
+.dashboard-layout {
+  min-height: 100vh;
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background-color: var(--sidebar-bg);
+  color: white;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-card);
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--sidebar-hover);
+}
+
+.sidebar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+}
+
+.nav-list {
+  list-style: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.nav-link:hover {
+  background-color: var(--sidebar-hover);
+  color: white;
+}
+
+.nav-link.active {
+  background-color: var(--sidebar-active);
+  color: white;
+}
+
+.nav-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-card);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  padding: 1rem 2rem;
+}
+
+#page-title {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* Content Area */
+.content-wrapper {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  margin-bottom: 2rem;
+}
+
+.page-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background-color: var(--surface);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-light);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: between;
+}
+
+.metric-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.metric-card-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--primary-foreground);
+  border: none;
+}
+
+.metric-card-success {
+  background: linear-gradient(135deg, var(--success), hsl(142, 76%, 30%));
+  color: white;
+  border: none;
+}
+
+.metric-card-info {
+  background: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(217, 91%, 45%));
+  color: white;
+  border: none;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.metric-icon {
+  opacity: 0.8;
+}
+
+.metric-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* Charts */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chart-card {
+  background-color: var(--surface);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-light);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.chart-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-toggle {
+    display: block;
+  }
+  
+  .header-content {
+    padding: 1rem;
+  }
+  
+  .content-wrapper {
+    padding: 1rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
