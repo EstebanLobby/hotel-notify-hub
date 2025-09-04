@@ -31,31 +31,52 @@ function setupHotelsEventListeners() {
       await handleHotelSearch({ target: document.getElementById('hotel-search') });
     });
   }
+
+  // Filtros adicionales
+  const languageFilter = document.getElementById('language-filter');
+  const statusFilter = document.getElementById('status-filter');
+  const servicesFilter = document.getElementById('services-filter');
   
+  if (languageFilter) {
+    languageFilter.addEventListener('change', () => applyFilters());
+  }
+  if (statusFilter) {
+    statusFilter.addEventListener('change', () => applyFilters());
+  }
+  if (servicesFilter) {
+    servicesFilter.addEventListener('change', () => applyFilters());
+  }
+
+  // Export CSV
+  const exportBtn = document.getElementById('export-csv');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportHotelsToCSV);
+  }
+
   // Add hotel button
   const addBtn = document.getElementById('add-hotel-btn');
   if (addBtn) {
     addBtn.addEventListener('click', openAddHotelModal);
   }
-  
+
   // Modal close events
   const closeBtn = document.getElementById('close-modal');
   const cancelBtn = document.getElementById('cancel-btn');
-  
+
   if (closeBtn) {
     closeBtn.addEventListener('click', () => closeModal('hotel-modal'));
   }
-  
+
   if (cancelBtn) {
     cancelBtn.addEventListener('click', () => closeModal('hotel-modal'));
   }
-  
+
   // Form submission
   const form = document.getElementById('hotel-form');
   if (form) {
     form.addEventListener('submit', handleHotelSubmit);
   }
-  
+
   // Close modal when clicking outside
   const modal = document.getElementById('hotel-modal');
   if (modal) {
@@ -74,20 +95,31 @@ async function handleHotelSearch(e) {
   await renderHotelsTable(query);
 }
 
+function applyFilters() {
+  currentHotelsPage = 1;
+  renderHotelsTable(document.getElementById('hotel-search')?.value || '');
+}
+
 async function renderHotelsTable(query = '') {
   const tbody = document.getElementById('hotels-tbody');
   const countElement = document.getElementById('hotels-count');
   
   if (!tbody) return;
+  
   // Obtener hoteles desde el servicio (con filtro q si aplica)
   try {
     const searchQuery = typeof query === 'string' ? query : (document.getElementById('hotel-search')?.value || '');
+    console.log('Buscando hoteles con query:', searchQuery);
     hotelsCache = await getHotelsAsync({ limit: 1000, offset: 0, q: searchQuery });
-  } catch (_) {
+    console.log('Hoteles obtenidos del servicio:', hotelsCache);
+  } catch (error) {
+    console.error('Error obteniendo hoteles del servicio:', error);
     // Fallback a datos locales si el servicio falla
     hotelsCache = getHotels();
   }
+  
   filteredHotels = hotelsCache;
+  console.log('Hoteles después de filtros:', filteredHotels);
   
   // Paginate results
   const paginatedData = paginate(filteredHotels, hotelsPerPage, currentHotelsPage);
@@ -122,6 +154,92 @@ async function renderHotelsTable(query = '') {
     `;
     tbody.appendChild(emptyRow);
   }
+  
+  // Initialize Lucide icons for dynamically added content
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+    
+    // Check if icons loaded and show fallback if not
+    setTimeout(() => {
+      const iconElements = document.querySelectorAll('[data-lucide]');
+      iconElements.forEach(icon => {
+        if (!icon.querySelector('svg')) {
+          const fallback = icon.parentElement.querySelector('.fallback-icon, .fallback-text');
+          if (fallback) {
+            fallback.style.display = 'inline';
+          }
+        }
+      });
+    }, 100);
+  }
+}
+
+function applyAdditionalFilters(hotels) {
+  let filtered = hotels;
+  
+  // Filtro por idioma
+  const languageFilter = document.getElementById('language-filter')?.value;
+  if (languageFilter) {
+    filtered = filtered.filter(hotel => hotel.language === languageFilter);
+  }
+  
+  // Filtro por estado
+  const statusFilter = document.getElementById('status-filter')?.value;
+  if (statusFilter !== '') {
+    const isActive = statusFilter === 'true';
+    filtered = filtered.filter(hotel => hotel.active === isActive);
+  }
+  
+  // Filtro por servicios
+  const servicesFilter = document.getElementById('services-filter')?.value;
+  if (servicesFilter) {
+    filtered = filtered.filter(hotel => 
+      hotel.active_services?.some(service => service.service_code === servicesFilter)
+    );
+  }
+  
+  return filtered;
+}
+
+function exportHotelsToCSV() {
+  const hotels = filteredHotels.length > 0 ? filteredHotels : hotelsCache;
+  
+  if (hotels.length === 0) {
+    showToast('No hay datos para exportar', 'warning');
+    return;
+  }
+  
+  const headers = [
+    'ID', 'Código', 'Nombre', 'Email', 'Teléfono', 'Idioma', 
+    'Estado', 'Servicios Activos', 'Fecha Creación'
+  ];
+  
+  const csvContent = [
+    headers.join(','),
+    ...hotels.map(hotel => [
+      hotel.id,
+      `"${hotel.hotel_code}"`,
+      `"${hotel.hotel_name}"`,
+      `"${hotel.email}"`,
+      `"${hotel.phone || ''}"`,
+      hotel.language,
+      hotel.active ? 'Activo' : 'Inactivo',
+      `"${hotel.active_services?.map(s => s.service_code).join(', ') || ''}"`,
+      new Date(hotel.created_at).toLocaleDateString('es-ES')
+    ].join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `hoteles_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  showToast('Archivo CSV exportado correctamente', 'success');
 }
 
 function createHotelRow(hotel) {
@@ -160,21 +278,18 @@ function createHotelRow(hotel) {
     </td>
     <td>
       <div class="dropdown">
-        <button class="btn btn-ghost btn-sm" onclick="toggleDropdown(this)">
-          <span data-lucide="more-horizontal"></span>
+        <button class="btn btn-ghost btn-sm" onclick="toggleDropdown(this)" title="Acciones" style="min-width: 32px; min-height: 32px; font-size: 18px; line-height: 1;">
+          ⋮
         </button>
         <div class="dropdown-content">
           <button class="dropdown-item" onclick="editHotel(${hotel.id})">
-            <span data-lucide="edit" style="width: 16px; height: 16px; margin-right: 0.5rem;"></span>
-            Editar
+            ✏️ Editar
           </button>
           <button class="dropdown-item" onclick="viewHotelServices(${hotel.id})">
-            <span data-lucide="eye" style="width: 16px; height: 16px; margin-right: 0.5rem;"></span>
-            Ver Servicios
+            👁️ Ver Servicios
           </button>
           <button class="dropdown-item danger" onclick="deleteHotel(${hotel.id})">
-            <span data-lucide="trash-2" style="width: 16px; height: 16px; margin-right: 0.5rem;"></span>
-            Eliminar
+            🗑️ Eliminar
           </button>
         </div>
       </div>
@@ -233,10 +348,11 @@ function editHotel(id) {
   openModal('hotel-modal');
 }
 
-function handleHotelSubmit(e) {
+async function handleHotelSubmit(e) {
   e.preventDefault();
   
   const formData = getFormData('hotel-form');
+  console.log('FormData obtenido:', formData);
   
   // Validation
   if (!validateHotelCode(formData.hotel_code)) {
@@ -250,7 +366,7 @@ function handleHotelSubmit(e) {
   }
   
   // Check for duplicate hotel code (only for new hotels or different hotel)
-  const existingHotel = getHotels().find(h => 
+  const existingHotel = hotelsCache.find(h => 
     h.hotel_code.toLowerCase() === formData.hotel_code.toLowerCase() && 
     h.id !== (editingHotel?.id || null)
   );
@@ -263,31 +379,58 @@ function handleHotelSubmit(e) {
   try {
     if (editingHotel) {
       // Update existing hotel
-      updateHotel(editingHotel.id, formData);
-      showToast('Hotel actualizado correctamente', 'success');
+      console.log('Actualizando hotel existente:', editingHotel.id);
+      console.log('Función updateHotelAsync disponible:', typeof updateHotelAsync);
+      const updatedHotel = await updateHotelAsync(editingHotel.id, formData);
+      if (updatedHotel) {
+        showToast('Hotel actualizado correctamente', 'success');
+        // Refresh the hotels list
+        await renderHotelsTable();
+      } else {
+        showToast('Error al actualizar el hotel', 'error');
+      }
     } else {
       // Create new hotel
-      addHotel(formData);
-      showToast('Hotel creado correctamente', 'success');
+      console.log('Creando nuevo hotel');
+      console.log('Función createHotelAsync disponible:', typeof createHotelAsync);
+      console.log('Datos a enviar:', formData);
+      const newHotel = await createHotelAsync(formData);
+      console.log('Respuesta de createHotelAsync:', newHotel);
+      if (newHotel) {
+        showToast('Hotel creado correctamente', 'success');
+        // Refresh the hotels list
+        await renderHotelsTable();
+      } else {
+        showToast('Error al crear el hotel', 'error');
+      }
     }
     
     closeModal('hotel-modal');
-    renderHotelsTable();
     
   } catch (error) {
-    showToast('Error al guardar el hotel', 'error');
+    console.error('Error en handleHotelSubmit:', error);
+    showToast(`Error al guardar el hotel: ${error.message}`, 'error');
   }
 }
-
-function deleteHotel(id) {
+async function deleteHotel(id) {
   const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
   if (confirm(`¿Estás seguro de que quieres eliminar el hotel "${hotel.hotel_name}"?`)) {
-    // Sin endpoint de borrado en el servicio, solo actualizar UI local por ahora
-    hotelsCache = hotelsCache.filter(h => h.id !== id);
-    showToast('Hotel eliminado en la vista (no persistido)', 'info');
-    renderHotelsTable(document.getElementById('hotel-search')?.value || '');
+    try {
+      console.log('Eliminando hotel:', id);
+      const result = await deleteHotelAsync(id);
+      if (result) {
+        showToast('Hotel eliminado correctamente', 'success');
+        // Refresh the hotels list
+        await renderHotelsTable();
+      } else {
+        showToast('Error al eliminar el hotel', 'error');
+      }
+    } catch (error) {
+      console.error('Error eliminando hotel:', error);
+      showToast(`Error al eliminar el hotel: ${error.message}`, 'error');
+    }
   }
 }
 
@@ -297,3 +440,9 @@ function viewHotelServices(id) {
   
   showToast(`Ver servicios de ${hotel.hotel_name} - Funcionalidad pendiente de implementar`, 'info');
 }
+
+// Make functions globally available for onclick handlers
+window.toggleDropdown = toggleDropdown;
+window.editHotel = editHotel;
+window.viewHotelServices = viewHotelServices;
+window.deleteHotel = deleteHotel;

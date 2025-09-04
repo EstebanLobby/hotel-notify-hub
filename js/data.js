@@ -51,7 +51,7 @@ const mockHotels = [
     hotel_name: "Coastal Paradise Hotel",
     email: "reservas@coastal.com",
     phone: "+34 956 789 012",
-    language: "es",
+    language: "en",
     active: false,
     created_at: "2025-08-15T09:20:00.000Z",
     updated_at: "2025-08-15T09:20:00.000Z",
@@ -205,7 +205,7 @@ function deleteHotel(id) {
 // Webhook integration (GET with func/method)
 // =============================================
 
-const WEBHOOK_BASE_URL = 'https://automate.golobby.ai/webhook-test/8486e672-cf9e-4fd6-8eea-09f48babbf1a';
+const WEBHOOK_BASE_URL = 'https://automate.golobby.ai/webhook/8486e672-cf9e-4fd6-8eea-09f48babbf1a';
 
 function buildWebhookUrl(params) {
   const url = new URL(WEBHOOK_BASE_URL);
@@ -214,16 +214,19 @@ function buildWebhookUrl(params) {
       url.searchParams.set(key, String(value));
     }
   });
+  console.log('URL construida:', url.toString());
   return url.toString();
 }
 
 async function fetchWebhook(params) {
   const url = buildWebhookUrl(params);
+  console.log('Llamando webhook:', url);
   const response = await fetch(url, { method: 'GET' });
   if (!response.ok) {
     throw new Error(`Webhook HTTP ${response.status}`);
   }
   let payload = await response.json();
+  console.log('Respuesta del webhook:', payload);
   // Normalizar caso donde el backend responde un array con un único objeto
   if (Array.isArray(payload)) {
     payload = payload[0] || {};
@@ -239,9 +242,12 @@ async function fetchWebhook(params) {
 
 async function getHotelsAsync(options = {}) {
   const { limit = 100, offset = 0, q = '' } = options;
+  console.log('getHotelsAsync llamada con:', options);
   const res = await fetchWebhook({ func: 'hotels', method: 'list', limit, offset, q });
-  // Estructura flexible: admite data.items o data directo
-  const data = res?.data?.items || res?.data || [];
+  console.log('Respuesta de getHotelsAsync:', res);
+  // La respuesta tiene estructura: { ok: true, data: { items: [...], total: number } }
+  const data = res?.data?.items || [];
+  console.log('Datos extraídos:', data);
   return Array.isArray(data) ? data : [];
 }
 
@@ -280,3 +286,57 @@ async function getDashboardMetricsAsync() {
     return getDashboardMetrics();
   }
 }
+
+// =============================================
+// Hotel CRUD operations with webhook
+// =============================================
+
+async function createHotelAsync(hotelData) {
+  console.log('Creando hotel:', hotelData);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'create',
+    hotel_code: hotelData.hotel_code,
+    hotel_name: hotelData.hotel_name,
+    email: hotelData.email,
+    phone: hotelData.phone || '',
+    language: hotelData.language,
+    active: hotelData.active
+  });
+  console.log('Respuesta de createHotelAsync:', res);
+  return res?.data || null;
+}
+
+async function updateHotelAsync(id, hotelData) {
+  console.log('Actualizando hotel:', id, hotelData);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'update',
+    id: id,
+    hotel_code: hotelData.hotel_code,
+    hotel_name: hotelData.hotel_name,
+    email: hotelData.email,
+    phone: hotelData.phone || '',
+    language: hotelData.language,
+    active: hotelData.active
+  });
+  console.log('Respuesta de updateHotelAsync:', res);
+  return res?.data || null;
+}
+
+async function deleteHotelAsync(id) {
+  console.log('Eliminando hotel:', id);
+  const res = await fetchWebhook({ 
+    func: 'hotels', 
+    method: 'delete',
+    id: id
+  });
+  console.log('Respuesta de deleteHotelAsync:', res);
+  return res?.data || null;
+}
+
+// Make functions globally available
+window.createHotelAsync = createHotelAsync;
+window.updateHotelAsync = updateHotelAsync;
+window.deleteHotelAsync = deleteHotelAsync;
+window.getHotelsAsync = getHotelsAsync;
