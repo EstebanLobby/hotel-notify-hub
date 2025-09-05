@@ -504,6 +504,9 @@ async function viewHotelServices(id) {
   
   console.log('Viendo servicios del hotel:', hotel.hotel_name, 'ID:', id);
   
+  // Establecer el hotel actual para el botón de agregar servicio
+  currentHotelIdForServices = id;
+  
   // Actualizar título del modal
   document.getElementById('hotel-services-title').textContent = `Servicios de ${hotel.hotel_name}`;
   
@@ -675,6 +678,32 @@ function getServiceName(serviceCode) {
   return serviceNames[serviceCode] || serviceCode;
 }
 
+// Función para actualizar el select de servicios
+function updateServiceSelect(availableServices) {
+  const serviceSelect = document.getElementById('service-select');
+  if (!serviceSelect) return;
+  
+  // Limpiar opciones existentes
+  serviceSelect.innerHTML = '<option value="">Seleccionar servicio...</option>';
+  
+  if (availableServices && availableServices.length > 0) {
+    // Agregar servicios disponibles
+    availableServices.forEach(service => {
+      const option = document.createElement('option');
+      option.value = service.service_code;
+      option.textContent = `${service.service_code} - ${service.service_name}`;
+      serviceSelect.appendChild(option);
+    });
+  } else {
+    // No hay servicios disponibles para agregar
+    const option = document.createElement('option');
+    option.value = "";
+    option.textContent = "No hay servicios disponibles para agregar";
+    option.disabled = true;
+    serviceSelect.appendChild(option);
+  }
+}
+
 // Función para abrir modal de agregar servicio
 async function openAddServiceModal(hotelId) {
   currentHotelIdForServices = hotelId;
@@ -686,6 +715,32 @@ async function openAddServiceModal(hotelId) {
   
   // Resetear formulario
   resetAddServiceForm();
+  
+  // Cargar servicios disponibles dinámicamente
+  try {
+    // Obtener todos los servicios disponibles
+    const allServices = await getServicesAsync();
+    
+    // Obtener servicios ya asignados al hotel
+    const hotelServices = await fetchWebhook({ 
+      func: 'hotels', 
+      method: 'services', 
+      id: hotelId 
+    });
+    
+    // Filtrar servicios que no están ya asignados
+    const assignedServiceCodes = hotelServices?.map(s => s.service_code) || [];
+    const availableServices = allServices.filter(service => 
+      !assignedServiceCodes.includes(service.service_code)
+    );
+    
+    // Actualizar el select con servicios disponibles
+    updateServiceSelect(availableServices);
+    
+  } catch (error) {
+    console.error('Error cargando servicios:', error);
+    showToast('Error al cargar servicios disponibles', 'error');
+  }
   
   openModal('add-service-modal');
 }
@@ -784,11 +839,25 @@ function resetAddServiceForm() {
     // Resetear formulario
     resetForm('add-service-form');
     
-    // Restaurar estado inicial
-    document.getElementById('service-select').disabled = false;
+    // Restaurar estado inicial del select
+    const serviceSelect = document.getElementById('service-select');
+    if (serviceSelect) {
+      serviceSelect.disabled = false;
+      // Restaurar opciones por defecto
+      serviceSelect.innerHTML = `
+        <option value="">Seleccionar servicio...</option>
+        <option value="BOENGINE">Booking Engine</option>
+        <option value="WL">Waitlist</option>
+        <option value="LATE_IN">Late Check-in</option>
+        <option value="LATE_OUT">Late Check-out</option>
+        <option value="BL">Blacklist</option>
+        <option value="SELF_IN">Self Check-in</option>
+      `;
+    }
+    
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
     if (submitBtn) {
-      submitBtn.textContent = 'Agregar Serviciooooo';
+      submitBtn.textContent = 'Agregar Servicio';
     }
     
     // Limpiar dataset
@@ -797,7 +866,7 @@ function resetAddServiceForm() {
     console.log('serviceId después de limpiar:', form.dataset.serviceId);
     
     // Restaurar título
-    document.getElementById('add-service-title').textContent = 'Agregar Servicioo';
+    document.getElementById('add-service-title').textContent = 'Agregar Servicio';
   }
 }
 
