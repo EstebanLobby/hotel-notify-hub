@@ -507,9 +507,9 @@ async function viewHotelServices(id) {
   // Actualizar título del modal
   document.getElementById('hotel-services-title').textContent = `Servicios de ${hotel.hotel_name}`;
   
-  // Mostrar modal con spinner de carga
+  // Mostrar modal con spinner de carga mejorado
   const contentDiv = document.getElementById('hotel-services-content');
-  contentDiv.innerHTML = '<div class="loading-spinner">Cargando servicios...</div>';
+  contentDiv.innerHTML = '<div class="services-loading">Cargando servicios...</div>';
   openModal('hotel-services-modal');
   
   try {
@@ -526,25 +526,33 @@ async function viewHotelServices(id) {
     console.log('Servicios obtenidos:', services);
     
     if (services && services.length > 0) {
-      // Crear header con información del hotel
+      // Crear header con información del hotel mejorado
       const hotelInfo = document.createElement('div');
       hotelInfo.className = 'hotel-info';
       hotelInfo.innerHTML = `
-        <div style="background: var(--surface); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <h4 style="margin: 0; color: var(--foreground);">${hotelData.data.hotel_name}</h4>
-            <span class="badge badge-success">${services.length} servicios activos</span>
+        <div class="hotel-info-header">
+          <h4>${hotelData.data.hotel_name}</h4>
+          <span class="badge badge-success">${services.length} servicios activos</span>
+        </div>
+        <div class="hotel-info-details">
+          <div class="hotel-info-detail">
+            <strong>Código:</strong> ${hotelData.data.hotel_code}
           </div>
-          <div style="font-size: 0.875rem; color: var(--text-muted);">
-            <div>Código: ${hotelData.data.hotel_code}</div>
-            <div>Email: ${hotelData.data.email}</div>
-            ${hotelData.data.phone ? `<div>Teléfono: ${hotelData.data.phone}</div>` : ''}
-            <div>Idioma: ${getLanguageLabel(hotelData.data.language)}</div>
+          <div class="hotel-info-detail">
+            <strong>Email:</strong> ${hotelData.data.email}
+          </div>
+          ${hotelData.data.phone ? `
+            <div class="hotel-info-detail">
+              <strong>Teléfono:</strong> ${hotelData.data.phone}
+            </div>
+          ` : ''}
+          <div class="hotel-info-detail">
+            <strong>Idioma:</strong> ${getLanguageLabel(hotelData.data.language)}
           </div>
         </div>
       `;
       
-      // Renderizar lista de servicios
+      // Renderizar lista de servicios mejorada
       const servicesList = document.createElement('div');
       servicesList.className = 'hotel-services-list';
       
@@ -557,22 +565,32 @@ async function viewHotelServices(id) {
         if (service.send_by_whatsapp) channels.push('WhatsApp');
         
         serviceItem.innerHTML = `
-          <div class="service-info">
-            <div class="service-name">${getServiceName(service.service_code)}</div>
-            <div class="service-code">ID: ${service.service_id} | ${service.service_code}</div>
-            <div class="service-channels">
-              ${channels.map(channel => `<span class="channel-badge">${channel}</span>`).join('')}
+          <div class="service-item-content">
+            <div class="service-info">
+              <div class="service-name">${getServiceName(service.service_code)}</div>
+              <div class="service-code">ID: ${service.service_id} | ${service.service_code}</div>
+              <div class="service-channels">
+                ${channels.map(channel => {
+                  const channelClass = channel === 'Email' ? 'channel-email' : 'channel-whatsapp';
+                  const channelIcon = channel === 'Email' ? '📧' : '📱';
+                  return `<span class="channel-badge ${channelClass}">${channelIcon} ${channel}</span>`;
+                }).join('')}
+              </div>
             </div>
-          </div>
-          <div class="service-status">
-            <span class="status-badge active">Activo</span>
-            <div class="service-actions">
-              <button class="service-action-btn edit" onclick="editHotelService(${id}, ${service.service_id}, '${service.service_code}')" title="Editar canales">
-                ✏️
-              </button>
-              <button class="service-action-btn remove" onclick="removeHotelService(${id}, ${service.service_id})" title="Quitar servicio">
-                🗑️
-              </button>
+            <div class="service-status">
+              <span class="status-badge active">✓ Activo</span>
+              <div class="service-actions">
+                <button class="service-action-btn edit" 
+                        onclick="editHotelService(${id}, ${service.service_id}, '${service.service_code}')" 
+                        title="Editar canales de comunicación">
+                  ✏️
+                </button>
+                <button class="service-action-btn remove" 
+                        onclick="removeHotelService(${id}, ${service.service_id})" 
+                        title="Quitar servicio del hotel">
+                  🗑️
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -584,22 +602,64 @@ async function viewHotelServices(id) {
       contentDiv.appendChild(hotelInfo);
       contentDiv.appendChild(servicesList);
     } else {
-      // Mostrar mensaje si no hay servicios
+      // Mostrar mensaje mejorado si no hay servicios
       contentDiv.innerHTML = `
-        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
-          <p>Este hotel no tiene servicios configurados.</p>
-          <p style="font-size: 0.875rem; margin-top: 0.5rem;">Hotel: ${hotelData.data.hotel_name} (${hotelData.data.hotel_code})</p>
+        <div class="hotel-info">
+          <div class="hotel-info-header">
+            <h4>${hotelData.data.hotel_name}</h4>
+            <span class="badge badge-secondary">Sin servicios</span>
+          </div>
+          <div class="hotel-info-details">
+            <div class="hotel-info-detail">
+              <strong>Código:</strong> ${hotelData.data.hotel_code}
+            </div>
+            <div class="hotel-info-detail">
+              <strong>Email:</strong> ${hotelData.data.email}
+            </div>
+          </div>
+        </div>
+        <div class="services-empty-state">
+          <p>Este hotel no tiene servicios configurados</p>
+          <p style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">
+            Agregue servicios para comenzar a recibir notificaciones automatizadas
+          </p>
         </div>
       `;
     }
   } catch (error) {
     console.error('Error obteniendo servicios del hotel:', error);
     contentDiv.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: var(--error);">
-        <p>Error al cargar los servicios: ${error.message}</p>
+      <div class="services-empty-state" style="border-color: var(--error); color: var(--error);">
+        <p>❌ Error al cargar los servicios</p>
+        <p style="font-size: 0.875rem; margin-top: 0.5rem;">${error.message}</p>
+        <button class="btn btn-secondary btn-sm" onclick="viewHotelServices(${id})" style="margin-top: 1rem;">
+          🔄 Intentar nuevamente
+        </button>
       </div>
     `;
   }
+}
+
+// Función auxiliar para obtener el ícono del canal
+function getChannelIcon(channel) {
+  const icons = {
+    'Email': '📧',
+    'WhatsApp': '📱',
+    'SMS': '💬',
+    'Push': '🔔'
+  };
+  return icons[channel] || '📌';
+}
+
+// Función auxiliar para obtener la clase del canal
+function getChannelClass(channel) {
+  const classes = {
+    'Email': 'channel-email',
+    'WhatsApp': 'channel-whatsapp',
+    'SMS': 'channel-sms',
+    'Push': 'channel-push'
+  };
+  return classes[channel] || 'channel-default';
 }
 
 // Función auxiliar para obtener el nombre del servicio
@@ -667,6 +727,12 @@ async function handleAddServiceSubmit(e) {
 
   const formData = getFormData('add-service-form');
   const serviceId = e.target.dataset.serviceId;
+  
+  // Debug logs
+  console.log('=== DEBUG handleAddServiceSubmit ===');
+  console.log('serviceId:', serviceId);
+  console.log('formData:', formData);
+  console.log('currentHotelIdForServices:', currentHotelIdForServices);
 
   if (!formData.service_code) {
     showToast('Debe seleccionar un servicio', 'error');
@@ -702,7 +768,7 @@ async function handleAddServiceSubmit(e) {
       // Recargar servicios del hotel
       await viewHotelServices(currentHotelIdForServices);
     } else {
-      showToast(serviceId ? 'Error al actualizar el servicio' : 'Error al agregar el servicio', 'error');
+      showToast(serviceName ? 'Error al actualizar el servicio' : 'Error al agregar el servicio', 'error');
     }
   } catch (error) {
     console.error('Error en handleAddServiceSubmit:', error);
@@ -712,6 +778,7 @@ async function handleAddServiceSubmit(e) {
 
 // Función para resetear el formulario de servicios
 function resetAddServiceForm() {
+  console.log('=== DEBUG resetAddServiceForm ejecutándose ===');
   const form = document.getElementById('add-service-form');
   if (form) {
     // Resetear formulario
@@ -721,14 +788,16 @@ function resetAddServiceForm() {
     document.getElementById('service-select').disabled = false;
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
     if (submitBtn) {
-      submitBtn.textContent = 'Agregar Servicio';
+      submitBtn.textContent = 'Agregar Serviciooooo';
     }
     
     // Limpiar dataset
+    console.log('serviceId antes de limpiar:', form.dataset.serviceId);
     delete form.dataset.serviceId;
+    console.log('serviceId después de limpiar:', form.dataset.serviceId);
     
     // Restaurar título
-    document.getElementById('add-service-title').textContent = 'Agregar Servicio';
+    document.getElementById('add-service-title').textContent = 'Agregar Servicioo';
   }
 }
 
@@ -766,7 +835,7 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     submitBtn.textContent = 'Actualizar Servicio';
     
     // Guardar ID del servicio para la actualización
-    document.getElementById('add-service-form').dataset.serviceId = serviceId;
+    document.getElementById('add-service-form').dataset.serviceName = serviceCode;
     
     openModal('add-service-modal');
   } catch (error) {

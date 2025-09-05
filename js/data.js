@@ -365,42 +365,81 @@ window.getHotelServicesAsync = getHotelServicesAsync;
 
 async function addHotelServiceAsync(hotelId, serviceCode, channels = {}) {
   console.log('Agregando servicio al hotel:', hotelId, 'servicio:', serviceCode, 'canales:', channels);
+  
+  // Obtener el hotel_code desde el cache de hoteles
+  const hotel = hotelsCache.find(h => h.id === hotelId);
+  if (!hotel) {
+    throw new Error(`Hotel con ID ${hotelId} no encontrado`);
+  }
+  
   const res = await fetchWebhook({ 
     func: 'hotels', 
     method: 'add_service',
-    id: hotelId,
+    hotel_code: hotel.hotel_code,
     service_code: serviceCode,
     send_by_email: channels.email || false,
     send_by_whatsapp: channels.whatsapp || false
   });
   console.log('Respuesta de addHotelServiceAsync:', res);
-  return res?.data || null;
+  
+  // Verificar si la operación fue exitosa
+  if (res && (res.ok === true || res.success === true)) {
+    return res;
+  }
+  
+  return null;
 }
 
 async function removeHotelServiceAsync(hotelId, serviceId) {
   console.log('Quitando servicio del hotel:', hotelId, 'service_id:', serviceId);
+  
+  // Obtener el hotel_code desde el cache de hoteles
+  const hotel = hotelsCache.find(h => h.id === hotelId);
+  if (!hotel) {
+    throw new Error(`Hotel con ID ${hotelId} no encontrado`);
+  }
+  
   const res = await fetchWebhook({ 
     func: 'hotels', 
     method: 'remove_service',
-    id: hotelId,
+    hotel_code: hotel.hotel_code,
     service_id: serviceId
   });
   console.log('Respuesta de removeHotelServiceAsync:', res);
-  return res?.data || null;
+  
+  // Verificar si la operación fue exitosa
+  if (res && (res.ok === true || res.success === true)) {
+    return res;
+  }
+  
+  return null;
 }
 
-async function updateHotelServiceAsync(hotelId, serviceId, channels = {}) {
-  console.log('Actualizando servicio del hotel:', hotelId, 'service_id:', serviceId, 'canales:', channels);
+async function updateHotelServiceAsync(hotelId, serviceName, channels = {}) {
+  console.log('Actualizando servicio del hotel:', hotelId, 'service_code:', serviceName, 'canales:', channels);
+  
+  // Obtener el hotel_code desde el cache de hoteles
+  const hotel = hotelsCache.find(h => h.id === hotelId);
+  if (!hotel) {
+    throw new Error(`Hotel con ID ${hotelId} no encontrado`);
+  }
+  
   const res = await fetchWebhook({ 
     func: 'hotels', 
     method: 'update_service',
-    id: hotelId,
-    service_id: serviceId,
+    hotel_code: hotel.hotel_code,
+    service_code: serviceName,
     send_by_email: channels.email || false,
     send_by_whatsapp: channels.whatsapp || false
   });
   console.log('Respuesta de updateHotelServiceAsync:', res);
-  return res?.data || null;
+  
+  // Verificar si la operación fue exitosa
+  if (res && (res.ok === true || res.success === true)) {
+    return res;
+  }
+  
+  return null;
 }
 
 // Make hotel service management functions globally available

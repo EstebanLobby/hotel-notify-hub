@@ -17,6 +17,74 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
+    <!-- Login Modal -->
+    <div id="login-modal" class="login-modal">
+        <div class="login-container">
+            <!-- Background Pattern -->
+            <div class="login-background">
+                <div class="login-pattern"></div>
+            </div>
+            
+            <!-- Login Card -->
+            <div class="login-card">
+                <!-- Header -->
+                <div class="login-header">
+                    <div class="login-logo">
+                        <div class="logo-icon">
+                            <span data-lucide="shield-check"></span>
+                        </div>
+                        <div class="logo-glow"></div>
+                    </div>
+                    <h1 class="login-title">Hotel Notify Hub</h1>
+                    <p class="login-subtitle">Sistema de Gestión de Notificaciones</p>
+                </div>
+
+                <!-- Form -->
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <span data-lucide="lock" class="label-icon"></span>
+                            Contraseña
+                        </label>
+                        <div class="input-container">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                required 
+                                placeholder="Ingresa tu contraseña"
+                                class="form-input"
+                            >
+                            <button type="button" id="toggle-password" class="password-toggle">
+                                <span data-lucide="eye" class="toggle-icon"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        <span data-lucide="log-in" class="button-icon"></span>
+                        <span class="button-text">Iniciar Sesión</span>
+                        <div class="button-shine"></div>
+                    </button>
+                </form>
+
+                <!-- Error Message -->
+                <div id="login-error" class="login-error">
+                    <span data-lucide="alert-circle" class="error-icon"></span>
+                    <span class="error-text"></span>
+                </div>
+
+                <!-- Footer -->
+                <div class="login-footer">
+                    <p class="footer-text">
+                        <span data-lucide="shield" class="footer-icon"></span>
+                        Acceso seguro y encriptado
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="app" class="dashboard-layout">
         <!-- Sidebar -->
         <aside id="sidebar" class="sidebar">
@@ -37,10 +105,12 @@
                         <span data-lucide="settings"></span>
                         Servicios
                     </a></li>
+                    <!--
                     <li><a href="#reports" class="nav-link" data-route="reports">
                         <span data-lucide="file-text"></span>
                         Reportes
                     </a></li>
+                    -->
                 </ul>
             </nav>
         </aside>
@@ -60,7 +130,7 @@
             <!-- Content Area -->
             <div class="content-wrapper">
                 <!-- Dashboard View -->
-                <div id="dashboard-view" class="view active">
+                <div id="dashboard-view" class="view">
                     <div class="metrics-grid">
                         <div class="metric-card metric-card-primary">
                             <div class="metric-content">
@@ -339,6 +409,7 @@
     <!-- Scripts -->
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/hotels.js"></script>
     <script src="js/services.js"></script>

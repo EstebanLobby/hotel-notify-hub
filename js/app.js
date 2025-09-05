@@ -3,7 +3,8 @@
 let currentView = 'dashboard';
 
 document.addEventListener('DOMContentLoaded', function() {
-  initializeApp();
+  // Inicializar autenticación primero
+  initializeAuth();
 });
 
 function initializeApp() {
@@ -18,11 +19,17 @@ function initializeApp() {
   // Setup sidebar toggle for mobile
   setupSidebarToggle();
   
+  // Add logout button to sidebar
+  addLogoutButton();
+  
   // Initialize dashboard metrics
   updateDashboardMetrics();
   
   // Setup periodic updates (every 30 seconds)
   setInterval(updateDashboardMetrics, 30000);
+  
+  // Verificar sesión periódicamente (cada 5 minutos)
+  setInterval(verifySession, 300000);
 }
 
 function setupNavigation() {

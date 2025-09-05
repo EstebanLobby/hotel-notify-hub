@@ -149,6 +149,7 @@ function getFormData(formId) {
   const formData = new FormData(form);
   const data = {};
   
+  // Primero procesar los campos habilitados (que están en FormData)
   for (const [key, value] of formData.entries()) {
     if (form.querySelector(`[name="${key}"]`).type === 'checkbox') {
       data[key] = form.querySelector(`[name="${key}"]`).checked;
@@ -156,6 +157,18 @@ function getFormData(formId) {
       data[key] = value;
     }
   }
+  
+  // Luego agregar los campos deshabilitados que no están en FormData
+  const allFields = form.querySelectorAll('[name]');
+  allFields.forEach(field => {
+    if (field.disabled && !(field.name in data)) {
+      if (field.type === 'checkbox') {
+        data[field.name] = field.checked;
+      } else {
+        data[field.name] = field.value;
+      }
+    }
+  });
   
   return data;
 }
