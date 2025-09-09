@@ -722,14 +722,21 @@ async function openAddServiceModal(hotelId) {
     const allServices = await getServicesAsync();
     
     // Obtener servicios ya asignados al hotel
-    const hotelServices = await fetchWebhook({ 
-      func: 'hotels', 
-      method: 'services', 
-      id: hotelId 
-    });
+    let assignedServiceCodes = [];
+    try {
+      const hotelServices = await fetchWebhook({ 
+        func: 'hotels', 
+        method: 'services', 
+        id: hotelId 
+      });
+      assignedServiceCodes = hotelServices?.data?.active_services?.map(s => s.service_code) || [];
+    } catch (hotelServicesError) {
+      console.warn('No se pudieron obtener los servicios del hotel, mostrando todos los servicios:', hotelServicesError);
+      // Si falla la consulta de servicios del hotel, mostramos todos los servicios disponibles
+      assignedServiceCodes = [];
+    }
     
     // Filtrar servicios que no están ya asignados
-    const assignedServiceCodes = hotelServices?.map(s => s.service_code) || [];
     const availableServices = allServices.filter(service => 
       !assignedServiceCodes.includes(service.service_code)
     );
@@ -740,6 +747,8 @@ async function openAddServiceModal(hotelId) {
   } catch (error) {
     console.error('Error cargando servicios:', error);
     showToast('Error al cargar servicios disponibles', 'error');
+    // Mostrar servicios por defecto como fallback
+    updateServiceSelect([]);
   }
   
   openModal('add-service-modal');
@@ -781,11 +790,11 @@ async function handleAddServiceSubmit(e) {
   }
 
   const formData = getFormData('add-service-form');
-  const serviceId = e.target.dataset.serviceId;
+  const editingServiceId = e.target.dataset.serviceId ? parseInt(e.target.dataset.serviceId) : null;
   
   // Debug logs
   console.log('=== DEBUG handleAddServiceSubmit ===');
-  console.log('serviceId:', serviceId);
+  console.log('editingServiceId:', editingServiceId);
   console.log('formData:', formData);
   console.log('currentHotelIdForServices:', currentHotelIdForServices);
 
@@ -806,10 +815,10 @@ async function handleAddServiceSubmit(e) {
 
   try {
     let result;
-    if (serviceId) {
+    if (editingServiceId) {
       // Actualizar servicio existente
-      console.log('Actualizando servicio:', serviceId);
-      result = await updateHotelServiceAsync(currentHotelIdForServices, parseInt(serviceId), channels);
+      console.log('Actualizando servicio (service_id):', editingServiceId);
+      result = await updateHotelServiceAsync(currentHotelIdForServices, editingServiceId, channels);
     } else {
       // Agregar nuevo servicio
       console.log('Agregando nuevo servicio:', formData.service_code);
@@ -817,13 +826,13 @@ async function handleAddServiceSubmit(e) {
     }
 
     if (result) {
-      showToast(serviceId ? 'Servicio actualizado correctamente' : 'Servicio agregado correctamente', 'success');
+      showToast(editingServiceId ? 'Servicio actualizado correctamente' : 'Servicio agregado correctamente', 'success');
       closeModal('add-service-modal');
       resetAddServiceForm();
       // Recargar servicios del hotel
       await viewHotelServices(currentHotelIdForServices);
     } else {
-      showToast(serviceName ? 'Error al actualizar el servicio' : 'Error al agregar el servicio', 'error');
+      showToast(editingServiceId ? 'Error al actualizar el servicio' : 'Error al agregar el servicio', 'error');
     }
   } catch (error) {
     console.error('Error en handleAddServiceSubmit:', error);
@@ -861,9 +870,7 @@ function resetAddServiceForm() {
     }
     
     // Limpiar dataset
-    console.log('serviceId antes de limpiar:', form.dataset.serviceId);
     delete form.dataset.serviceId;
-    console.log('serviceId después de limpiar:', form.dataset.serviceId);
     
     // Restaurar título
     document.getElementById('add-service-title').textContent = 'Agregar Servicio';
@@ -903,8 +910,8 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
     submitBtn.textContent = 'Actualizar Servicio';
     
-    // Guardar ID del servicio para la actualización
-    document.getElementById('add-service-form').dataset.serviceName = serviceCode;
+    // Guardar service_id para la actualización
+    document.getElementById('add-service-form').dataset.serviceId = String(serviceId);
     
     openModal('add-service-modal');
   } catch (error) {

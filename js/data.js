@@ -415,8 +415,8 @@ async function removeHotelServiceAsync(hotelId, serviceId) {
   return null;
 }
 
-async function updateHotelServiceAsync(hotelId, serviceName, channels = {}) {
-  console.log('Actualizando servicio del hotel:', hotelId, 'service_code:', serviceName, 'canales:', channels);
+async function updateHotelServiceAsync(hotelId, serviceId, channels = {}) {
+  console.log('Actualizando servicio del hotel:', hotelId, 'service_id:', serviceId, 'canales:', channels);
   
   // Obtener el hotel_code desde el cache de hoteles
   const hotel = hotelsCache.find(h => h.id === hotelId);
@@ -428,7 +428,7 @@ async function updateHotelServiceAsync(hotelId, serviceName, channels = {}) {
     func: 'hotels', 
     method: 'update_service',
     hotel_code: hotel.hotel_code,
-    service_code: serviceName,
+    service_id: serviceId,
     send_by_email: channels.email || false,
     send_by_whatsapp: channels.whatsapp || false
   });
