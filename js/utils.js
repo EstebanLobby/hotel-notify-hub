@@ -71,6 +71,12 @@ function validateHotelCode(code) {
   return re.test(code);
 }
 
+function validatePhone(phone) {
+  // Solo números
+  const re = /^\d+$/;
+  return re.test(phone);
+}
+
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {

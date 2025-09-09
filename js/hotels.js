@@ -149,6 +149,27 @@ function setupHotelsEventListeners() {
   if (addServiceForm) {
     addServiceForm.addEventListener('submit', handleAddServiceSubmit);
   }
+
+  // Phone input validation - solo permitir números
+  const phoneInput = document.getElementById('hotel-phone');
+  if (phoneInput) {
+    phoneInput.addEventListener('input', (e) => {
+      // Permitir solo números
+      const value = e.target.value;
+      const cleanValue = value.replace(/[^\d]/g, '');
+      if (value !== cleanValue) {
+        e.target.value = cleanValue;
+      }
+    });
+    
+    // Prevenir pegar contenido inválido
+    phoneInput.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text');
+      const cleanPaste = paste.replace(/[^\d]/g, '');
+      e.target.value = cleanPaste;
+    });
+  }
    
   hotelsListenersInitialized = true;
 }
@@ -426,6 +447,11 @@ async function handleHotelSubmit(e) {
   
   if (!validateEmail(formData.email)) {
     showToast('Email inválido', 'error');
+    return;
+  }
+  
+  if (formData.phone && !validatePhone(formData.phone)) {
+    showToast('Teléfono inválido. Solo se permiten números', 'error');
     return;
   }
   
