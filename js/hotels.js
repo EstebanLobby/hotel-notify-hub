@@ -296,7 +296,7 @@ function exportHotelsToCSV() {
   
   const headers = [
     'ID', 'Código', 'Nombre', 'Email', 'Teléfono', 'Idioma', 
-    'Estado', 'Servicios Activos', 'Fecha Creación'
+    'Estado', 'Colombia', 'Servicios Activos', 'Fecha Creación'
   ];
   
   const csvContent = [
@@ -306,9 +306,10 @@ function exportHotelsToCSV() {
       `"${hotel.hotel_code}"`,
       `"${hotel.hotel_name}"`,
       `"${hotel.email}"`,
-      `"${hotel.phone || ''}"`,
+      `"${(hotel.phone && hotel.phone !== 'undefined') ? hotel.phone : ''}"`,
       hotel.language,
       hotel.active ? 'Activo' : 'Inactivo',
+      hotel.co ? 'Sí' : 'No',
       `"${hotel.active_services?.map(s => s.service_code).join(', ') || ''}"`,
       new Date(hotel.created_at).toLocaleDateString('es-ES')
     ].join(','))
@@ -339,7 +340,7 @@ function createHotelRow(hotel) {
     <td>
       <div>
         <div style="font-size: 0.875rem;">${hotel.email}</div>
-        ${hotel.phone ? `<div style="font-size: 0.875rem; color: var(--text-muted);">${hotel.phone}</div>` : ''}
+        ${(hotel.phone && hotel.phone !== 'undefined') ? `<div style="font-size: 0.875rem; color: var(--text-muted);">${hotel.phone}</div>` : ''}
       </div>
     </td>
     <td>
@@ -348,6 +349,11 @@ function createHotelRow(hotel) {
     <td>
       <span class="badge ${hotel.active ? 'badge-success' : 'badge-secondary'}">
         ${hotel.active ? 'Activo' : 'Inactivo'}
+      </span>
+    </td>
+    <td>
+      <span class="badge ${hotel.co ? 'badge-info' : 'badge-secondary'}">
+        ${hotel.co ? '🇨🇴 Colombia' : 'Otro País'}
       </span>
     </td>
     <td>
@@ -394,6 +400,34 @@ function toggleDropdown(button) {
   // Toggle current dropdown
   if (!isActive) {
     dropdown.classList.add('active');
+    
+    // Check if dropdown should open upward
+    setTimeout(() => {
+      const dropdownContent = dropdown.querySelector('.dropdown-content');
+      if (dropdownContent) {
+        const rect = dropdownContent.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Check if this is the last row or only row in the table
+        const tableRow = button.closest('tr');
+        const tableBody = tableRow?.closest('tbody');
+        const allRows = tableBody?.querySelectorAll('tr');
+        const isLastRow = tableRow && allRows && tableRow === allRows[allRows.length - 1];
+        const isOnlyRow = allRows && allRows.length === 1;
+        
+        // If dropdown would go below viewport OR it's the last/only row, position it upward
+        if (rect.bottom > viewportHeight - 10 || isLastRow || isOnlyRow) {
+          dropdownContent.style.top = 'auto';
+          dropdownContent.style.bottom = '10%';
+          dropdownContent.style.marginBottom = '4px';
+        } else {
+          // Reset to default position
+          dropdownContent.style.top = '';
+          dropdownContent.style.bottom = '';
+          dropdownContent.style.marginBottom = '';
+        }
+      }
+    }, 0);
   }
   
   // Close dropdown when clicking outside
@@ -425,9 +459,10 @@ function editHotel(id) {
     hotel_code: hotel.hotel_code,
     hotel_name: hotel.hotel_name,
     email: hotel.email,
-    phone: hotel.phone || '',
+    phone: (hotel.phone && hotel.phone !== 'undefined') ? hotel.phone : '',
     language: hotel.language,
-    active: hotel.active
+    active: hotel.active,
+    co: hotel.co || false
   });
   
   openModal('hotel-modal');
@@ -570,7 +605,7 @@ async function viewHotelServices(id) {
           <div class="hotel-info-detail">
             <strong>Email:</strong> ${hotelData.data.email}
           </div>
-          ${hotelData.data.phone ? `
+          ${(hotelData.data.phone && hotelData.data.phone !== 'undefined') ? `
             <div class="hotel-info-detail">
               <strong>Teléfono:</strong> ${hotelData.data.phone}
             </div>

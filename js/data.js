@@ -211,7 +211,12 @@ function buildWebhookUrl(params) {
   const url = new URL(WEBHOOK_BASE_URL);
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
-      url.searchParams.set(key, String(value));
+      // Mantener valores booleanos como booleanos, convertir otros a string
+      if (typeof value === 'boolean') {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.set(key, String(value));
+      }
     }
   });
   console.log('URL construida:', url.toString());
@@ -301,7 +306,8 @@ async function createHotelAsync(hotelData) {
     email: hotelData.email,
     phone: hotelData.phone || '',
     language: hotelData.language,
-    active: hotelData.active
+    active: hotelData.active,
+    co: hotelData.co || false
   });
   console.log('Respuesta de createHotelAsync:', res);
   return res?.data || null;
@@ -318,7 +324,8 @@ async function updateHotelAsync(id, hotelData) {
     email: hotelData.email,
     phone: hotelData.phone || '',
     language: hotelData.language,
-    active: hotelData.active
+    active: hotelData.active,
+    co: hotelData.co || false
   });
   console.log('Respuesta de updateHotelAsync:', res);
   return res?.data || null;
