@@ -9,6 +9,26 @@ class CacheManager {
         this.currentVersion = '1.2.0';
         this.versionKey = 'hotel_notify_hub_version';
         this.lastUpdateKey = 'hotel_notify_hub_last_update';
+        
+        // Release notes para la versión actual
+        this.releaseNotes = {
+            '1.2.0': {
+                title: '🎉 Sistema de Caché Inteligente',
+                date: '2025-09-10',
+                highlights: [
+                    '✨ Detección automática de nuevas versiones',
+                    '🎨 Modal elegante para información del caché',
+                    '🔄 Limpieza inteligente preservando configuraciones',
+                    '📱 Mejoras de UX y diseño responsive'
+                ],
+                breaking: [],
+                technical: [
+                    'Sistema de testing completo implementado',
+                    'GitHub Actions sin warnings de deprecación',
+                    'Configuración mejorada de Jest y Babel'
+                ]
+            }
+        };
         this.cacheKeys = [
             'countriesCache',
             'servicesCache',
@@ -160,16 +180,33 @@ class CacheManager {
      */
     showUpdateNotification(oldVersion, newVersion) {
         try {
-            const message = oldVersion 
-                ? `🎉 ¡Aplicación actualizada! ${oldVersion} → ${newVersion}`
-                : `🎉 ¡Bienvenido a Hotel Notify Hub v${newVersion}!`;
+            const releaseInfo = this.releaseNotes[newVersion];
             
-            // Usar el sistema de toast existente si está disponible
-            if (window.showToast) {
-                window.showToast(message, 'success', 5000);
+            if (releaseInfo && oldVersion) {
+                // Mostrar release notes completas para actualizaciones
+                const message = `
+                    🎉 <strong>¡Aplicación actualizada!</strong><br>
+                    <strong>${releaseInfo.title}</strong><br><br>
+                    <strong>Novedades:</strong><br>
+                    ${releaseInfo.highlights.map(item => `• ${item}`).join('<br>')}
+                    <br><br>
+                    <small>Haz clic en el botón de información para ver más detalles</small>
+                `;
+                
+                if (window.showToast) {
+                    window.showToast(message, 'success', 8000);
+                }
             } else {
-                // Fallback: crear notificación temporal
-                this.createTemporaryNotification(message);
+                // Mensaje simple para primera instalación
+                const message = oldVersion 
+                    ? `🎉 ¡Aplicación actualizada! ${oldVersion} → ${newVersion}`
+                    : `🎉 ¡Bienvenido a Hotel Notify Hub v${newVersion}!`;
+                
+                if (window.showToast) {
+                    window.showToast(message, 'success', 5000);
+                } else {
+                    this.createTemporaryNotification(message);
+                }
             }
         } catch (error) {
             console.log('No se pudo mostrar notificación de actualización');

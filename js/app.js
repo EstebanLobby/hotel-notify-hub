@@ -302,6 +302,36 @@ function showCacheInfoModal() {
     `;
   }
   
+  // Mostrar release notes si están disponibles
+  const releaseNotesContainer = document.getElementById('cache-release-notes');
+  const releaseInfo = window.cacheManager.releaseNotes[cacheInfo.version];
+  
+  if (releaseInfo) {
+    releaseNotesContainer.innerHTML = `
+      <h4>
+        📋 Notas de la Versión
+        <span class="cache-release-date">${releaseInfo.date}</span>
+      </h4>
+      <div class="cache-release-highlights">
+        <strong>${releaseInfo.title}</strong>
+        <ul>
+          ${releaseInfo.highlights.map(item => `<li>${item}</li>`).join('')}
+        </ul>
+      </div>
+      ${releaseInfo.technical.length > 0 ? `
+        <details class="cache-release-technical">
+          <summary>🔧 Detalles técnicos</summary>
+          <ul>
+            ${releaseInfo.technical.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </details>
+      ` : ''}
+    `;
+    releaseNotesContainer.classList.add('show');
+  } else {
+    releaseNotesContainer.classList.remove('show');
+  }
+  
   // Mostrar modal
   const modal = document.getElementById('cache-info-modal');
   const modalContent = modal.querySelector('.cache-info-modal-content');
