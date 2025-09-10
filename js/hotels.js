@@ -7,6 +7,7 @@ let hotelsCache = [];
 let editingHotel = null;
 let hotelsListenersInitialized = false;
 let countriesCache = [];
+let servicesCache = [];
 
 async function initializeHotels() {
   // Cargar países en el cache para poder mostrar nombres en la tabla
@@ -151,6 +152,42 @@ function setupHotelsEventListeners() {
 
   if (addServiceForm) {
     addServiceForm.addEventListener('submit', handleAddServiceSubmit);
+  }
+
+  // Frequency quick buttons functionality
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('frequency-quick-btn')) {
+      e.preventDefault();
+      const value = e.target.getAttribute('data-value');
+      const frequencyInput = document.getElementById('send-frequency');
+      
+      if (frequencyInput && value !== null) {
+        frequencyInput.value = value;
+        
+        // Update active button
+        document.querySelectorAll('.frequency-quick-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        e.target.classList.add('active');
+        
+        // Trigger change event for any listeners
+        frequencyInput.dispatchEvent(new Event('change'));
+      }
+    }
+  });
+
+  // Update active button when input value changes
+  const frequencyInput = document.getElementById('send-frequency');
+  if (frequencyInput) {
+    frequencyInput.addEventListener('input', (e) => {
+      const value = e.target.value;
+      document.querySelectorAll('.frequency-quick-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-value') === value) {
+          btn.classList.add('active');
+        }
+      });
+    });
   }
 
   // Phone input validation - solo permitir números
@@ -482,6 +519,45 @@ async function loadCountriesCache() {
       { id: 4, name: 'Chile', abbreviation: 'CL' },
       { id: 5, name: 'Colombia', abbreviation: 'CO' },
       { id: 13, name: 'México', abbreviation: 'MX' }
+    ];
+  }
+}
+
+async function loadServicesCache() {
+  if (servicesCache.length > 0) {
+    console.log('Usando cache de servicios existente');
+    return;
+  }
+
+  try {
+    console.log('Cargando servicios desde el backend...');
+    const services = await getServicesAsync();
+    
+    if (Array.isArray(services) && services.length > 0) {
+      servicesCache = services;
+      console.log('Cache de servicios cargado:', servicesCache.length, 'servicios');
+    } else {
+      console.warn('No se obtuvieron servicios del backend, usando fallback');
+      // Fallback básico con servicios comunes
+      servicesCache = [
+        { service_code: 'BOENGINE', service_name: 'Booking Engine', description: 'Motor de reservas' },
+        { service_code: 'WL', service_name: 'Waitlist', description: 'Lista de espera' },
+        { service_code: 'LATE_IN', service_name: 'Late Check-in', description: 'Check-in tardío' },
+        { service_code: 'LATE_OUT', service_name: 'Late Check-out', description: 'Check-out tardío' },
+        { service_code: 'BL', service_name: 'Blacklist', description: 'Lista negra' },
+        { service_code: 'SELF_IN', service_name: 'Self Check-in', description: 'Auto check-in' }
+      ];
+    }
+  } catch (error) {
+    console.error('Error cargando servicios:', error);
+    // Fallback básico en caso de error
+    servicesCache = [
+      { service_code: 'BOENGINE', service_name: 'Booking Engine', description: 'Motor de reservas' },
+      { service_code: 'WL', service_name: 'Waitlist', description: 'Lista de espera' },
+      { service_code: 'LATE_IN', service_name: 'Late Check-in', description: 'Check-in tardío' },
+      { service_code: 'LATE_OUT', service_name: 'Late Check-out', description: 'Check-out tardío' },
+      { service_code: 'BL', service_name: 'Blacklist', description: 'Lista negra' },
+      { service_code: 'SELF_IN', service_name: 'Self Check-in', description: 'Auto check-in' }
     ];
   }
 }
@@ -880,6 +956,57 @@ function updateServiceSelect(availableServices) {
   }
 }
 
+async function loadServicesSelect(excludeServiceCodes = [], selectedServiceCode = null) {
+  const serviceSelect = document.getElementById('service-select');
+  if (!serviceSelect) {
+    console.error('No se encontró el elemento service-select');
+    return;
+  }
+
+  // Cargar servicios en cache si no están cargados
+  await loadServicesCache();
+
+  // Limpiar opciones existentes
+  serviceSelect.innerHTML = '<option value="">Seleccionar servicio...</option>';
+  
+  if (servicesCache.length === 0) {
+    const noServicesOption = document.createElement('option');
+    noServicesOption.value = '';
+    noServicesOption.textContent = 'No hay servicios disponibles';
+    noServicesOption.disabled = true;
+    serviceSelect.appendChild(noServicesOption);
+    return;
+  }
+
+  // Filtrar servicios que no están excluidos (ya asignados)
+  const availableServices = servicesCache.filter(service => 
+    !excludeServiceCodes.includes(service.service_code)
+  );
+
+  // Si estamos editando, incluir el servicio actual aunque esté "excluido"
+  if (selectedServiceCode) {
+    const currentService = servicesCache.find(s => s.service_code === selectedServiceCode);
+    if (currentService && !availableServices.find(s => s.service_code === selectedServiceCode)) {
+      availableServices.push(currentService);
+    }
+  }
+
+  // Agregar servicios disponibles
+  availableServices.forEach(service => {
+    const option = document.createElement('option');
+    option.value = service.service_code;
+    option.textContent = service.service_name || service.service_code;
+    serviceSelect.appendChild(option);
+  });
+
+  // Preseleccionar el servicio si se especifica
+  if (selectedServiceCode) {
+    serviceSelect.value = selectedServiceCode;
+  }
+
+  console.log(`Select de servicios poblado con ${availableServices.length} servicios`);
+}
+
 // Función para abrir modal de agregar servicio
 async function openAddServiceModal(hotelId) {
   currentHotelIdForServices = hotelId;
@@ -894,9 +1021,6 @@ async function openAddServiceModal(hotelId) {
   
   // Cargar servicios disponibles dinámicamente
   try {
-    // Obtener todos los servicios disponibles
-    const allServices = await getServicesAsync();
-    
     // Obtener servicios ya asignados al hotel
     let assignedServiceCodes = [];
     try {
@@ -908,23 +1032,17 @@ async function openAddServiceModal(hotelId) {
       assignedServiceCodes = hotelServices?.data?.active_services?.map(s => s.service_code) || [];
     } catch (hotelServicesError) {
       console.warn('No se pudieron obtener los servicios del hotel, mostrando todos los servicios:', hotelServicesError);
-      // Si falla la consulta de servicios del hotel, mostramos todos los servicios disponibles
       assignedServiceCodes = [];
     }
     
-    // Filtrar servicios que no están ya asignados
-    const availableServices = allServices.filter(service => 
-      !assignedServiceCodes.includes(service.service_code)
-    );
-    
-    // Actualizar el select con servicios disponibles
-    updateServiceSelect(availableServices);
+    // Cargar servicios usando la nueva función
+    await loadServicesSelect(assignedServiceCodes);
     
   } catch (error) {
     console.error('Error cargando servicios:', error);
     showToast('Error al cargar servicios disponibles', 'error');
-    // Mostrar servicios por defecto como fallback
-    updateServiceSelect([]);
+    // Cargar servicios sin filtros como fallback
+    await loadServicesSelect([]);
   }
   
   openModal('add-service-modal');
@@ -984,9 +1102,10 @@ async function handleAddServiceSubmit(e) {
     return;
   }
 
-  const channels = {
+  const serviceData = {
     email: formData.send_by_email,
-    whatsapp: formData.send_by_whatsapp
+    whatsapp: formData.send_by_whatsapp,
+    frequency_days: parseInt(formData.send_frequency_days) || 0
   };
 
   try {
@@ -994,11 +1113,11 @@ async function handleAddServiceSubmit(e) {
     if (editingServiceId) {
       // Actualizar servicio existente
       console.log('Actualizando servicio (service_id):', editingServiceId);
-      result = await updateHotelServiceAsync(currentHotelIdForServices, editingServiceId, channels);
+      result = await updateHotelServiceAsync(currentHotelIdForServices, editingServiceId, serviceData);
     } else {
       // Agregar nuevo servicio
       console.log('Agregando nuevo servicio:', formData.service_code);
-      result = await addHotelServiceAsync(currentHotelIdForServices, formData.service_code, channels);
+      result = await addHotelServiceAsync(currentHotelIdForServices, formData.service_code, serviceData);
     }
 
     if (result) {
@@ -1028,21 +1147,19 @@ function resetAddServiceForm() {
     const serviceSelect = document.getElementById('service-select');
     if (serviceSelect) {
       serviceSelect.disabled = false;
-      // Restaurar opciones por defecto
-      serviceSelect.innerHTML = `
-        <option value="">Seleccionar servicio...</option>
-        <option value="BOENGINE">Booking Engine</option>
-        <option value="WL">Waitlist</option>
-        <option value="LATE_IN">Late Check-in</option>
-        <option value="LATE_OUT">Late Check-out</option>
-        <option value="BL">Blacklist</option>
-        <option value="SELF_IN">Self Check-in</option>
-      `;
+      // Restaurar opciones básicas (se cargarán dinámicamente cuando se abra el modal)
+      serviceSelect.innerHTML = '<option value="">Seleccionar servicio...</option>';
     }
     
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
     if (submitBtn) {
       submitBtn.textContent = 'Agregar Servicio';
+    }
+    
+    // Resetear campo de frecuencia a valor por defecto
+    const frequencyField = document.getElementById('send-frequency');
+    if (frequencyField) {
+      frequencyField.value = 0;
     }
     
     // Limpiar dataset
@@ -1076,11 +1193,25 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     currentHotelIdForServices = hotelId;
     document.getElementById('add-service-title').textContent = `Editar ${service.service_name || serviceCode} - ${hotel.hotel_name}`;
     
+    // Cargar servicios dinámicamente y preseleccionar el actual
+    await loadServicesSelect([], serviceCode);
+    
+    // Deshabilitar el select para no permitir cambiar el servicio
+    document.getElementById('service-select').disabled = true;
+    
     // Llenar formulario con datos actuales
-    document.getElementById('service-select').value = serviceCode;
-    document.getElementById('service-select').disabled = true; // No permitir cambiar el servicio
     document.getElementById('send-email').checked = service.send_by_email;
     document.getElementById('send-whatsapp').checked = service.send_by_whatsapp;
+    document.getElementById('send-frequency').value = service.send_frequency_days || 0;
+    
+    // Activate the correct frequency button
+    const frequencyValue = (service.send_frequency_days || 0).toString();
+    document.querySelectorAll('.frequency-quick-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.getAttribute('data-value') === frequencyValue) {
+        btn.classList.add('active');
+      }
+    });
     
     // Cambiar texto del botón
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');

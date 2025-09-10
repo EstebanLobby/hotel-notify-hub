@@ -384,8 +384,8 @@ window.getHotelServicesAsync = getHotelServicesAsync;
 // Hotel Service Management operations with webhook
 // =============================================
 
-async function addHotelServiceAsync(hotelId, serviceCode, channels = {}) {
-  console.log('Agregando servicio al hotel:', hotelId, 'servicio:', serviceCode, 'canales:', channels);
+async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
+  console.log('Agregando servicio al hotel:', hotelId, 'servicio:', serviceCode, 'datos:', serviceData);
   
   // Obtener el hotel_code desde el cache de hoteles
   const hotel = hotelsCache.find(h => h.id === hotelId);
@@ -398,8 +398,9 @@ async function addHotelServiceAsync(hotelId, serviceCode, channels = {}) {
     method: 'add_service',
     hotel_code: hotel.hotel_code,
     service_code: serviceCode,
-    send_by_email: channels.email || false,
-    send_by_whatsapp: channels.whatsapp || false
+    send_by_email: serviceData.email || false,
+    send_by_whatsapp: serviceData.whatsapp || false,
+    send_frequency_days: serviceData.frequency_days || 0
   });
   console.log('Respuesta de addHotelServiceAsync:', res);
   
@@ -436,8 +437,8 @@ async function removeHotelServiceAsync(hotelId, serviceId) {
   return null;
 }
 
-async function updateHotelServiceAsync(hotelId, serviceId, channels = {}) {
-  console.log('Actualizando servicio del hotel:', hotelId, 'service_id:', serviceId, 'canales:', channels);
+async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
+  console.log('Actualizando servicio del hotel:', hotelId, 'service_id:', serviceId, 'datos:', serviceData);
   
   // Obtener el hotel_code desde el cache de hoteles
   const hotel = hotelsCache.find(h => h.id === hotelId);
@@ -450,8 +451,9 @@ async function updateHotelServiceAsync(hotelId, serviceId, channels = {}) {
     method: 'update_service',
     hotel_code: hotel.hotel_code,
     service_id: serviceId,
-    send_by_email: channels.email || false,
-    send_by_whatsapp: channels.whatsapp || false
+    send_by_email: serviceData.email || false,
+    send_by_whatsapp: serviceData.whatsapp || false,
+    send_frequency_days: serviceData.frequency_days || 0
   });
   console.log('Respuesta de updateHotelServiceAsync:', res);
   

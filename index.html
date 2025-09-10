@@ -379,31 +379,58 @@
                 </button>
             </div>
             <form id="add-service-form" class="modal-body">
+                <!-- Service Selection Section -->
                 <div class="form-group">
-                    <label for="service-select">Servicio *</label>
+                    <label for="service-select">🔧 Servicio *</label>
                     <select id="service-select" name="service_code" required>
                         <option value="">Seleccionar servicio...</option>
-                        <option value="BOENGINE">Booking Engine</option>
-                        <option value="WL">Waitlist</option>
-                        <option value="LATE_IN">Late Check-in</option>
-                        <option value="LATE_OUT">Late Check-out</option>
-                        <option value="BL">Blacklist</option>
-                        <option value="SELF_IN">Self Check-in</option>
+                        <!-- Las opciones se cargan dinámicamente desde el backend -->
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Canales de Notificación</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="send-email" name="send_by_email" checked>
-                            <span class="checkmark"></span>
-                            Email
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="send-whatsapp" name="send_by_whatsapp" checked>
-                            <span class="checkmark"></span>
-                            WhatsApp
-                        </label>
+
+                <!-- Communication Channels Section -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>📢 Canales de Notificación *</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="send-email" name="send_by_email" checked>
+                                Email
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="send-whatsapp" name="send_by_whatsapp" checked>
+                                WhatsApp
+                            </label>
+                        </div>
+                        <small class="form-help">Selecciona al menos un canal de comunicación</small>
+                    </div>
+                </div>
+
+                <!-- Frequency Section -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="send-frequency">⏰ Frecuencia de Envío *</label>
+                        <div class="frequency-input-container">
+                            <div class="frequency-input-wrapper">
+                                <input type="number" id="send-frequency" name="send_frequency_days" min="0" step="1" value="0" required>
+                                <span class="frequency-unit">días</span>
+                            </div>
+                        </div>
+                        <div class="frequency-quick-buttons">
+                            <button type="button" class="frequency-quick-btn" data-value="0">
+                                ⚡ Inmediato
+                            </button>
+                            <button type="button" class="frequency-quick-btn" data-value="1">
+                                📅 Diario
+                            </button>
+                            <button type="button" class="frequency-quick-btn" data-value="7">
+                                📆 Semanal
+                            </button>
+                            <button type="button" class="frequency-quick-btn" data-value="30">
+                                🗓️ Mensual
+                            </button>
+                        </div>
+                        <small class="form-help">Selecciona una opción rápida o ingresa un valor personalizado</small>
                     </div>
                 </div>
                 <div class="modal-footer">
