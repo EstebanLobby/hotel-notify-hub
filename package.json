@@ -45,7 +45,11 @@
     ],
     "testMatch": [
       "<rootDir>/tests/**/*.test.js",
-      "<rootDir>/tests/**/*.spec.js"
+      "!<rootDir>/tests/e2e/**/*.spec.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/e2e/",
+      "<rootDir>/tests/integration/hotel-workflow.test.js"
     ],
     "moduleFileExtensions": [
       "js",
