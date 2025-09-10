@@ -232,7 +232,21 @@ async function fetchWebhook(params) {
   }
   let payload = await response.json();
   console.log('Respuesta del webhook:', payload);
-  // Normalizar caso donde el backend responde un array con un único objeto
+  
+  // Para países, extraer el array de datos
+  if (params.func === 'country') {
+    if (payload && payload.data && Array.isArray(payload.data)) {
+      console.log('Extrayendo países de la estructura data:', payload.data.length);
+      return payload.data;
+    }
+    if (Array.isArray(payload) && payload.length > 0 && payload[0].data) {
+      console.log('Extrayendo países de array con data:', payload[0].data.length);
+      return payload[0].data;
+    }
+    return payload;
+  }
+  
+  // Para otros endpoints, normalizar caso donde el backend responde un array con un único objeto
   if (Array.isArray(payload)) {
     payload = payload[0] || {};
   }
@@ -307,7 +321,7 @@ async function createHotelAsync(hotelData) {
     phone: hotelData.phone || '',
     language: hotelData.language,
     active: hotelData.active,
-    co: hotelData.co || false
+    country_id: hotelData.country_id
   });
   console.log('Respuesta de createHotelAsync:', res);
   return res?.data || null;
@@ -325,7 +339,7 @@ async function updateHotelAsync(id, hotelData) {
     phone: hotelData.phone || '',
     language: hotelData.language,
     active: hotelData.active,
-    co: hotelData.co || false
+    country_id: hotelData.country_id
   });
   console.log('Respuesta de updateHotelAsync:', res);
   return res?.data || null;
@@ -453,3 +467,30 @@ async function updateHotelServiceAsync(hotelId, serviceId, channels = {}) {
 window.addHotelServiceAsync = addHotelServiceAsync;
 window.removeHotelServiceAsync = removeHotelServiceAsync;
 window.updateHotelServiceAsync = updateHotelServiceAsync;
+
+// =============================================
+// Countries operations with webhook
+// =============================================
+
+async function getCountriesAsync() {
+  try {
+    const countries = await fetchWebhook({ 
+      func: 'country', 
+      method: 'list'
+    });
+    
+    if (countries && Array.isArray(countries)) {
+      console.log('Países obtenidos:', countries.length);
+      return countries;
+    } else {
+      console.error('Respuesta inválida de países:', countries);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error en getCountriesAsync:', error);
+    throw error;
+  }
+}
+
+// Make countries function globally available
+window.getCountriesAsync = getCountriesAsync;

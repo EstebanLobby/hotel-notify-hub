@@ -218,7 +218,7 @@
                                     <th>Contacto</th>
                                     <th>Idioma</th>
                                     <th>Estado</th>
-                                    <th>Colombia</th>
+                                    <th>País</th>
                                     <th>Servicios</th>
                                     <th>Creado</th>
                                     <th>Acciones</th>
@@ -331,11 +331,11 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="hotel-colombia" name="co">
-                        <span class="checkmark"></span>
-                        Hotel de Colombia
-                    </label>
+                    <label for="hotel-country">País *</label>
+                    <select id="hotel-country" name="country_id" required>
+                        <option value="">Seleccionar país...</option>
+                        <!-- Los países se cargarán dinámicamente -->
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>

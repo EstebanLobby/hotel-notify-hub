@@ -683,6 +683,24 @@ select:focus {
   color: white;
 }
 
+/* Frequency badge */
+.frequency-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  margin-top: 0.5rem;
+}
+
+.service-frequency {
+  margin-top: 0.75rem;
+}
+
 /* Status y acciones */
 .service-status {
   display: flex;

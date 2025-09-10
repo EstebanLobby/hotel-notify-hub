@@ -6,8 +6,11 @@ let filteredHotels = [];
 let hotelsCache = [];
 let editingHotel = null;
 let hotelsListenersInitialized = false;
+let countriesCache = [];
 
-function initializeHotels() {
+async function initializeHotels() {
+  // Cargar países en el cache para poder mostrar nombres en la tabla
+  await loadCountriesCache();
   renderHotelsTable();
   setupHotelsEventListeners();
 }
@@ -296,7 +299,7 @@ function exportHotelsToCSV() {
   
   const headers = [
     'ID', 'Código', 'Nombre', 'Email', 'Teléfono', 'Idioma', 
-    'Estado', 'Colombia', 'Servicios Activos', 'Fecha Creación'
+    'Estado', 'País', 'Servicios Activos', 'Fecha Creación'
   ];
   
   const csvContent = [
@@ -309,7 +312,7 @@ function exportHotelsToCSV() {
       `"${(hotel.phone && hotel.phone !== 'undefined') ? hotel.phone : ''}"`,
       hotel.language,
       hotel.active ? 'Activo' : 'Inactivo',
-      hotel.co ? 'Sí' : 'No',
+      getCountryName(hotel.country_id),
       `"${hotel.active_services?.map(s => s.service_code).join(', ') || ''}"`,
       new Date(hotel.created_at).toLocaleDateString('es-ES')
     ].join(','))
@@ -352,8 +355,8 @@ function createHotelRow(hotel) {
       </span>
     </td>
     <td>
-      <span class="badge ${hotel.co ? 'badge-info' : 'badge-secondary'}">
-        ${hotel.co ? '🇨🇴 Colombia' : 'Otro País'}
+      <span class="badge badge-info">
+        ${getCountryName(hotel.country_id)}
       </span>
     </td>
     <td>
@@ -441,19 +444,97 @@ function toggleDropdown(button) {
   }, 0);
 }
 
-function openAddHotelModal() {
+async function openAddHotelModal() {
   editingHotel = null;
   document.getElementById('modal-title').textContent = 'Nuevo Hotel';
   resetForm('hotel-form');
+  await loadCountriesSelect();
   openModal('hotel-modal');
 }
 
-function editHotel(id) {
+// Función para cargar países solo en el cache (sin modificar ningún select)
+async function loadCountriesCache() {
+  try {
+    const countries = await getCountriesAsync();
+    console.log('Países cargados en cache:', countries.length);
+    
+    if (countries && Array.isArray(countries) && countries.length > 0) {
+      countriesCache = countries;
+    } else {
+      console.warn('No se recibieron países válidos, usando fallback');
+      // Fallback básico
+      countriesCache = [
+        { id: 1, name: 'Argentina', abbreviation: 'AR' },
+        { id: 2, name: 'Bolivia', abbreviation: 'BO' },
+        { id: 3, name: 'Brasil', abbreviation: 'BR' },
+        { id: 4, name: 'Chile', abbreviation: 'CL' },
+        { id: 5, name: 'Colombia', abbreviation: 'CO' },
+        { id: 13, name: 'México', abbreviation: 'MX' }
+      ];
+    }
+  } catch (error) {
+    console.error('Error cargando países en cache:', error);
+    // Fallback básico en caso de error
+    countriesCache = [
+      { id: 1, name: 'Argentina', abbreviation: 'AR' },
+      { id: 2, name: 'Bolivia', abbreviation: 'BO' },
+      { id: 3, name: 'Brasil', abbreviation: 'BR' },
+      { id: 4, name: 'Chile', abbreviation: 'CL' },
+      { id: 5, name: 'Colombia', abbreviation: 'CO' },
+      { id: 13, name: 'México', abbreviation: 'MX' }
+    ];
+  }
+}
+
+async function loadCountriesSelect() {
+  const countrySelect = document.getElementById('hotel-country');
+  if (!countrySelect) {
+    console.error('No se encontró el elemento hotel-country');
+    return;
+  }
+  
+  // Si el cache está vacío, cargarlo
+  if (countriesCache.length === 0) {
+    await loadCountriesCache();
+  }
+  
+  try {
+    console.log('Poblando select con países del cache:', countriesCache.length);
+    
+    // Limpiar opciones existentes excepto la primera
+    countrySelect.innerHTML = '<option value="">Seleccionar país...</option>';
+    
+    // Agregar países al select
+    countriesCache.forEach(country => {
+      const option = document.createElement('option');
+      option.value = country.id;
+      option.textContent = `${country.name} (${country.abbreviation})`;
+      countrySelect.appendChild(option);
+    });
+    
+    console.log('Países agregados al select:', countrySelect.options.length - 1);
+    
+  } catch (error) {
+    console.error('Error poblando select de países:', error);
+    showToast('Error al cargar la lista de países', 'error');
+  }
+}
+
+function getCountryName(countryId) {
+  if (!countryId || !countriesCache.length) return 'País no especificado';
+  const country = countriesCache.find(c => c.id == countryId);
+  return country ? country.name : 'País no encontrado';
+}
+
+async function editHotel(id) {
   const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
   editingHotel = hotel;
   document.getElementById('modal-title').textContent = 'Editar Hotel';
+  
+  // Cargar países antes de llenar el formulario
+  await loadCountriesSelect();
   
   setFormData('hotel-form', {
     hotel_code: hotel.hotel_code,
@@ -462,7 +543,7 @@ function editHotel(id) {
     phone: (hotel.phone && hotel.phone !== 'undefined') ? hotel.phone : '',
     language: hotel.language,
     active: hotel.active,
-    co: hotel.co || false
+    country_id: hotel.country_id || ''
   });
   
   openModal('hotel-modal');
@@ -487,6 +568,11 @@ async function handleHotelSubmit(e) {
   
   if (formData.phone && !validatePhone(formData.phone)) {
     showToast('Teléfono inválido. Solo se permiten números', 'error');
+    return;
+  }
+  
+  if (!formData.country_id) {
+    showToast('Debe seleccionar un país', 'error');
     return;
   }
   
@@ -613,6 +699,9 @@ async function viewHotelServices(id) {
           <div class="hotel-info-detail">
             <strong>Idioma:</strong> ${getLanguageLabel(hotelData.data.language)}
           </div>
+          <div class="hotel-info-detail">
+            <strong>País:</strong> ${hotelData.data.country_name || 'País no especificado'}
+          </div>
         </div>
       `;
       
@@ -631,7 +720,7 @@ async function viewHotelServices(id) {
         serviceItem.innerHTML = `
           <div class="service-item-content">
             <div class="service-info">
-              <div class="service-name">${getServiceName(service.service_code)}</div>
+              <div class="service-name">${service.service_name || service.service_code}</div>
               <div class="service-code">ID: ${service.service_id} | ${service.service_code}</div>
               <div class="service-channels">
                 ${channels.map(channel => {
@@ -639,6 +728,11 @@ async function viewHotelServices(id) {
                   const channelIcon = channel === 'Email' ? '📧' : '📱';
                   return `<span class="channel-badge ${channelClass}">${channelIcon} ${channel}</span>`;
                 }).join('')}
+              </div>
+              <div class="service-frequency">
+                <span class="frequency-badge">
+                  ${getFrequencyIcon(service.send_frequency_days)} ${getFrequencyLabel(service.send_frequency_days)}
+                </span>
               </div>
             </div>
             <div class="service-status">
@@ -679,6 +773,9 @@ async function viewHotelServices(id) {
             </div>
             <div class="hotel-info-detail">
               <strong>Email:</strong> ${hotelData.data.email}
+            </div>
+            <div class="hotel-info-detail">
+              <strong>País:</strong> ${hotelData.data.country_name || 'País no especificado'}
             </div>
           </div>
         </div>
@@ -726,17 +823,35 @@ function getChannelClass(channel) {
   return classes[channel] || 'channel-default';
 }
 
-// Función auxiliar para obtener el nombre del servicio
-function getServiceName(serviceCode) {
-  const serviceNames = {
-    'BOENGINE': 'Booking Engine',
-    'WL': 'Waitlist',
-    'LATE_IN': 'Late Check-in',
-    'LATE_OUT': 'Late Check-out',
-    'BL': 'Blacklist',
-    'SELF_IN': 'Self Check-in'
-  };
-  return serviceNames[serviceCode] || serviceCode;
+
+// Función auxiliar para formatear la frecuencia de envío
+function getFrequencyLabel(frequencyDays) {
+  if (frequencyDays === 0) {
+    return 'Inmediato';
+  } else if (frequencyDays === 1) {
+    return 'Diario';
+  } else if (frequencyDays === 7) {
+    return 'Semanal';
+  } else if (frequencyDays === 30) {
+    return 'Mensual';
+  } else {
+    return `Cada ${frequencyDays} días`;
+  }
+}
+
+// Función auxiliar para obtener el ícono de frecuencia
+function getFrequencyIcon(frequencyDays) {
+  if (frequencyDays === 0) {
+    return '⚡'; // Inmediato
+  } else if (frequencyDays === 1) {
+    return '📅'; // Diario
+  } else if (frequencyDays === 7) {
+    return '📆'; // Semanal
+  } else if (frequencyDays === 30) {
+    return '🗓️'; // Mensual
+  } else {
+    return '⏰'; // Personalizado
+  }
 }
 
 // Función para actualizar el select de servicios
@@ -959,7 +1074,7 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
 
     // Configurar modal para edición
     currentHotelIdForServices = hotelId;
-    document.getElementById('add-service-title').textContent = `Editar ${getServiceName(serviceCode)} - ${hotel.hotel_name}`;
+    document.getElementById('add-service-title').textContent = `Editar ${service.service_name || serviceCode} - ${hotel.hotel_name}`;
     
     // Llenar formulario con datos actuales
     document.getElementById('service-select').value = serviceCode;
