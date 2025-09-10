@@ -3,7 +3,12 @@
 let currentView = 'dashboard';
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar autenticación primero
+  // Inicializar sistema de cache primero
+  if (window.cacheManager) {
+    window.cacheManager.initialize();
+  }
+  
+  // Inicializar autenticación
   initializeAuth();
 });
 
@@ -18,6 +23,9 @@ function initializeApp() {
   
   // Setup sidebar toggle for mobile
   setupSidebarToggle();
+  
+  // Setup cache management buttons
+  setupCacheManagement();
   
   // Add logout button to sidebar
   addLogoutButton();
@@ -207,6 +215,49 @@ function animateNumber(element, targetValue, suffix = '') {
   }
   
   requestAnimationFrame(animate);
+}
+
+// Setup cache management buttons
+function setupCacheManagement() {
+  // Botón de información de caché
+  const cacheInfoBtn = document.getElementById('cache-info-btn');
+  if (cacheInfoBtn) {
+    cacheInfoBtn.addEventListener('click', function() {
+      if (window.cacheManager) {
+        const cacheInfo = window.cacheManager.getCacheInfo();
+        if (cacheInfo) {
+          const message = `
+            📊 Información del Caché:<br>
+            • Versión actual: ${cacheInfo.version}<br>
+            • Versión almacenada: ${cacheInfo.storedVersion || 'ninguna'}<br>
+            • Última actualización: ${cacheInfo.lastUpdate.toLocaleString()}<br>
+            • Tamaño del caché: ${cacheInfo.cacheSize}<br>
+            • Elementos en caché: ${cacheInfo.cachedItems.length}
+          `;
+          showToast(message, 'info', 8000);
+        }
+      } else {
+        showToast('Sistema de caché no disponible', 'warning');
+      }
+    });
+  }
+  
+  // Botón de actualización forzada
+  const forceRefreshBtn = document.getElementById('force-refresh-btn');
+  if (forceRefreshBtn) {
+    forceRefreshBtn.addEventListener('click', function() {
+      if (confirm('¿Estás seguro de que quieres forzar la actualización? Esto limpiará el caché y recargará la página.')) {
+        if (window.cacheManager) {
+          window.cacheManager.forceUpdate();
+        } else {
+          // Fallback manual
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.reload(true);
+        }
+      }
+    });
+  }
 }
 
 // Global error handler

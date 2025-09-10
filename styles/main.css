@@ -165,6 +165,54 @@ body {
   padding: 1rem 2rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-actions .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  transition: var(--transition-smooth);
+}
+
+.header-actions .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.header-actions .btn-outline-secondary {
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  background: transparent;
+}
+
+.header-actions .btn-outline-secondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--border);
+}
+
+.header-actions .btn-outline-primary {
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  background: transparent;
+}
+
+.header-actions .btn-outline-primary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+#app-version {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
 #page-title {
   font-size: 1.875rem;
   font-weight: 600;

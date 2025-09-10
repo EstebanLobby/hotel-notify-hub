@@ -483,6 +483,12 @@ async function getCountriesAsync() {
     
     if (countries && Array.isArray(countries)) {
       console.log('Países obtenidos:', countries.length);
+      
+      // Actualizar cache con el nuevo sistema
+      if (window.cacheManager) {
+        localStorage.setItem('countriesCache', JSON.stringify(countries));
+      }
+      
       return countries;
     } else {
       console.error('Respuesta inválida de países:', countries);

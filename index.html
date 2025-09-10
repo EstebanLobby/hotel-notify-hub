@@ -121,9 +121,18 @@
             <header class="header">
                 <div class="header-content">
                     <h1 id="page-title">Dashboard</h1>
-                    <button id="sidebar-toggle" class="sidebar-toggle">
-                        <span data-lucide="menu"></span>
-                    </button>
+                    <div class="header-actions">
+                        <button id="cache-info-btn" class="btn btn-outline-secondary btn-sm" title="Información de caché">
+                            <span data-lucide="info"></span>
+                            <span id="app-version">v1.2.0</span>
+                        </button>
+                        <button id="force-refresh-btn" class="btn btn-outline-primary btn-sm" title="Forzar actualización">
+                            <span data-lucide="refresh-cw"></span>
+                        </button>
+                        <button id="sidebar-toggle" class="sidebar-toggle">
+                            <span data-lucide="menu"></span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -442,6 +451,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/cache-manager.js"></script>
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/auth.js"></script>
