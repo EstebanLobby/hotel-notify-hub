@@ -497,6 +497,11 @@ async function loadCountriesCache() {
     
     if (countries && Array.isArray(countries) && countries.length > 0) {
       countriesCache = countries;
+      
+      // Actualizar indicador visual del cache manager
+      if (window.cacheManager) {
+        setTimeout(() => window.cacheManager.updateVersionIndicator(), 100);
+      }
     } else {
       console.warn('No se recibieron países válidos, usando fallback');
       // Fallback básico
@@ -536,6 +541,12 @@ async function loadServicesCache() {
     if (Array.isArray(services) && services.length > 0) {
       servicesCache = services;
       console.log('Cache de servicios cargado:', servicesCache.length, 'servicios');
+      
+      // Actualizar localStorage para el cache manager
+      if (window.cacheManager) {
+        localStorage.setItem('servicesCache', JSON.stringify(services));
+        setTimeout(() => window.cacheManager.updateVersionIndicator(), 100);
+      }
     } else {
       console.warn('No se obtuvieron servicios del backend, usando fallback');
       // Fallback básico con servicios comunes

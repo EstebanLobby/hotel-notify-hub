@@ -450,6 +450,68 @@
         </div>
     </div>
 
+    <!-- Cache Info Modal -->
+    <div id="cache-info-modal" class="modal">
+        <div class="modal-content cache-info-modal-content">
+            <div class="modal-header">
+                <h3>📊 Información del Sistema de Caché</h3>
+                <span class="close" id="close-cache-info">&times;</span>
+            </div>
+            <div class="modal-body cache-info-body">
+                <div class="cache-info-grid">
+                    <div class="cache-info-card">
+                        <div class="cache-info-icon">🏷️</div>
+                        <div class="cache-info-details">
+                            <h4>Versión del Sistema</h4>
+                            <p id="cache-current-version">-</p>
+                            <small id="cache-stored-version">-</small>
+                        </div>
+                    </div>
+                    
+                    <div class="cache-info-card">
+                        <div class="cache-info-icon">🕒</div>
+                        <div class="cache-info-details">
+                            <h4>Última Actualización</h4>
+                            <p id="cache-last-update">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cache-info-card">
+                        <div class="cache-info-icon">📦</div>
+                        <div class="cache-info-details">
+                            <h4>Tamaño Total</h4>
+                            <p id="cache-total-size">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cache-info-card">
+                        <div class="cache-info-icon">🗂️</div>
+                        <div class="cache-info-details">
+                            <h4>Elementos Almacenados</h4>
+                            <p id="cache-items-count">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cache-items-list" id="cache-items-list">
+                    <h4>📋 Detalle de Elementos</h4>
+                    <div id="cache-items-container">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+                
+                <div class="cache-actions">
+                    <button class="btn btn-outline-primary" onclick="window.cacheManager?.checkForUpdates()">
+                        🔍 Verificar Actualizaciones
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="if(confirm('¿Limpiar todo el caché?')) window.cacheManager?.forceUpdate()">
+                        🗑️ Limpiar Caché
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/cache-manager.js"></script>
     <script src="js/data.js"></script>

@@ -44,6 +44,9 @@ class CacheManager {
             // Actualizar timestamp de última verificación
             localStorage.setItem(this.lastUpdateKey, currentTime.toString());
             
+            // Actualizar indicador visual
+            setTimeout(() => this.updateVersionIndicator(), 500);
+            
         } catch (error) {
             console.error('Error al inicializar CacheManager:', error);
         }
@@ -62,6 +65,9 @@ class CacheManager {
             
             // Actualizar versión almacenada
             localStorage.setItem(this.versionKey, this.currentVersion);
+            
+            // Actualizar indicador visual
+            this.updateVersionIndicator();
             
             console.log('✅ Cache actualizado para nueva versión');
             
@@ -291,9 +297,56 @@ class CacheManager {
      */
     getCachedItems() {
         try {
-            return this.cacheKeys.filter(key => localStorage.getItem(key) !== null);
+            const cachedItems = this.cacheKeys.filter(key => localStorage.getItem(key) !== null);
+            
+            // Agregar información detallada de cada elemento
+            const detailedInfo = cachedItems.map(key => {
+                const data = localStorage.getItem(key);
+                let itemCount = 0;
+                
+                try {
+                    const parsed = JSON.parse(data);
+                    if (Array.isArray(parsed)) {
+                        itemCount = parsed.length;
+                    } else if (typeof parsed === 'object' && parsed !== null) {
+                        itemCount = Object.keys(parsed).length;
+                    } else {
+                        itemCount = 1;
+                    }
+                } catch (e) {
+                    itemCount = 1;
+                }
+                
+                return { key, count: itemCount, size: (data.length / 1024).toFixed(2) + ' KB' };
+            });
+            
+            return detailedInfo;
         } catch (error) {
             return [];
+        }
+    }
+
+    /**
+     * Actualiza el indicador visual de versión
+     */
+    updateVersionIndicator() {
+        try {
+            const versionElement = document.getElementById('app-version');
+            if (versionElement) {
+                const cachedItems = this.getCachedItems();
+                const hasData = cachedItems.length > 0;
+                
+                // Agregar indicador de estado
+                if (hasData) {
+                    versionElement.style.color = '#22c55e'; // Verde si hay datos
+                    versionElement.title = `v${this.currentVersion} - ${cachedItems.length} elementos en caché`;
+                } else {
+                    versionElement.style.color = '#6b7280'; // Gris si no hay datos
+                    versionElement.title = `v${this.currentVersion} - Sin datos en caché`;
+                }
+            }
+        } catch (error) {
+            console.log('No se pudo actualizar indicador de versión');
         }
     }
 }

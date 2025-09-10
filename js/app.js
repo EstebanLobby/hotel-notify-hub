@@ -224,18 +224,7 @@ function setupCacheManagement() {
   if (cacheInfoBtn) {
     cacheInfoBtn.addEventListener('click', function() {
       if (window.cacheManager) {
-        const cacheInfo = window.cacheManager.getCacheInfo();
-        if (cacheInfo) {
-          const message = `
-            📊 Información del Caché:<br>
-            • Versión actual: ${cacheInfo.version}<br>
-            • Versión almacenada: ${cacheInfo.storedVersion || 'ninguna'}<br>
-            • Última actualización: ${cacheInfo.lastUpdate.toLocaleString()}<br>
-            • Tamaño del caché: ${cacheInfo.cacheSize}<br>
-            • Elementos en caché: ${cacheInfo.cachedItems.length}
-          `;
-          showToast(message, 'info', 8000);
-        }
+        showCacheInfoModal();
       } else {
         showToast('Sistema de caché no disponible', 'warning');
       }
@@ -258,6 +247,101 @@ function setupCacheManagement() {
       }
     });
   }
+}
+
+// Show cache info modal
+function showCacheInfoModal() {
+  const cacheInfo = window.cacheManager.getCacheInfo();
+  if (!cacheInfo) return;
+  
+  // Actualizar información básica
+  document.getElementById('cache-current-version').textContent = cacheInfo.version;
+  document.getElementById('cache-stored-version').textContent = `Almacenada: ${cacheInfo.storedVersion || 'ninguna'}`;
+  document.getElementById('cache-last-update').textContent = cacheInfo.lastUpdate.toLocaleString();
+  document.getElementById('cache-total-size').textContent = cacheInfo.cacheSize;
+  document.getElementById('cache-items-count').textContent = `${cacheInfo.cachedItems.length} elementos`;
+  
+  // Generar lista de elementos
+  const container = document.getElementById('cache-items-container');
+  container.innerHTML = '';
+  
+  if (cacheInfo.cachedItems.length > 0) {
+    cacheInfo.cachedItems.forEach(item => {
+      const displayInfo = {
+        'countriesCache': { icon: '🌍', name: 'Países', desc: 'Lista de países disponibles' },
+        'servicesCache': { icon: '🔧', name: 'Servicios', desc: 'Servicios de hotel configurables' },
+        'hotelsCache': { icon: '🏨', name: 'Hoteles', desc: 'Datos de hoteles registrados' },
+        'userPreferences': { icon: '⚙️', name: 'Preferencias', desc: 'Configuraciones del usuario' },
+        'dashboardSettings': { icon: '📊', name: 'Dashboard', desc: 'Configuraciones del panel' }
+      }[item.key] || { icon: '📄', name: item.key, desc: 'Elemento de caché' };
+      
+      const itemElement = document.createElement('div');
+      itemElement.className = 'cache-item';
+      itemElement.innerHTML = `
+        <div class="cache-item-info">
+          <div class="cache-item-icon">${displayInfo.icon}</div>
+          <div class="cache-item-details">
+            <h5>${displayInfo.name}</h5>
+            <p>${displayInfo.desc}</p>
+          </div>
+        </div>
+        <div class="cache-item-stats">
+          <div class="cache-item-count">${item.count} items</div>
+          <div class="cache-item-size">${item.size}</div>
+        </div>
+      `;
+      container.appendChild(itemElement);
+    });
+  } else {
+    container.innerHTML = `
+      <div class="cache-empty-state">
+        <div class="empty-icon">📭</div>
+        <p>Sin datos en caché</p>
+        <small>Los datos se cargarán automáticamente al usar la aplicación</small>
+      </div>
+    `;
+  }
+  
+  // Mostrar modal
+  const modal = document.getElementById('cache-info-modal');
+  const modalContent = modal.querySelector('.cache-info-modal-content');
+  
+  modal.style.display = 'flex';
+  
+  // Setup close handlers
+  const closeBtn = document.getElementById('close-cache-info');
+  
+  const closeModal = () => {
+    modalContent.classList.add('closing');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modalContent.classList.remove('closing');
+    }, 200);
+  };
+  
+  closeBtn.onclick = closeModal;
+  
+  // Close on background click
+  modal.onclick = (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
+  
+  // Prevent closing when clicking on modal content
+  modalContent.onclick = (event) => {
+    event.stopPropagation();
+  };
+  
+  // Close with Escape key
+  const handleEscape = (event) => {
+    if (event.key === 'Escape') {
+      closeModal();
+      document.removeEventListener('keydown', handleEscape);
+    }
+  };
+  
+  document.addEventListener('keydown', handleEscape);
 }
 
 // Global error handler
