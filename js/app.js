@@ -302,31 +302,70 @@ function showCacheInfoModal() {
     `;
   }
   
-  // Mostrar release notes si están disponibles
+  // Mostrar release notes de las versiones recientes
   const releaseNotesContainer = document.getElementById('cache-release-notes');
-  const releaseInfo = window.cacheManager.releaseNotes[cacheInfo.version];
+  const { current, previous } = cacheInfo.recentVersions;
+  const currentReleaseInfo = window.cacheManager.releaseNotes[current];
+  const previousReleaseInfo = previous ? window.cacheManager.releaseNotes[previous] : null;
   
-  if (releaseInfo) {
-    releaseNotesContainer.innerHTML = `
-      <h4>
-        📋 Notas de la Versión
-        <span class="cache-release-date">${releaseInfo.date}</span>
-      </h4>
-      <div class="cache-release-highlights">
-        <strong>${releaseInfo.title}</strong>
-        <ul>
-          ${releaseInfo.highlights.map(item => `<li>${item}</li>`).join('')}
-        </ul>
-      </div>
-      ${releaseInfo.technical.length > 0 ? `
-        <details class="cache-release-technical">
-          <summary>🔧 Detalles técnicos</summary>
-          <ul>
-            ${releaseInfo.technical.map(item => `<li>${item}</li>`).join('')}
-          </ul>
-        </details>
-      ` : ''}
-    `;
+  if (currentReleaseInfo || previousReleaseInfo) {
+    let releaseNotesHTML = '<h4>📋 Historial de Versiones</h4>';
+    
+    // Mostrar versión actual
+    if (currentReleaseInfo) {
+      releaseNotesHTML += `
+        <div class="version-section current-version">
+          <h5>
+            🆕 Versión Actual - ${current}
+            <span class="cache-release-date">${currentReleaseInfo.date}</span>
+          </h5>
+          <div class="cache-release-highlights">
+            <strong>${currentReleaseInfo.title}</strong>
+            <ul>
+              ${currentReleaseInfo.highlights.map(item => `<li>${item}</li>`).join('')}
+            </ul>
+          </div>
+          ${currentReleaseInfo.technical.length > 0 ? `
+            <details class="cache-release-technical">
+              <summary>🔧 Detalles técnicos</summary>
+              <ul>
+                ${currentReleaseInfo.technical.map(item => `<li>${item}</li>`).join('')}
+              </ul>
+            </details>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    // Mostrar versión anterior si existe
+    if (previousReleaseInfo) {
+      releaseNotesHTML += `
+        <div class="version-section previous-version">
+          <h5>
+            📜 Versión Anterior - ${previous}
+            <span class="cache-release-date">${previousReleaseInfo.date}</span>
+          </h5>
+          <div class="cache-release-highlights">
+            <strong>${previousReleaseInfo.title}</strong>
+            <ul>
+              ${previousReleaseInfo.highlights.slice(0, 3).map(item => `<li>${item}</li>`).join('')}
+              ${previousReleaseInfo.highlights.length > 3 ? '<li><em>... y más mejoras</em></li>' : ''}
+            </ul>
+          </div>
+          ${previousReleaseInfo.technical.length > 0 ? `
+            <details class="cache-release-technical">
+              <summary>🔧 Detalles técnicos (${previousReleaseInfo.technical.length} elementos)</summary>
+              <ul>
+                ${previousReleaseInfo.technical.slice(0, 3).map(item => `<li>${item}</li>`).join('')}
+                ${previousReleaseInfo.technical.length > 3 ? '<li><em>... y más mejoras técnicas</em></li>' : ''}
+              </ul>
+            </details>
+          ` : ''}
+        </div>
+      `;
+    }
+    
+    releaseNotesContainer.innerHTML = releaseNotesHTML;
     releaseNotesContainer.classList.add('show');
   } else {
     releaseNotesContainer.classList.remove('show');

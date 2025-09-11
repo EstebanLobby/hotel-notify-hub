@@ -6,12 +6,31 @@
 class CacheManager {
     constructor() {
         // Versión actual del proyecto (actualizar manualmente en cada release)
-        this.currentVersion = '1.3.0';
+        this.currentVersion = '1.3.1';
         this.versionKey = 'hotel_notify_hub_version';
         this.lastUpdateKey = 'hotel_notify_hub_last_update';
         
         // Release notes para la versión actual
         this.releaseNotes = {
+            '1.3.1': {
+                title: '🎓 Sistema de Tutorial Interactivo Completo',
+                date: '2025-09-11',
+                highlights: [
+                    '🎯 Sistema de tutorial paso a paso con Intro.js',
+                    '🎨 Modales elegantes sin alerts (adiós prompt/confirm)',
+                    '📚 Tutorial específico por sección (Hoteles, Dashboard, Servicios)',
+                    '🆕 Onboarding automático para usuarios nuevos',
+                    '🎛️ Menú de selección visual con opciones claras'
+                ],
+                breaking: [],
+                technical: [
+                    'Integración completa de Intro.js con estilos personalizados',
+                    'Sistema de modales profesionales reemplazando alerts',
+                    'LocalStorage para gestión de preferencias de tutorial',
+                    'Event listeners con cleanup automático y gestión de memoria',
+                    'Responsive design para experiencia móvil optimizada'
+                ]
+            },
             '1.3.0': {
                 title: '🏨 Gestión Avanzada de Servicios SELF_IN',
                 date: '2025-09-11',
@@ -312,16 +331,29 @@ class CacheManager {
     }
 
     /**
+     * Obtiene las dos versiones más recientes para mostrar en la UI
+     */
+    getRecentVersions() {
+        const versions = Object.keys(this.releaseNotes).sort().reverse();
+        return {
+            current: versions[0] || this.currentVersion,
+            previous: versions[1] || null
+        };
+    }
+
+    /**
      * Obtiene información del cache actual
      */
     getCacheInfo() {
         try {
+            const recentVersions = this.getRecentVersions();
             const info = {
                 version: this.currentVersion,
                 storedVersion: localStorage.getItem(this.versionKey),
                 lastUpdate: new Date(parseInt(localStorage.getItem(this.lastUpdateKey) || '0')),
                 cacheSize: this.calculateCacheSize(),
-                cachedItems: this.getCachedItems()
+                cachedItems: this.getCachedItems(),
+                recentVersions: recentVersions
             };
             
             return info;

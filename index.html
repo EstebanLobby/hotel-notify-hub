@@ -15,6 +15,10 @@
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Intro.js for interactive tutorial -->
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
 </head>
 <body>
     <!-- Login Modal -->
@@ -87,21 +91,29 @@
 
     <div id="app" class="dashboard-layout">
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar">
+        <aside id="sidebar" class="sidebar" 
+               data-intro="Este es el menú de navegación principal. Desde aquí puedes acceder a todas las secciones de la aplicación." 
+               data-step="4">
             <div class="sidebar-header">
                 <h2 class="sidebar-title">Hotel Dashboard</h2>
             </div>
             <nav class="sidebar-nav">
                 <ul class="nav-list">
-                    <li><a href="#dashboard" class="nav-link active" data-route="dashboard">
+                    <li><a href="#dashboard" class="nav-link active" data-route="dashboard"
+                           data-intro="Dashboard: Aquí ves un resumen general con estadísticas y gráficos de tu sistema de notificaciones." 
+                           data-step="5">
                         <span data-lucide="bar-chart-3"></span>
                         Dashboard
                     </a></li>
-                    <li><a href="#hotels" class="nav-link" data-route="hotels">
+                    <li><a href="#hotels" class="nav-link" data-route="hotels"
+                           data-intro="Hoteles: Esta es la sección principal donde gestionas todos tus hoteles, agregas nuevos y configuras sus servicios de notificación." 
+                           data-step="6">
                         <span data-lucide="building"></span>
                         Hoteles
                     </a></li>
-                    <li><a href="#services" class="nav-link" data-route="services">
+                    <li><a href="#services" class="nav-link" data-route="services"
+                           data-intro="Servicios: Aquí puedes ver todos los tipos de servicios disponibles para configurar en tus hoteles." 
+                           data-step="7">
                         <span data-lucide="settings"></span>
                         Servicios
                     </a></li>
@@ -120,13 +132,23 @@
             <!-- Header -->
             <header class="header">
                 <div class="header-content">
-                    <h1 id="page-title">Dashboard</h1>
+                    <h1 id="page-title" 
+                        data-intro="¡Bienvenido al Hotel Notify Hub! Este es tu panel principal donde puedes gestionar hoteles y sus servicios de notificación." 
+                        data-step="1">Dashboard</h1>
                     <div class="header-actions">
-                        <button id="cache-info-btn" class="btn btn-outline-secondary btn-sm" title="Información de caché">
-                            <span data-lucide="info"></span>
-                            <span id="app-version">v1.3.0</span>
+                        <button id="tutorial-btn" class="btn btn-primary btn-sm" title="Iniciar tutorial">
+                            <span data-lucide="help-circle"></span>
+                            Tutorial
                         </button>
-                        <button id="force-refresh-btn" class="btn btn-outline-primary btn-sm" title="Forzar actualización">
+                        <button id="cache-info-btn" class="btn btn-outline-secondary btn-sm" title="Información de caché"
+                                data-intro="Aquí puedes ver la información del sistema, versión actual y gestionar el caché de la aplicación." 
+                                data-step="2">
+                            <span data-lucide="info"></span>
+                            <span id="app-version">v1.3.1</span>
+                        </button>
+                        <button id="force-refresh-btn" class="btn btn-outline-primary btn-sm" title="Forzar actualización"
+                                data-intro="Usa este botón para forzar una actualización y recargar los datos más recientes." 
+                                data-step="3">
                             <span data-lucide="refresh-cw"></span>
                         </button>
                         <button id="sidebar-toggle" class="sidebar-toggle">
@@ -198,14 +220,18 @@
                 <div id="hotels-view" class="view">
                     <div class="page-header">
                         <h2>Gestión de Hoteles</h2>
-                        <button id="add-hotel-btn" class="btn btn-primary">
+                        <button id="add-hotel-btn" class="btn btn-primary"
+                                data-intro="¡Aquí puedes agregar un nuevo hotel! Haz clic para abrir el formulario donde ingresarás la información básica del hotel." 
+                                data-step="8">
                             <span data-lucide="plus"></span>
                             Nuevo Hotel
                         </button>
                     </div>
 
                     <div class="filters-section">
-                        <div class="search-box">
+                        <div class="search-box" 
+                             data-intro="Usa este buscador para encontrar hoteles rápidamente. Puedes buscar por nombre, código o email del hotel." 
+                             data-step="9">
                             <input type="text" id="hotel-search" placeholder="Buscar por nombre, código o email...">
                             <span data-lucide="search"></span>
                         </div>
@@ -219,7 +245,9 @@
                             <span id="hotels-count">0 hoteles</span>
                         </div>
                     </div>
-                    <div class="table-container">
+                    <div class="table-container" 
+                         data-intro="Esta tabla muestra todos tus hoteles. Cada fila contiene información del hotel y botones de acción para editarlo, ver servicios o eliminarlo." 
+                         data-step="10">
                         <table class="data-table" id="hotels-table">
                             <thead>
                                 <tr>
@@ -228,7 +256,8 @@
                                     <th>Idioma</th>
                                     <th>Estado</th>
                                     <th>País</th>
-                                    <th>Servicios</th>
+                                    <th data-intro="La columna 'Servicios' muestra cuántos servicios de notificación tiene configurados cada hotel. Haz clic en el ícono de configuración para gestionar los servicios." 
+                                        data-step="11">Servicios</th>
                                     <th>Creado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -468,6 +497,127 @@
         </div>
     </div>
 
+    <!-- Tutorial Menu Modal -->
+    <div id="tutorial-menu-modal" class="modal">
+        <div class="modal-content tutorial-menu-content">
+            <div class="modal-header">
+                <h3>🎓 Selecciona un Tutorial</h3>
+                <button class="modal-close" id="close-tutorial-menu">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="tutorial-menu-subtitle">¿Qué tutorial te gustaría ver?</p>
+                <div class="tutorial-options">
+                    <button class="tutorial-option-btn" data-tutorial="main">
+                        <div class="tutorial-option-icon">🎯</div>
+                        <div class="tutorial-option-content">
+                            <h4>Tutorial Completo</h4>
+                            <p>Recorrido completo por todas las funcionalidades (Recomendado)</p>
+                            <span class="tutorial-duration">⏰ 2-3 minutos</span>
+                        </div>
+                    </button>
+                    
+                    <button class="tutorial-option-btn" data-tutorial="hotels">
+                        <div class="tutorial-option-icon">🏨</div>
+                        <div class="tutorial-option-content">
+                            <h4>Tutorial de Hoteles</h4>
+                            <p>Gestión de hoteles, servicios y configuración statusIN</p>
+                            <span class="tutorial-duration">⏰ 1-2 minutos</span>
+                        </div>
+                    </button>
+                    
+                    <button class="tutorial-option-btn" data-tutorial="dashboard">
+                        <div class="tutorial-option-icon">📊</div>
+                        <div class="tutorial-option-content">
+                            <h4>Tutorial de Dashboard</h4>
+                            <p>Estadísticas, gráficos y reportes del sistema</p>
+                            <span class="tutorial-duration">⏰ 1 minuto</span>
+                        </div>
+                    </button>
+                    
+                    <button class="tutorial-option-btn" data-tutorial="services">
+                        <div class="tutorial-option-icon">⚙️</div>
+                        <div class="tutorial-option-content">
+                            <h4>Tutorial de Servicios</h4>
+                            <p>Tipos de servicios y configuraciones disponibles</p>
+                            <span class="tutorial-duration">⏰ 1 minuto</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Tutorial Modal -->
+    <div id="welcome-tutorial-modal" class="modal">
+        <div class="modal-content welcome-modal-content">
+            <div class="welcome-modal-header">
+                <div class="welcome-logo">
+                    <div class="welcome-icon">
+                        <span data-lucide="graduation-cap"></span>
+                    </div>
+                    <div class="welcome-glow"></div>
+                </div>
+                <h2 class="welcome-title">¡Bienvenido a Hotel Notify Hub! 🏨</h2>
+                <p class="welcome-subtitle">Sistema de Gestión de Notificaciones Hoteleras</p>
+            </div>
+            
+            <div class="welcome-modal-body">
+                <div class="welcome-message">
+                    <p class="welcome-main-text">
+                        ¿Te gustaría hacer un <strong>tour rápido</strong> para conocer todas las funcionalidades?
+                    </p>
+                    
+                    <div class="welcome-features">
+                        <div class="welcome-feature">
+                            <span class="feature-icon">🏨</span>
+                            <span class="feature-text">Gestión completa de hoteles</span>
+                        </div>
+                        <div class="welcome-feature">
+                            <span class="feature-icon">⚙️</span>
+                            <span class="feature-text">Configuración de servicios</span>
+                        </div>
+                        <div class="welcome-feature">
+                            <span class="feature-icon">📊</span>
+                            <span class="feature-text">Reportes y estadísticas</span>
+                        </div>
+                        <div class="welcome-feature">
+                            <span class="feature-icon">📱</span>
+                            <span class="feature-text">Notificaciones Email/WhatsApp</span>
+                        </div>
+                    </div>
+                    
+                    <div class="welcome-info">
+                        <div class="info-item">
+                            <span data-lucide="clock" class="info-icon"></span>
+                            <span>Duración: 2-3 minutos</span>
+                        </div>
+                        <div class="info-item">
+                            <span data-lucide="play-circle" class="info-icon"></span>
+                            <span>Tutorial interactivo paso a paso</span>
+                        </div>
+                        <div class="info-item">
+                            <span data-lucide="skip-forward" class="info-icon"></span>
+                            <span>Puedes saltarlo en cualquier momento</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="welcome-modal-footer">
+                <button id="welcome-skip-btn" class="btn btn-secondary">
+                    <span data-lucide="x"></span>
+                    No, gracias
+                </button>
+                <button id="welcome-start-btn" class="btn btn-primary">
+                    <span data-lucide="play"></span>
+                    ¡Empezar Tour!
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Cache Info Modal -->
     <div id="cache-info-modal" class="modal">
         <div class="modal-content cache-info-modal-content">
@@ -543,6 +693,7 @@
     <script src="js/hotels.js"></script>
     <script src="js/services.js"></script>
     <script src="js/reports.js"></script>
+    <script src="js/tutorial.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

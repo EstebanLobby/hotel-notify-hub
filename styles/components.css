@@ -1983,6 +1983,76 @@ select:focus {
   display: block;
 }
 
+/* Version sections styling */
+.version-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  position: relative;
+}
+
+.version-section.current-version {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-hover) 100%);
+  border-color: var(--primary-light);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.version-section.previous-version {
+  background: var(--surface);
+  border-color: var(--border-light);
+  opacity: 0.9;
+}
+
+.version-section h5 {
+  margin: 0 0 1rem 0;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.version-section.current-version h5 {
+  color: var(--primary);
+}
+
+.version-section.previous-version h5 {
+  color: var(--text-muted);
+}
+
+.version-section .cache-release-date {
+  font-size: 0.75rem;
+  font-weight: normal;
+  background: var(--background);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+}
+
+.version-section.current-version .cache-release-date {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Responsive version sections */
+@media (max-width: 768px) {
+  .version-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .version-section h5 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
 .cache-release-notes h4 {
   margin: 0 0 1rem 0;
   color: var(--foreground);
@@ -2178,4 +2248,571 @@ select:focus {
 
 .cache-info-modal-content.closing {
   animation: modalSlideOut 0.2s ease-in forwards;
+}
+
+/* =============================================
+   Tutorial Menu Modal Styles
+   ============================================= */
+
+.tutorial-menu-content {
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.tutorial-menu-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.tutorial-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tutorial-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 2px solid var(--border-light);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.tutorial-option-btn:hover {
+  border-color: var(--primary);
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.tutorial-option-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  border-radius: 1rem;
+  color: white;
+}
+
+.tutorial-option-content {
+  flex: 1;
+}
+
+.tutorial-option-content h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.tutorial-option-content p {
+  margin: 0 0 0.75rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.tutorial-duration {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--primary);
+  font-weight: 500;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tutorial-menu-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .tutorial-option-btn {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  
+  .tutorial-option-icon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 2rem;
+  }
+}
+
+/* =============================================
+   Welcome Tutorial Modal Styles
+   ============================================= */
+
+.welcome-modal-content {
+  max-width: 600px;
+  width: 90%;
+  margin: auto;
+  background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+  border-radius: 2rem;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  animation: welcomeSlideIn 0.6s ease-out;
+  position: relative;
+}
+
+@keyframes welcomeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.welcome-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.6), 
+    transparent);
+}
+
+/* Welcome Header */
+.welcome-modal-header {
+  text-align: center;
+  padding: 3rem 2rem 2rem 2rem;
+  position: relative;
+}
+
+.welcome-logo {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 2rem;
+}
+
+.welcome-icon {
+  width: 5rem;
+  height: 5rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  position: relative;
+  z-index: 2;
+  box-shadow: 
+    0 10px 25px rgba(59, 130, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.welcome-icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.welcome-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6rem;
+  height: 6rem;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: welcomePulse 3s ease-in-out infinite;
+}
+
+@keyframes welcomePulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, var(--foreground), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Welcome Body */
+.welcome-modal-body {
+  padding: 0 2rem 2rem 2rem;
+}
+
+.welcome-main-text {
+  font-size: 1.1rem;
+  color: var(--foreground);
+  text-align: center;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.welcome-main-text strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Features Grid */
+.welcome-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.welcome-feature {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.welcome-feature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-light);
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.feature-text {
+  font-size: 0.9rem;
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+/* Info Items */
+.welcome-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--surface-hover);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-light);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.info-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* Welcome Footer */
+.welcome-modal-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--surface);
+  border-top: 1px solid var(--border-light);
+}
+
+.welcome-modal-footer .btn {
+  padding: 1rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.welcome-modal-footer .btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border: none;
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.welcome-modal-footer .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.welcome-modal-footer .btn-secondary {
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+}
+
+.welcome-modal-footer .btn-secondary:hover {
+  background: var(--border-light);
+  color: var(--foreground);
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .welcome-modal-content {
+    width: 95%;
+    margin: 1rem;
+    border-radius: 1.5rem;
+  }
+  
+  .welcome-modal-header {
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+  }
+  
+  .welcome-modal-body {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.75rem;
+  }
+  
+  .welcome-features {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .welcome-feature {
+    padding: 0.75rem;
+  }
+  
+  .welcome-modal-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+  }
+  
+  .welcome-modal-footer .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-icon {
+    width: 4rem;
+    height: 4rem;
+  }
+  
+  .welcome-icon svg {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .welcome-glow {
+    width: 5rem;
+    height: 5rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* =============================================
+   Tutorial System Styles (Intro.js customization)
+   ============================================= */
+
+/* Tutorial button styling */
+#tutorial-btn {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+#tutorial-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Intro.js custom styling */
+.introjs-tooltip {
+  background: var(--background) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  color: var(--foreground) !important;
+  font-size: 0.875rem !important;
+  max-width: 400px !important;
+  min-width: 300px !important;
+}
+
+.introjs-tooltip-header {
+  background: transparent !important;
+  border: none !important;
+  padding: 1.5rem 1.5rem 0 1.5rem !important;
+}
+
+.introjs-tooltiptext {
+  padding: 0 1.5rem 1rem 1.5rem !important;
+  line-height: 1.6 !important;
+  color: var(--foreground) !important;
+}
+
+.introjs-tooltiptext strong {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+/* Botones del tutorial */
+.introjs-button {
+  background: var(--primary) !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.introjs-button:hover {
+  background: var(--primary-dark) !important;
+  transform: translateY(-1px) !important;
+}
+
+.introjs-skipbutton {
+  background: var(--surface-hover) !important;
+  color: var(--text-muted) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+.introjs-skipbutton:hover {
+  background: var(--border-light) !important;
+  color: var(--foreground) !important;
+}
+
+/* Highlight personalizado */
+.introjs-helperLayer {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 3px solid var(--primary) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Progress bar */
+.introjs-progress {
+  background: var(--surface-hover) !important;
+  border-radius: 1rem !important;
+  height: 6px !important;
+}
+
+.introjs-progressbar {
+  background: linear-gradient(90deg, var(--primary), var(--primary-light)) !important;
+  border-radius: 1rem !important;
+}
+
+/* Bullets (si se habilitan) */
+.introjs-bullets ul li a {
+  background: var(--border-light) !important;
+  border-radius: 50% !important;
+}
+
+.introjs-bullets ul li a.active {
+  background: var(--primary) !important;
+}
+
+/* Overlay personalizado */
+.introjs-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+/* Animaciones suaves para los tooltips */
+.introjs-tooltip {
+  animation: tutorialSlideIn 0.3s ease-out !important;
+}
+
+@keyframes tutorialSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive tutorial */
+@media (max-width: 768px) {
+  .introjs-tooltip {
+    max-width: 300px !important;
+    min-width: 250px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .introjs-tooltiptext {
+    padding: 0 1rem 1rem 1rem !important;
+  }
+  
+  .introjs-tooltip-header {
+    padding: 1rem 1rem 0 1rem !important;
+  }
+  
+  #tutorial-btn span:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .introjs-tooltip {
+    max-width: 280px !important;
+    min-width: 220px !important;
+  }
 }

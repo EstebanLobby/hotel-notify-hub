@@ -27,6 +27,52 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [1.3.1] - 2025-09-11
+
+### Agregado
+- 🎓 **Sistema de Tutorial Interactivo Completo**
+  - Tutorial paso a paso usando Intro.js con 11 pasos guiados
+  - Onboarding automático para usuarios nuevos con modal de bienvenida
+  - Tutorial específico por sección: Hoteles, Dashboard y Servicios
+  - Botón "Tutorial" siempre accesible en el header principal
+  - Sistema inteligente que recuerda preferencias del usuario
+- 🎨 **Modales Profesionales sin Alerts**
+  - Modal de bienvenida elegante con información detallada
+  - Modal de menú de tutoriales con opciones visuales claras
+  - Reemplazo completo de prompt() y confirm() por modales
+  - Diseño consistente con gradientes y animaciones suaves
+- 📚 **Tutoriales Específicos por Funcionalidad**
+  - Tutorial de Hoteles: Agregar, buscar, gestionar servicios y statusIN
+  - Tutorial de Dashboard: Estadísticas y gráficos del sistema
+  - Tutorial de Servicios: Tipos disponibles y configuraciones
+  - Navegación automática a la sección correcta antes del tutorial
+
+### Cambiado
+- 🎛️ **Experiencia de Usuario Mejorada**
+  - Botón "Tutorial" ahora abre modal de selección en lugar de prompt
+  - Información clara de duración estimada para cada tutorial
+  - Descripciones detalladas de lo que incluye cada opción
+  - Interfaz completamente responsive para móviles y tablets
+- 🎨 **Interfaz Visual Modernizada**
+  - Iconos grandes con gradientes para cada opción de tutorial
+  - Efectos hover elegantes en todos los elementos interactivos
+  - Animaciones de entrada suaves para modales
+  - Badges informativos con duración de cada tutorial
+
+### Técnico
+- 📊 **Arquitectura de Tutorial Robusta**
+  - Integración completa de Intro.js (10KB) con configuración personalizada
+  - Sistema de gestión de estado con LocalStorage para preferencias
+  - Event listeners con cleanup automático para evitar memory leaks
+  - Fallback robusto a prompt básico si modales no están disponibles
+- 🧪 **Optimizaciones de Performance**
+  - Carga lazy de tutorial manager con delay de inicialización
+  - Gestión eficiente de event listeners con cleanup automático
+  - CSS optimizado con variables reutilizables y media queries
+  - Funciones globales para acceso desde consola de desarrollo
+
+---
+
 ## [1.3.0] - 2025-09-11
 
 ### Agregado
