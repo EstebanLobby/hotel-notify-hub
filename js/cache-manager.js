@@ -50,6 +50,23 @@ class CacheManager {
                     'Validación automática y valores por defecto implementados'
                 ]
             },
+            '1.2.5': {
+                title: '🔧 Optimizaciones y Correcciones',
+                date: '2025-09-10',
+                highlights: [
+                    '🐛 Correcciones en modal footers y overlapping de estilos',
+                    '⚡ Mejoras en rendimiento de carga de datos',
+                    '🎨 Refinamiento de estilos de componentes',
+                    '📱 Optimizaciones para dispositivos móviles'
+                ],
+                breaking: [],
+                technical: [
+                    'Consolidación de estilos CSS duplicados',
+                    'Optimización de consultas de datos',
+                    'Mejoras en gestión de memoria',
+                    'Reducción de bundle size'
+                ]
+            },
             '1.2.0': {
                 title: '🎉 Sistema de Caché Inteligente',
                 date: '2025-09-10',
@@ -334,7 +351,17 @@ class CacheManager {
      * Obtiene las dos versiones más recientes para mostrar en la UI
      */
     getRecentVersions() {
-        const versions = Object.keys(this.releaseNotes).sort().reverse();
+        const versions = Object.keys(this.releaseNotes).sort((a, b) => {
+            // Ordenamiento semántico de versiones (ej: 1.3.1 > 1.3.0 > 1.2.0)
+            const parseVersion = (v) => v.split('.').map(n => parseInt(n));
+            const [aMajor, aMinor, aPatch = 0] = parseVersion(a);
+            const [bMajor, bMinor, bPatch = 0] = parseVersion(b);
+            
+            if (aMajor !== bMajor) return bMajor - aMajor;
+            if (aMinor !== bMinor) return bMinor - aMinor;
+            return bPatch - aPatch;
+        });
+        
         return {
             current: versions[0] || this.currentVersion,
             previous: versions[1] || null
