@@ -34,9 +34,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
-          # Configuración para repositorios privados
-          enablement: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable Pages if not already enabled
+          enable_pages: true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
