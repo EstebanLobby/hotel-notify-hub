@@ -393,7 +393,7 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     throw new Error(`Hotel con ID ${hotelId} no encontrado`);
   }
   
-  const res = await fetchWebhook({ 
+  const webhookData = { 
     func: 'hotels', 
     method: 'add_service',
     hotel_code: hotel.hotel_code,
@@ -401,7 +401,15 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     send_by_email: serviceData.email || false,
     send_by_whatsapp: serviceData.whatsapp || false,
     send_frequency_days: serviceData.frequency_days || 0
-  });
+  };
+
+  // Agregar statusIN solo para el servicio SELF_IN
+  if (serviceCode === 'SELF_IN' && serviceData.hasOwnProperty('status_in')) {
+    webhookData.status_in = serviceData.status_in;
+    console.log('Agregando statusIN para SELF_IN:', serviceData.status_in);
+  }
+
+  const res = await fetchWebhook(webhookData);
   console.log('Respuesta de addHotelServiceAsync:', res);
   
   // Verificar si la operación fue exitosa
@@ -446,7 +454,7 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     throw new Error(`Hotel con ID ${hotelId} no encontrado`);
   }
   
-  const res = await fetchWebhook({ 
+  const webhookData = { 
     func: 'hotels', 
     method: 'update_service',
     hotel_code: hotel.hotel_code,
@@ -454,7 +462,15 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     send_by_email: serviceData.email || false,
     send_by_whatsapp: serviceData.whatsapp || false,
     send_frequency_days: serviceData.frequency_days || 0
-  });
+  };
+
+  // Agregar statusIN solo para el servicio SELF_IN
+  if (serviceData.hasOwnProperty('status_in')) {
+    webhookData.status_in = serviceData.status_in;
+    console.log('Actualizando statusIN para SELF_IN:', serviceData.status_in);
+  }
+
+  const res = await fetchWebhook(webhookData);
   console.log('Respuesta de updateHotelServiceAsync:', res);
   
   // Verificar si la operación fue exitosa

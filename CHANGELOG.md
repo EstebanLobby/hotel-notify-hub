@@ -27,6 +27,51 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [1.3.0] - 2025-09-11
+
+### Agregado
+- ✨ **Campo statusIN exclusivo para servicio SELF_IN**
+  - Campo especial solo para el servicio de Auto Check-in (ID: 6)
+  - Control TRUE/FALSE para activar/desactivar el estado
+  - Aparece automáticamente solo cuando se selecciona SELF_IN
+  - Valor por defecto configurado en FALSE para seguridad
+- 🎛️ **Sistema de gestión completo para statusIN**
+  - Formulario de agregar servicio con sección dedicada
+  - Edición completa de statusIN en servicios existentes
+  - Carga automática de valores actuales al editar
+  - Validación y manejo de datos consistente
+- 📊 **Visualización mejorada de servicios**
+  - Badges de estado específicos para SELF_IN (Activo/Inactivo)
+  - Colores distintivos: verde para activo, rojo para inactivo
+  - Información clara del estado actual en la lista de servicios
+  - Solo se muestra para servicios SELF_IN relevantes
+
+### Cambiado
+- 🎨 **Interfaz de usuario mejorada**
+  - Radio buttons con diseño consistente y profesional
+  - Etiquetas `<p>` para mejor centrado y alineación
+  - Aplicado también a canales de comunicación para consistencia
+  - Espaciado mejorado en formularios con gap de 1.5rem
+- 🔧 **API y funciones backend actualizadas**
+  - `addHotelServiceAsync` extendida para manejar status_in
+  - `updateHotelServiceAsync` actualizada con soporte completo
+  - Envío condicional solo para servicios SELF_IN
+  - Logging mejorado para debugging y seguimiento
+
+### Técnico
+- 📊 **Mejoras de arquitectura**
+  - Sistema dinámico de mostrar/ocultar basado en servicio seleccionado
+  - Función `handleServiceSelectionChange` para gestión automática
+  - Reset automático de valores al cambiar servicios
+  - Estilos CSS específicos con selectores precisos
+- 🧪 **Validación y robustez**
+  - Validación automática de datos antes del envío
+  - Manejo de casos edge y valores undefined
+  - Preservación de compatibilidad con servicios existentes
+  - Sistema de fallback para valores no definidos
+
+---
+
 ## [1.2.0] - 2025-09-10
 
 ### Agregado

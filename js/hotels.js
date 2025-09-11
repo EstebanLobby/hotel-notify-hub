@@ -154,6 +154,12 @@ function setupHotelsEventListeners() {
     addServiceForm.addEventListener('submit', handleAddServiceSubmit);
   }
 
+  // Service selection change event for SELF_IN specific fields
+  const serviceSelect = document.getElementById('service-select');
+  if (serviceSelect) {
+    serviceSelect.addEventListener('change', handleServiceSelectionChange);
+  }
+
   // Frequency quick buttons functionality
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('frequency-quick-btn')) {
@@ -821,6 +827,13 @@ async function viewHotelServices(id) {
                   ${getFrequencyIcon(service.send_frequency_days)} ${getFrequencyLabel(service.send_frequency_days)}
                 </span>
               </div>
+              ${service.service_code === 'SELF_IN' ? `
+                <div class="service-status-in">
+                  <span class="status-in-badge ${service.status_in ? 'status-in-active' : 'status-in-inactive'}">
+                    ${service.status_in ? '✅ StatusIN: ACTIVO' : '❌ StatusIN: INACTIVO'}
+                  </span>
+                </div>
+              ` : ''}
             </div>
             <div class="service-status">
               <span class="status-badge active">✓ Activo</span>
@@ -1119,6 +1132,12 @@ async function handleAddServiceSubmit(e) {
     frequency_days: parseInt(formData.send_frequency_days) || 0
   };
 
+  // Agregar statusIN solo para el servicio SELF_IN
+  if (formData.service_code === 'SELF_IN') {
+    serviceData.status_in = formData.status_in === 'true';
+    console.log('SELF_IN detectado - statusIN:', serviceData.status_in);
+  }
+
   try {
     let result;
     if (editingServiceId) {
@@ -1143,6 +1162,25 @@ async function handleAddServiceSubmit(e) {
   } catch (error) {
     console.error('Error en handleAddServiceSubmit:', error);
     showToast(`Error: ${error.message}`, 'error');
+  }
+}
+
+// Función para manejar cambios en la selección de servicio
+function handleServiceSelectionChange(e) {
+  const selectedServiceCode = e.target.value;
+  const selfInSection = document.getElementById('self-in-status-section');
+  
+  if (selectedServiceCode === 'SELF_IN') {
+    // Mostrar la sección de statusIN para el servicio SELF_IN
+    selfInSection.style.display = 'block';
+  } else {
+    // Ocultar la sección de statusIN para otros servicios
+    selfInSection.style.display = 'none';
+    // Resetear valores de statusIN
+    const statusInFalse = document.getElementById('status-in-false');
+    if (statusInFalse) {
+      statusInFalse.checked = true;
+    }
   }
 }
 
@@ -1171,6 +1209,16 @@ function resetAddServiceForm() {
     const frequencyField = document.getElementById('send-frequency');
     if (frequencyField) {
       frequencyField.value = 0;
+    }
+    
+    // Ocultar sección de statusIN y resetear a FALSE
+    const selfInSection = document.getElementById('self-in-status-section');
+    if (selfInSection) {
+      selfInSection.style.display = 'none';
+    }
+    const statusInFalse = document.getElementById('status-in-false');
+    if (statusInFalse) {
+      statusInFalse.checked = true;
     }
     
     // Limpiar dataset
@@ -1214,6 +1262,19 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     document.getElementById('send-email').checked = service.send_by_email;
     document.getElementById('send-whatsapp').checked = service.send_by_whatsapp;
     document.getElementById('send-frequency').value = service.send_frequency_days || 0;
+    
+    // Manejar campo statusIN para servicio SELF_IN
+    const selfInSection = document.getElementById('self-in-status-section');
+    if (serviceCode === 'SELF_IN') {
+      selfInSection.style.display = 'block';
+      // Configurar valor de statusIN basado en los datos del servicio
+      const statusInValue = service.status_in !== undefined ? service.status_in : false;
+      document.getElementById('status-in-true').checked = statusInValue === true;
+      document.getElementById('status-in-false').checked = statusInValue === false;
+      console.log('Cargando statusIN para edición:', statusInValue);
+    } else {
+      selfInSection.style.display = 'none';
+    }
     
     // Activate the correct frequency button
     const frequencyValue = (service.send_frequency_days || 0).toString();

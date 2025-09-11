@@ -124,7 +124,7 @@
                     <div class="header-actions">
                         <button id="cache-info-btn" class="btn btn-outline-secondary btn-sm" title="Información de caché">
                             <span data-lucide="info"></span>
-                            <span id="app-version">v1.2.0</span>
+                            <span id="app-version">v1.3.0</span>
                         </button>
                         <button id="force-refresh-btn" class="btn btn-outline-primary btn-sm" title="Forzar actualización">
                             <span data-lucide="refresh-cw"></span>
@@ -404,14 +404,32 @@
                         <div class="checkbox-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="send-email" name="send_by_email" checked>
-                                Email
+                                <p>📧 Email</p>
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="send-whatsapp" name="send_by_whatsapp" checked>
-                                WhatsApp
+                                <p>📱 WhatsApp</p>
                             </label>
                         </div>
                         <small class="form-help">Selecciona al menos un canal de comunicación</small>
+                    </div>
+                </div>
+
+                <!-- SELF_IN Status Section (only visible for SELF_IN service) -->
+                <div class="form-section" id="self-in-status-section" style="display: none;">
+                    <div class="form-group">
+                        <label>🏨 Estado Check-in Automático</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="radio" id="status-in-true" name="status_in" value="true">
+                                <p>✅ Activo (TRUE)</p>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="radio" id="status-in-false" name="status_in" value="false" checked>
+                                <p>❌ Inactivo (FALSE)</p>
+                            </label>
+                        </div>
+                        <small class="form-help">Configuración específica para el servicio de Auto Check-in</small>
                     </div>
                 </div>
 

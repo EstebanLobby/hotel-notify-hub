@@ -6,12 +6,31 @@
 class CacheManager {
     constructor() {
         // Versión actual del proyecto (actualizar manualmente en cada release)
-        this.currentVersion = '1.2.0';
+        this.currentVersion = '1.3.0';
         this.versionKey = 'hotel_notify_hub_version';
         this.lastUpdateKey = 'hotel_notify_hub_last_update';
         
         // Release notes para la versión actual
         this.releaseNotes = {
+            '1.3.0': {
+                title: '🏨 Gestión Avanzada de Servicios SELF_IN',
+                date: '2025-09-11',
+                highlights: [
+                    '✨ Campo statusIN exclusivo para servicio SELF_IN (ID: 6)',
+                    '🎛️ Control TRUE/FALSE para estado de Check-in Automático',
+                    '✏️ Edición completa de statusIN en servicios existentes',
+                    '📊 Visualización con badges de estado (Activo/Inactivo)',
+                    '🎨 Interfaz mejorada con radio buttons y etiquetas <p>'
+                ],
+                breaking: [],
+                technical: [
+                    'API actualizada para manejar campo status_in en SELF_IN',
+                    'Funciones addHotelServiceAsync y updateHotelServiceAsync extendidas',
+                    'Sistema de mostrar/ocultar dinámico basado en servicio seleccionado',
+                    'Estilos CSS específicos para consistencia visual',
+                    'Validación automática y valores por defecto implementados'
+                ]
+            },
             '1.2.0': {
                 title: '🎉 Sistema de Caché Inteligente',
                 date: '2025-09-10',
