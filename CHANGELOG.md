@@ -27,7 +27,50 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
-## [1.3.1] - 2025-09-11
+## [1.3.2] - 2025-09-22
+
+### 🧹 Simplificación del Sistema - Eliminación de Frecuencia
+
+#### Removido
+- 🗑️ **Funcionalidad de Frecuencia de Envío Completa**
+  - Campo input de frecuencia con validación numérica
+  - Botones de frecuencia rápida: ⚡ Inmediato, 📅 Diario, 📆 Semanal, 🗓️ Mensual
+  - Sistema de badges de frecuencia en visualización de servicios
+  - Iconos y etiquetas dinámicas según días configurados
+- 📱 **Elementos de Interfaz Relacionados**
+  - Sección completa "Frecuencia de Envío" en formularios
+  - Estilos CSS específicos (.frequency-*, #send-frequency)
+  - Contenedores y wrappers de frecuencia
+  - Tooltips y textos de ayuda relacionados
+
+#### Cambiado
+- ⚡ **Formularios Simplificados**
+  - Enfoque únicamente en canales de comunicación (Email/WhatsApp)
+  - Interfaz más limpia sin campos innecesarios
+  - Flujo de trabajo más directo y rápido
+- 🎯 **API Optimizada**
+  - Webhooks sin campo send_frequency_days
+  - Payload más ligero en requests
+  - Menos validaciones en backend
+
+#### Técnico
+- 🧹 **Limpieza de Código Masiva**
+  - Eliminadas funciones getFrequencyLabel() y getFrequencyIcon()
+  - Removidos event listeners de botones de frecuencia
+  - Limpieza de estilos CSS (.frequency-badge, .frequency-input-container, etc.)
+  - Actualización completa de tests unitarios e integración
+- 📊 **Optimización de Performance**
+  - Reducción de DOM elements en formularios
+  - Menos JavaScript ejecutándose en runtime
+  - Simplificación de lógica de validación
+  - Menor uso de memoria y mejor rendimiento
+
+#### Breaking Changes
+⚠️ **Importante**: Esta versión elimina completamente la funcionalidad de frecuencia de envío. Los servicios existentes ya no tendrán información de frecuencia y funcionarán de manera inmediata.
+
+---
+
+## [1.3.1] - 2025-09-22
 
 ### Agregado
 - 🎓 **Sistema de Tutorial Interactivo Completo**
@@ -46,6 +89,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   - Tutorial de Dashboard: Estadísticas y gráficos del sistema
   - Tutorial de Servicios: Tipos disponibles y configuraciones
   - Navegación automática a la sección correcta antes del tutorial
+- 🔗 **Campo URL de Redirección para SELF_IN**
+  - Input URL opcional al editar hoteles con servicio SELF_IN
+  - Validación HTML5 automática con type="url"
+  - Badge visual con enlace directo y truncamiento inteligente
+  - Integración completa con API y persistencia de datos
 
 ### Cambiado
 - 🎛️ **Experiencia de Usuario Mejorada**
@@ -70,6 +118,11 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   - Gestión eficiente de event listeners con cleanup automático
   - CSS optimizado con variables reutilizables y media queries
   - Funciones globales para acceso desde consola de desarrollo
+- 🔗 **Funcionalidad URL para SELF_IN**
+  - Campo `self_in_url` agregado a funciones addHotelServiceAsync y updateHotelServiceAsync
+  - Validación robusta con HTML5 input type="url" y estilos CSS específicos
+  - Sistema de badges con enlace directo y manejo de URLs largas
+  - Persistencia completa en base de datos y sincronización con API
 
 ---
 

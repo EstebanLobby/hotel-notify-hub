@@ -32,7 +32,6 @@ class TestHelpers {
       description: 'Motor de reservas',
       send_by_email: true,
       send_by_whatsapp: true,
-      send_frequency_days: 0,
       ...overrides
     };
   }
@@ -191,14 +190,6 @@ class TestHelpers {
                 </div>
               </div>
               <div class="form-group">
-                <label for="send-frequency">Frecuencia de Envío *</label>
-                <input type="number" id="send-frequency" name="send_frequency_days" min="0" step="1" value="0" required>
-                <div class="frequency-quick-buttons">
-                  <button type="button" class="frequency-quick-btn" data-value="0">⚡ Inmediato</button>
-                  <button type="button" class="frequency-quick-btn" data-value="1">📅 Diario</button>
-                  <button type="button" class="frequency-quick-btn" data-value="7">📆 Semanal</button>
-                  <button type="button" class="frequency-quick-btn" data-value="30">🗓️ Mensual</button>
-                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" id="cancel-add-service-btn">Cancelar</button>

@@ -144,7 +144,7 @@
                                 data-intro="Aquí puedes ver la información del sistema, versión actual y gestionar el caché de la aplicación." 
                                 data-step="2">
                             <span data-lucide="info"></span>
-                            <span id="app-version">v1.3.1</span>
+                            <span id="app-version">v1.3.2</span>
                         </button>
                         <button id="force-refresh-btn" class="btn btn-outline-primary btn-sm" title="Forzar actualización"
                                 data-intro="Usa este botón para forzar una actualización y recargar los datos más recientes." 
@@ -475,33 +475,6 @@
                     </div>
                 </div>
 
-                <!-- Frequency Section -->
-                <div class="form-section">
-                    <div class="form-group">
-                        <label for="send-frequency">⏰ Frecuencia de Envío *</label>
-                        <div class="frequency-input-container">
-                            <div class="frequency-input-wrapper">
-                                <input type="number" id="send-frequency" name="send_frequency_days" min="0" step="1" value="0" required>
-                                <span class="frequency-unit">días</span>
-                            </div>
-                        </div>
-                        <div class="frequency-quick-buttons">
-                            <button type="button" class="frequency-quick-btn" data-value="0">
-                                ⚡ Inmediato
-                            </button>
-                            <button type="button" class="frequency-quick-btn" data-value="1">
-                                📅 Diario
-                            </button>
-                            <button type="button" class="frequency-quick-btn" data-value="7">
-                                📆 Semanal
-                            </button>
-                            <button type="button" class="frequency-quick-btn" data-value="30">
-                                🗓️ Mensual
-                            </button>
-                        </div>
-                        <small class="form-help">Selecciona una opción rápida o ingresa un valor personalizado</small>
-                    </div>
-                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="cancel-add-service-btn">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Agregar Servicio</button>

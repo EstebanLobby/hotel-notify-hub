@@ -208,7 +208,6 @@ test.describe('Hotel Management System E2E Tests', () => {
                   service_name: 'Booking Engine',
                   send_by_email: true,
                   send_by_whatsapp: true,
-                  send_frequency_days: 0
                 }
               ]
             }
@@ -272,7 +271,6 @@ test.describe('Hotel Management System E2E Tests', () => {
     // Configure service settings
     await page.check('#send-email');
     await page.check('#send-whatsapp');
-    await page.fill('#send-frequency', '1');
     
     // Submit service form
     await page.click('#add-service-form button[type="submit"]');

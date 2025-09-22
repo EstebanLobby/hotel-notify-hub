@@ -112,7 +112,6 @@ describe('Hotel Management Workflow Integration Tests', () => {
             <select id="service-select" name="service_code"></select>
             <input type="checkbox" id="send-email" name="send_by_email" />
             <input type="checkbox" id="send-whatsapp" name="send_by_whatsapp" />
-            <input type="number" id="send-frequency" name="send_frequency_days" />
             <button type="submit">Agregar Servicio</button>
           </form>
         </div>
@@ -210,7 +209,6 @@ describe('Hotel Management Workflow Integration Tests', () => {
       serviceForm.querySelector('#service-select').value = 'BOENGINE';
       serviceForm.querySelector('#send-email').checked = true;
       serviceForm.querySelector('#send-whatsapp').checked = true;
-      serviceForm.querySelector('#send-frequency').value = '0';
       
       // 6. Submit service form
       const mockEvent = { preventDefault: jest.fn() };
@@ -226,7 +224,6 @@ describe('Hotel Management Workflow Integration Tests', () => {
             service_code: 'BOENGINE',
             send_by_email: true,
             send_by_whatsapp: true,
-            send_frequency_days: 0
           })
         })
       );
@@ -249,7 +246,6 @@ describe('Hotel Management Workflow Integration Tests', () => {
               service_name: 'Booking Engine',
               send_by_email: true,
               send_by_whatsapp: false,
-              send_frequency_days: 1
             }
           ]
         }
@@ -262,12 +258,10 @@ describe('Hotel Management Workflow Integration Tests', () => {
       const serviceSelect = document.getElementById('service-select');
       const emailCheck = document.getElementById('send-email');
       const whatsappCheck = document.getElementById('send-whatsapp');
-      const frequencyInput = document.getElementById('send-frequency');
       
       expect(serviceSelect.value).toBe('BOENGINE');
       expect(emailCheck.checked).toBe(true);
       expect(whatsappCheck.checked).toBe(false);
-      expect(frequencyInput.value).toBe('1');
     });
   });
 

@@ -160,41 +160,6 @@ function setupHotelsEventListeners() {
     serviceSelect.addEventListener('change', handleServiceSelectionChange);
   }
 
-  // Frequency quick buttons functionality
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('frequency-quick-btn')) {
-      e.preventDefault();
-      const value = e.target.getAttribute('data-value');
-      const frequencyInput = document.getElementById('send-frequency');
-      
-      if (frequencyInput && value !== null) {
-        frequencyInput.value = value;
-        
-        // Update active button
-        document.querySelectorAll('.frequency-quick-btn').forEach(btn => {
-          btn.classList.remove('active');
-        });
-        e.target.classList.add('active');
-        
-        // Trigger change event for any listeners
-        frequencyInput.dispatchEvent(new Event('change'));
-      }
-    }
-  });
-
-  // Update active button when input value changes
-  const frequencyInput = document.getElementById('send-frequency');
-  if (frequencyInput) {
-    frequencyInput.addEventListener('input', (e) => {
-      const value = e.target.value;
-      document.querySelectorAll('.frequency-quick-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-value') === value) {
-          btn.classList.add('active');
-        }
-      });
-    });
-  }
 
   // Phone input validation - solo permitir números
   const phoneInput = document.getElementById('hotel-phone');
@@ -822,11 +787,6 @@ async function viewHotelServices(id) {
                   return `<span class="channel-badge ${channelClass}">${channelIcon} ${channel}</span>`;
                 }).join('')}
               </div>
-              <div class="service-frequency">
-                <span class="frequency-badge">
-                  ${getFrequencyIcon(service.send_frequency_days)} ${getFrequencyLabel(service.send_frequency_days)}
-                </span>
-              </div>
               ${service.service_code === 'SELF_IN' ? `
                 <div class="service-status-in">
                   <span class="status-in-badge ${service.status_in ? 'status-in-active' : 'status-in-inactive'}">
@@ -931,35 +891,6 @@ function getChannelClass(channel) {
 }
 
 
-// Función auxiliar para formatear la frecuencia de envío
-function getFrequencyLabel(frequencyDays) {
-  if (frequencyDays === 0) {
-    return 'Inmediato';
-  } else if (frequencyDays === 1) {
-    return 'Diario';
-  } else if (frequencyDays === 7) {
-    return 'Semanal';
-  } else if (frequencyDays === 30) {
-    return 'Mensual';
-  } else {
-    return `Cada ${frequencyDays} días`;
-  }
-}
-
-// Función auxiliar para obtener el ícono de frecuencia
-function getFrequencyIcon(frequencyDays) {
-  if (frequencyDays === 0) {
-    return '⚡'; // Inmediato
-  } else if (frequencyDays === 1) {
-    return '📅'; // Diario
-  } else if (frequencyDays === 7) {
-    return '📆'; // Semanal
-  } else if (frequencyDays === 30) {
-    return '🗓️'; // Mensual
-  } else {
-    return '⏰'; // Personalizado
-  }
-}
 
 // Función para actualizar el select de servicios
 function updateServiceSelect(availableServices) {
@@ -1135,8 +1066,7 @@ async function handleAddServiceSubmit(e) {
 
   const serviceData = {
     email: formData.send_by_email,
-    whatsapp: formData.send_by_whatsapp,
-    frequency_days: parseInt(formData.send_frequency_days) || 0
+    whatsapp: formData.send_by_whatsapp
   };
 
   // Agregar statusIN y URL solo para el servicio SELF_IN
@@ -1218,11 +1148,6 @@ function resetAddServiceForm() {
       submitBtn.textContent = 'Agregar Servicio';
     }
     
-    // Resetear campo de frecuencia a valor por defecto
-    const frequencyField = document.getElementById('send-frequency');
-    if (frequencyField) {
-      frequencyField.value = 0;
-    }
     
   // Ocultar sección de statusIN y resetear a FALSE, limpiar URL
   const selfInSection = document.getElementById('self-in-status-section');
@@ -1278,7 +1203,6 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     // Llenar formulario con datos actuales
     document.getElementById('send-email').checked = service.send_by_email;
     document.getElementById('send-whatsapp').checked = service.send_by_whatsapp;
-    document.getElementById('send-frequency').value = service.send_frequency_days || 0;
     
     // Manejar campo statusIN y URL para servicio SELF_IN
     const selfInSection = document.getElementById('self-in-status-section');
@@ -1301,14 +1225,6 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
       selfInSection.style.display = 'none';
     }
     
-    // Activate the correct frequency button
-    const frequencyValue = (service.send_frequency_days || 0).toString();
-    document.querySelectorAll('.frequency-quick-btn').forEach(btn => {
-      btn.classList.remove('active');
-      if (btn.getAttribute('data-value') === frequencyValue) {
-        btn.classList.add('active');
-      }
-    });
     
     // Cambiar texto del botón
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');

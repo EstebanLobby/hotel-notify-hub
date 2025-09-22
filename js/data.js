@@ -400,7 +400,6 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     service_code: serviceCode,
     send_by_email: serviceData.email || false,
     send_by_whatsapp: serviceData.whatsapp || false,
-    send_frequency_days: serviceData.frequency_days || 0
   };
 
   // Agregar statusIN y URL para el servicio SELF_IN
@@ -467,7 +466,6 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     service_id: serviceId,
     send_by_email: serviceData.email || false,
     send_by_whatsapp: serviceData.whatsapp || false,
-    send_frequency_days: serviceData.frequency_days || 0
   };
 
   // Agregar statusIN y URL para el servicio SELF_IN si están presentes

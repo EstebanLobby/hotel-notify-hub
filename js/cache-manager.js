@@ -6,21 +6,46 @@
 class CacheManager {
     constructor() {
         // Versión actual del proyecto (actualizar manualmente en cada release)
-        this.currentVersion = '1.3.1';
+        this.currentVersion = '1.3.2';
         this.versionKey = 'hotel_notify_hub_version';
         this.lastUpdateKey = 'hotel_notify_hub_last_update';
         
         // Release notes para la versión actual
         this.releaseNotes = {
+            '1.3.2': {
+                title: '🧹 Simplificación del Sistema - Eliminación de Frecuencia',
+                date: '2025-09-22',
+                highlights: [
+                    '🗑️ Eliminación completa de funcionalidad de frecuencia de envío',
+                    '⚡ Formularios simplificados y más intuitivos',
+                    '🎯 Enfoque en funcionalidades esenciales',
+                    '🧹 Código más limpio y mantenible',
+                    '📱 Interfaz optimizada sin campos innecesarios'
+                ],
+                breaking: [
+                    'Eliminada funcionalidad de frecuencia de envío (campo send_frequency_days)',
+                    'Removidos botones de frecuencia rápida (Inmediato, Diario, Semanal, Mensual)',
+                    'API webhooks ya no incluyen campo send_frequency_days'
+                ],
+                technical: [
+                    'Eliminados estilos CSS relacionados con frecuencia (.frequency-*)',
+                    'Removidas funciones getFrequencyLabel() y getFrequencyIcon()',
+                    'Limpieza de event listeners y lógica de botones de frecuencia',
+                    'Actualización de tests unitarios e integración',
+                    'Optimización de formularios y reducción de complejidad'
+                ]
+            },
             '1.3.1': {
-                title: '🎓 Sistema de Tutorial Interactivo Completo',
-                date: '2025-09-11',
+                title: '🎓 Sistema de Tutorial Interactivo + URL para SELF_IN',
+                date: '2025-09-22',
                 highlights: [
                     '🎯 Sistema de tutorial paso a paso con Intro.js',
                     '🎨 Modales elegantes sin alerts (adiós prompt/confirm)',
                     '📚 Tutorial específico por sección (Hoteles, Dashboard, Servicios)',
                     '🆕 Onboarding automático para usuarios nuevos',
-                    '🎛️ Menú de selección visual con opciones claras'
+                    '🎛️ Menú de selección visual con opciones claras',
+                    '🔗 Campo URL de redirección para servicio SELF_IN',
+                    '🌐 Gestión completa de URLs con validación y badges visuales'
                 ],
                 breaking: [],
                 technical: [
@@ -28,7 +53,10 @@ class CacheManager {
                     'Sistema de modales profesionales reemplazando alerts',
                     'LocalStorage para gestión de preferencias de tutorial',
                     'Event listeners con cleanup automático y gestión de memoria',
-                    'Responsive design para experiencia móvil optimizada'
+                    'Responsive design para experiencia móvil optimizada',
+                    'Campo self_in_url agregado a API para servicio SELF_IN',
+                    'Validación HTML5 con input type="url" y estilos CSS',
+                    'Badge visual con enlace directo y truncamiento de texto'
                 ]
             },
             '1.3.0': {

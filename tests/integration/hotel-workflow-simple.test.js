@@ -29,7 +29,6 @@ describe('Hotel Management Workflow - Integration Tests', () => {
         <select id="service-select" name="service_code"></select>
         <input type="checkbox" id="send-email" name="send_by_email" />
         <input type="checkbox" id="send-whatsapp" name="send_by_whatsapp" />
-        <input type="number" id="send-frequency" name="send_frequency_days" />
       </form>
     `;
     
@@ -150,7 +149,6 @@ describe('Hotel Management Workflow - Integration Tests', () => {
             service_name: 'Booking Engine',
             send_by_email: true,
             send_by_whatsapp: true,
-            send_frequency_days: 0
           }
         ]
       };
@@ -211,7 +209,6 @@ describe('Hotel Management Workflow - Integration Tests', () => {
         service_code: 'WL',
         send_by_email: true,
         send_by_whatsapp: false,
-        send_frequency_days: 1
       };
       
       const addResult = await mockFetchWebhook({
@@ -230,14 +227,12 @@ describe('Hotel Management Workflow - Integration Tests', () => {
         service_code: 'BOENGINE',
         send_by_email: true,
         send_by_whatsapp: false,
-        send_frequency_days: 0
       };
       
       const invalidServiceConfig = {
         service_code: '',  // empty
         send_by_email: false,
         send_by_whatsapp: false,  // no channels selected
-        send_frequency_days: -1   // negative frequency
       };
       
       const validateServiceConfig = (config) => {
@@ -251,9 +246,6 @@ describe('Hotel Management Workflow - Integration Tests', () => {
           errors.push('At least one communication channel must be selected');
         }
         
-        if (config.send_frequency_days < 0) {
-          errors.push('Frequency days cannot be negative');
-        }
         
         return errors;
       };
@@ -264,7 +256,7 @@ describe('Hotel Management Workflow - Integration Tests', () => {
       expect(errors.length).toBeGreaterThan(0);
       expect(errors).toContain('Service code is required');
       expect(errors).toContain('At least one communication channel must be selected');
-      expect(errors).toContain('Frequency days cannot be negative');
+      expect(errors).toHaveLength(0);
     });
   });
 

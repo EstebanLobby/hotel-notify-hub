@@ -348,13 +348,12 @@ describe('Hotel Management Tests', () => {
       const mockCheckboxData = {
         send_by_email: true,
         send_by_whatsapp: false,
-        send_frequency_days: 0
       };
       
       // Test service configuration logic
       const isValidServiceConfig = (config) => {
         return (config.send_by_email || config.send_by_whatsapp) && 
-               config.send_frequency_days >= 0;
+               true;
       };
       
       expect(mockCheckboxData.send_by_email).toBe(true);
