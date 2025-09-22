@@ -403,10 +403,16 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     send_frequency_days: serviceData.frequency_days || 0
   };
 
-  // Agregar statusIN solo para el servicio SELF_IN
-  if (serviceCode === 'SELF_IN' && serviceData.hasOwnProperty('status_in')) {
-    webhookData.status_in = serviceData.status_in;
-    console.log('Agregando statusIN para SELF_IN:', serviceData.status_in);
+  // Agregar statusIN y URL para el servicio SELF_IN
+  if (serviceCode === 'SELF_IN') {
+    if (serviceData.hasOwnProperty('status_in')) {
+      webhookData.status_in = serviceData.status_in;
+      console.log('Agregando statusIN para SELF_IN:', serviceData.status_in);
+    }
+    if (serviceData.hasOwnProperty('self_in_url')) {
+      webhookData.self_in_url = serviceData.self_in_url;
+      console.log('Agregando URL para SELF_IN:', serviceData.self_in_url);
+    }
   }
 
   const res = await fetchWebhook(webhookData);
@@ -464,10 +470,14 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     send_frequency_days: serviceData.frequency_days || 0
   };
 
-  // Agregar statusIN solo para el servicio SELF_IN
+  // Agregar statusIN y URL para el servicio SELF_IN si están presentes
   if (serviceData.hasOwnProperty('status_in')) {
     webhookData.status_in = serviceData.status_in;
     console.log('Actualizando statusIN para SELF_IN:', serviceData.status_in);
+  }
+  if (serviceData.hasOwnProperty('self_in_url')) {
+    webhookData.self_in_url = serviceData.self_in_url;
+    console.log('Actualizando URL para SELF_IN:', serviceData.self_in_url);
   }
 
   const res = await fetchWebhook(webhookData);

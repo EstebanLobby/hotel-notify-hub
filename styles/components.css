@@ -720,14 +720,48 @@ select:focus {
 }
 
 #self-in-status-section .checkbox-label p {
-  margin: 0;
-  padding: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* URL Input Field for SELF_IN Service */
+#self-in-url {
+    background: var(--surface);
+    border: 2px solid var(--border-light);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+#self-in-url:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: var(--background);
+}
+
+#self-in-url:invalid {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+#self-in-url:invalid:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+#self-in-url::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
 }
 
 /* StatusIN badge for SELF_IN service */
@@ -757,6 +791,46 @@ select:focus {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
   border: 1px solid #ef4444;
+}
+
+/* URL Badge for SELF_IN service */
+.service-url {
+  margin-top: 0.5rem;
+}
+
+.url-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: 1px solid #3b82f6;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.url-badge a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.url-badge a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .url-badge a {
+    max-width: 150px;
+  }
 }
 
 /* Communication Channels Section Styling */

@@ -832,6 +832,13 @@ async function viewHotelServices(id) {
                   <span class="status-in-badge ${service.status_in ? 'status-in-active' : 'status-in-inactive'}">
                     ${service.status_in ? '✅ StatusIN: ACTIVO' : '❌ StatusIN: INACTIVO'}
                   </span>
+                  ${service.self_in_url ? `
+                    <div class="service-url">
+                      <span class="url-badge">
+                        🔗 <a href="${service.self_in_url}" target="_blank" rel="noopener noreferrer">${service.self_in_url}</a>
+                      </span>
+                    </div>
+                  ` : ''}
                 </div>
               ` : ''}
             </div>
@@ -1132,10 +1139,12 @@ async function handleAddServiceSubmit(e) {
     frequency_days: parseInt(formData.send_frequency_days) || 0
   };
 
-  // Agregar statusIN solo para el servicio SELF_IN
+  // Agregar statusIN y URL solo para el servicio SELF_IN
   if (formData.service_code === 'SELF_IN') {
     serviceData.status_in = formData.status_in === 'true';
+    serviceData.self_in_url = formData.self_in_url || '';
     console.log('SELF_IN detectado - statusIN:', serviceData.status_in);
+    console.log('SELF_IN detectado - URL:', serviceData.self_in_url);
   }
 
   try {
@@ -1176,10 +1185,14 @@ function handleServiceSelectionChange(e) {
   } else {
     // Ocultar la sección de statusIN para otros servicios
     selfInSection.style.display = 'none';
-    // Resetear valores de statusIN
+    // Resetear valores de statusIN y URL
     const statusInFalse = document.getElementById('status-in-false');
+    const selfInUrl = document.getElementById('self-in-url');
     if (statusInFalse) {
       statusInFalse.checked = true;
+    }
+    if (selfInUrl) {
+      selfInUrl.value = '';
     }
   }
 }
@@ -1211,15 +1224,19 @@ function resetAddServiceForm() {
       frequencyField.value = 0;
     }
     
-    // Ocultar sección de statusIN y resetear a FALSE
-    const selfInSection = document.getElementById('self-in-status-section');
-    if (selfInSection) {
-      selfInSection.style.display = 'none';
-    }
-    const statusInFalse = document.getElementById('status-in-false');
-    if (statusInFalse) {
-      statusInFalse.checked = true;
-    }
+  // Ocultar sección de statusIN y resetear a FALSE, limpiar URL
+  const selfInSection = document.getElementById('self-in-status-section');
+  if (selfInSection) {
+    selfInSection.style.display = 'none';
+  }
+  const statusInFalse = document.getElementById('status-in-false');
+  const selfInUrl = document.getElementById('self-in-url');
+  if (statusInFalse) {
+    statusInFalse.checked = true;
+  }
+  if (selfInUrl) {
+    selfInUrl.value = '';
+  }
     
     // Limpiar dataset
     delete form.dataset.serviceId;
@@ -1263,7 +1280,7 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     document.getElementById('send-whatsapp').checked = service.send_by_whatsapp;
     document.getElementById('send-frequency').value = service.send_frequency_days || 0;
     
-    // Manejar campo statusIN para servicio SELF_IN
+    // Manejar campo statusIN y URL para servicio SELF_IN
     const selfInSection = document.getElementById('self-in-status-section');
     if (serviceCode === 'SELF_IN') {
       selfInSection.style.display = 'block';
@@ -1271,7 +1288,15 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
       const statusInValue = service.status_in !== undefined ? service.status_in : false;
       document.getElementById('status-in-true').checked = statusInValue === true;
       document.getElementById('status-in-false').checked = statusInValue === false;
+      
+      // Configurar URL de redirección
+      const selfInUrl = document.getElementById('self-in-url');
+      if (selfInUrl) {
+        selfInUrl.value = service.self_in_url || '';
+      }
+      
       console.log('Cargando statusIN para edición:', statusInValue);
+      console.log('Cargando URL para edición:', service.self_in_url || '');
     } else {
       selfInSection.style.display = 'none';
     }
