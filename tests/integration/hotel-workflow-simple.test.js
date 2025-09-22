@@ -256,7 +256,7 @@ describe('Hotel Management Workflow - Integration Tests', () => {
       expect(errors.length).toBeGreaterThan(0);
       expect(errors).toContain('Service code is required');
       expect(errors).toContain('At least one communication channel must be selected');
-      expect(errors).toHaveLength(0);
+      expect(errors).toHaveLength(2);
     });
   });
 
