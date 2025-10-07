@@ -640,9 +640,16 @@ class LanguageManager {
     const manageBtn = document.getElementById('manage-languages-btn');
     const closeBtn = document.getElementById('close-language-management');
     const section = document.getElementById('language-management');
+    
+    console.log('🔍 Elementos encontrados:', {
+      manageBtn: !!manageBtn,
+      closeBtn: !!closeBtn,
+      section: !!section
+    });
 
     if (manageBtn) {
       manageBtn.addEventListener('click', async () => {
+        console.log('🎯 Botón Gestionar Idiomas clickeado');
         section.style.display = section.style.display === 'none' ? 'block' : 'none';
         if (section.style.display === 'block') {
           // Load default templates when opening language management
@@ -1618,10 +1625,27 @@ async function initializeTemplateManager() {
   }
 }
 
-// Template manager initialization disabled for hotels view
-// Will be re-enabled in future version
-// if (document.readyState === 'loading') {
-//   document.addEventListener('DOMContentLoaded', initializeTemplateManager);
-// } else {
-//   initializeTemplateManager();
-// }
+// Initialize only language manager for services view
+// Template manager disabled for hotels view
+async function initializeLanguageManager() {
+  try {
+    console.log('🔄 Inicializando Language Manager...');
+    
+    // Load supported languages from API first
+    await loadSupportedLanguagesFromAPI();
+    
+    if (!languageManager) {
+      languageManager = new LanguageManager();
+      window.languageManager = languageManager;
+      console.log('✅ Language Manager inicializado correctamente');
+    }
+  } catch (error) {
+    console.error('❌ Error inicializando Language Manager:', error);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeLanguageManager);
+} else {
+  initializeLanguageManager();
+}
