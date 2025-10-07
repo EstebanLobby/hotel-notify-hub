@@ -27,6 +27,71 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [1.3.3] - 2025-10-07
+
+### 🎯 Optimización de Servicios - Enfoque en Funcionalidades Core
+
+#### Removido
+- 🗑️ **Sistema Completo de Plantillas de Mensajes en Vista de Hoteles**
+  - Sección "📝 Plantillas de Mensajes por Idioma" eliminada del formulario de servicios
+  - Contenedor de plantillas con sistema de pestañas dinámicas
+  - Sección "🔧 Variables Disponibles" con botones interactivos
+  - Botones de acción: "🔄 Cargar Plantillas por Defecto" y "👁️ Vista Previa"
+  - Event listeners y validaciones de plantillas en formularios
+- 🚫 **Botón "Sincronizar Plantillas"**
+  - Botón de sincronización eliminado del header de servicios
+  - Función `syncTemplatesWithAPI()` completamente removida
+  - Event listeners relacionados con sincronización
+- 🎓 **Tutoriales Automáticos Deshabilitados**
+  - Tutorial automático de bienvenida para usuarios nuevos
+  - Tutorial automático al navegar a sección "Hoteles"
+  - Ofertas automáticas de tutoriales específicos después de completar tutorial principal
+  - Confirmaciones automáticas de tutoriales al navegar
+
+#### Cambiado
+- ⚡ **Vista de Hoteles Simplificada**
+  - Formulario de servicios enfocado únicamente en funcionalidades esenciales
+  - Interfaz más limpia sin elementos de gestión de idiomas
+  - Flujo de trabajo más directo para agregar/editar servicios
+- 🎯 **Sistema de Tutoriales Solo Manual**
+  - Tutoriales únicamente disponibles a través del botón "🎓 Tutorial"
+  - Modal de selección con opciones: Tutorial Completo, Hoteles, Servicios
+  - Sin interrupciones automáticas durante la navegación
+  - Control total del usuario sobre cuándo ver tutoriales
+- 🎨 **Modal de Editar Idioma Mejorado**
+  - Tarjeta elegante de información del idioma con bandera grande
+  - Editor de plantilla profesional con contador de caracteres en tiempo real
+  - Colores adaptativos del contador (verde/amarillo/rojo según longitud)
+  - Diseño completamente responsivo para todos los dispositivos
+
+#### Técnico
+- 🧹 **Limpieza Masiva de Código**
+  - Eliminadas 64+ líneas HTML de sección de plantillas
+  - Removidas 50+ líneas JavaScript de validaciones y event listeners
+  - Deshabilitada inicialización automática del template manager
+  - Comentado código de tutoriales automáticos para futura reactivación
+- 📊 **Optimización de Performance**
+  - Menos elementos DOM en formularios de servicios
+  - Reducción significativa de JavaScript ejecutándose automáticamente
+  - Eliminación de event listeners innecesarios
+  - Mejor rendimiento general de la aplicación
+- 🔧 **Preparación para Versión Futura**
+  - Sistema de plantillas de mensajes preservado para reactivación
+  - Funcionalidades de idiomas disponibles en vista de servicios
+  - Código comentado (no eliminado) para fácil restauración
+  - APIs y funciones backend completamente intactas
+
+#### Breaking Changes
+⚠️ **Importante**: Esta versión elimina temporalmente la gestión de plantillas de mensajes de la vista de hoteles. La funcionalidad será reintegrada en una versión futura con mejoras adicionales.
+
+#### Beneficios
+- 🎯 **UX Más Enfocada**: Interfaz simplificada sin elementos confusos
+- ⚡ **Mejor Performance**: Menos código ejecutándose automáticamente
+- 🧹 **Código Más Limpio**: Eliminación de funcionalidades redundantes
+- 🎓 **Tutoriales No Intrusivos**: Control total del usuario sobre cuándo ver ayuda
+
+---
+
 ## [1.3.2] - 2025-09-22
 
 ### 🧹 Simplificación del Sistema - Eliminación de Frecuencia

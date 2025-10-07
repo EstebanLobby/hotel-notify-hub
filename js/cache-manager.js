@@ -6,12 +6,26 @@
 class CacheManager {
     constructor() {
         // Versión actual del proyecto (actualizar manualmente en cada release)
-        this.currentVersion = '1.3.2';
+        this.currentVersion = '1.3.3';
         this.versionKey = 'hotel_notify_hub_version';
         this.lastUpdateKey = 'hotel_notify_hub_last_update';
         
         // Release notes para la versión actual
         this.releaseNotes = {
+            '1.3.3': {
+                title: '🎯 Optimización de Servicios - Enfoque en Funcionalidades Core',
+                date: '2025-10-07',
+                changes: [
+                    '🗑️ Eliminado sistema completo de plantillas de mensajes en vista de hoteles',
+                    '🚫 Removido botón "Sincronizar Plantillas" y funcionalidades relacionadas',
+                    '🎓 Deshabilitados tutoriales automáticos - solo activación manual',
+                    '🎨 Mejorado modal de editar idioma con contador de caracteres',
+                    '⚡ Vista de hoteles simplificada y más enfocada',
+                    '🧹 Limpieza masiva de código: -64 líneas HTML, -50 líneas JS',
+                    '📊 Optimización de performance y mejor rendimiento',
+                    '🔧 Código preparado para reactivación futura de funcionalidades'
+                ]
+            },
             '1.3.2': {
                 title: '🧹 Simplificación del Sistema - Eliminación de Frecuencia',
                 date: '2025-09-22',

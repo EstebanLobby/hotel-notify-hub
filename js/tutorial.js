@@ -87,8 +87,8 @@ class TutorialManager {
             // Agregar event listeners
             this.setupEventListeners();
             
-            // Verificar si mostrar tutorial automáticamente
-            this.checkAutoTutorial();
+            // Auto-tutorial disabled - tutorials only activate via button
+            // this.checkAutoTutorial();
             
             this.isInitialized = true;
             console.log('Tutorial system initialized successfully');
@@ -141,13 +141,14 @@ class TutorialManager {
         }
 
         // Tutorial específico cuando se entra a la sección de hoteles
-        document.addEventListener('click', (e) => {
-            if (e.target.matches('[data-route="hotels"]')) {
-                setTimeout(() => {
-                    this.checkHotelsSectionTutorial();
-                }, 500);
-            }
-        });
+        // Auto-tutorials disabled - tutorials only activate via button
+        // document.addEventListener('click', (e) => {
+        //     if (e.target.matches('[data-route="hotels"]')) {
+        //         setTimeout(() => {
+        //             this.checkHotelsSectionTutorial();
+        //         }, 500);
+        //     }
+        // });
 
         // Eventos de Intro.js
         introJs().oncomplete(() => {
@@ -302,18 +303,18 @@ class TutorialManager {
             showToast('¡Tutorial completado! 🎉 Ya conoces las funcionalidades principales.', 'success');
         }
         
-        // Ofrecer tutorial de sección específica
-        setTimeout(() => {
-            const showSectionTutorial = confirm(
-                "¡Excelente! 🎉\n\n" +
-                "¿Te gustaría ver tutoriales específicos de cada sección cuando las visites?\n\n" +
-                "Esto te ayudará a entender funcionalidades más detalladas."
-            );
-            
-            if (!showSectionTutorial) {
-                localStorage.setItem('hotels_tutorial_seen', 'true');
-            }
-        }, 1000);
+        // Auto-tutorial offers disabled - tutorials only activate via button
+        // setTimeout(() => {
+        //     const showSectionTutorial = confirm(
+        //         "¡Excelente! 🎉\n\n" +
+        //         "¿Te gustaría ver tutoriales específicos de cada sección cuando las visites?\n\n" +
+        //         "Esto te ayudará a entender funcionalidades más detalladas."
+        //     );
+        //     
+        //     if (!showSectionTutorial) {
+        //         localStorage.setItem('hotels_tutorial_seen', 'true');
+        //     }
+        // }, 1000);
     }
 
     /**

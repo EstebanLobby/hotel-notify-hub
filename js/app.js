@@ -322,10 +322,10 @@ function showCacheInfoModal() {
           <div class="cache-release-highlights">
             <strong>${currentReleaseInfo.title}</strong>
             <ul>
-              ${currentReleaseInfo.highlights.map(item => `<li>${item}</li>`).join('')}
+              ${(currentReleaseInfo.highlights || currentReleaseInfo.changes || []).map(item => `<li>${item}</li>`).join('')}
             </ul>
           </div>
-          ${currentReleaseInfo.technical.length > 0 ? `
+          ${(currentReleaseInfo.technical && currentReleaseInfo.technical.length > 0) ? `
             <details class="cache-release-technical">
               <summary>🔧 Detalles técnicos</summary>
               <ul>
@@ -348,11 +348,11 @@ function showCacheInfoModal() {
           <div class="cache-release-highlights">
             <strong>${previousReleaseInfo.title}</strong>
             <ul>
-              ${previousReleaseInfo.highlights.slice(0, 3).map(item => `<li>${item}</li>`).join('')}
-              ${previousReleaseInfo.highlights.length > 3 ? '<li><em>... y más mejoras</em></li>' : ''}
+              ${(previousReleaseInfo.highlights || previousReleaseInfo.changes || []).slice(0, 3).map(item => `<li>${item}</li>`).join('')}
+              ${(previousReleaseInfo.highlights || previousReleaseInfo.changes || []).length > 3 ? '<li><em>... y más mejoras</em></li>' : ''}
             </ul>
           </div>
-          ${previousReleaseInfo.technical.length > 0 ? `
+          ${(previousReleaseInfo.technical && previousReleaseInfo.technical.length > 0) ? `
             <details class="cache-release-technical">
               <summary>🔧 Detalles técnicos (${previousReleaseInfo.technical.length} elementos)</summary>
               <ul>

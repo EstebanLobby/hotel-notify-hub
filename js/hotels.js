@@ -1069,10 +1069,12 @@ async function handleAddServiceSubmit(e) {
     whatsapp: formData.send_by_whatsapp
   };
 
-  // Agregar statusIN y URL solo para el servicio SELF_IN
+  // Agregar statusIN, URL y plantillas solo para el servicio SELF_IN
   if (formData.service_code === 'SELF_IN') {
     serviceData.status_in = formData.status_in === 'true';
     serviceData.self_in_url = formData.self_in_url || '';
+    
+    
     console.log('SELF_IN detectado - statusIN:', serviceData.status_in);
     console.log('SELF_IN detectado - URL:', serviceData.self_in_url);
   }
@@ -1112,6 +1114,7 @@ function handleServiceSelectionChange(e) {
   if (selectedServiceCode === 'SELF_IN') {
     // Mostrar la sección de statusIN para el servicio SELF_IN
     selfInSection.style.display = 'block';
+    
   } else {
     // Ocultar la sección de statusIN para otros servicios
     selfInSection.style.display = 'none';
@@ -1124,6 +1127,7 @@ function handleServiceSelectionChange(e) {
     if (selfInUrl) {
       selfInUrl.value = '';
     }
+    
   }
 }
 
@@ -1162,6 +1166,7 @@ function resetAddServiceForm() {
   if (selfInUrl) {
     selfInUrl.value = '';
   }
+  
     
     // Limpiar dataset
     delete form.dataset.serviceId;
@@ -1218,6 +1223,7 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
       if (selfInUrl) {
         selfInUrl.value = service.self_in_url || '';
       }
+      
       
       console.log('Cargando statusIN para edición:', statusInValue);
       console.log('Cargando URL para edición:', service.self_in_url || '');

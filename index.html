@@ -144,7 +144,7 @@
                                 data-intro="Aquí puedes ver la información del sistema, versión actual y gestionar el caché de la aplicación." 
                                 data-step="2">
                             <span data-lucide="info"></span>
-                            <span id="app-version">v1.3.2</span>
+                            <span id="app-version">v1.3.3</span>
                         </button>
                         <button id="force-refresh-btn" class="btn btn-outline-primary btn-sm" title="Forzar actualización"
                                 data-intro="Usa este botón para forzar una actualización y recargar los datos más recientes." 
@@ -277,6 +277,39 @@
                 <div id="services-view" class="view">
                     <div class="page-header">
                         <h2>Gestión de Servicios</h2>
+                        <div class="header-actions">
+                            <button id="manage-languages-btn" class="btn btn-secondary">
+                                <span data-lucide="globe"></span>
+                                Gestionar Idiomas
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Language Management Section -->
+                    <div id="language-management" class="management-section" style="display: none;">
+                        <div class="section-header">
+                            <h3>🌍 Gestión de Idiomas para Plantillas</h3>
+                            <button id="close-language-management" class="btn btn-ghost btn-sm">
+                                <span data-lucide="x"></span>
+                            </button>
+                        </div>
+                        
+            <div class="language-management-content">
+                <!-- Current Languages -->
+                <div class="active-languages-section">
+                    <div class="section-header-with-action">
+                        <h4>📋 Idiomas Activos</h4>
+                        <button id="add-new-language-btn" class="btn btn-primary" onclick="openAddLanguageModal()">
+                            <span data-lucide="plus"></span>
+                            Agregar Idioma
+                        </button>
+                    </div>
+                    <div id="active-languages-list" class="languages-list">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+            </div>
+                        
                     </div>
                     
                     <div class="table-container">
@@ -473,6 +506,7 @@
                         >
                         <small class="form-help">URL de destino para la redirección después del check-in automático</small>
                     </div>
+
                 </div>
 
                 <div class="modal-footer">
@@ -608,7 +642,7 @@
     <div id="cache-info-modal" class="modal">
         <div class="modal-content cache-info-modal-content">
             <div class="modal-header">
-                <h3>📊 Información del Sistema de Caché</h3>
+                <h3>📊 Información del Sistema</h3>
                 <span class="close" id="close-cache-info">&times;</span>
             </div>
             <div class="modal-body cache-info-body">
@@ -670,6 +704,187 @@
         </div>
     </div>
 
+    <!-- Variables Examples Modal -->
+    <div id="variables-examples-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📋 Ejemplos de Variables</h3>
+                <button class="modal-close" id="close-variables-examples">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="variable-icon">🏨</span>
+                            <code>{hotel_name}</code>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Descripción:</strong> Se reemplaza con el nombre completo del hotel</p>
+                            <p><strong>Ejemplo:</strong></p>
+                            <div class="example-before">Texto: "Bienvenido a {hotel_name}"</div>
+                            <div class="example-after">Resultado: "Bienvenido a Demo Bitrix (Test Fabi)"</div>
+                        </div>
+                    </div>
+                    
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="variable-icon">👤</span>
+                            <code>{guest_name}</code>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Descripción:</strong> Se reemplaza con el nombre del huésped</p>
+                            <p><strong>Ejemplo:</strong></p>
+                            <div class="example-before">Texto: "Estimado {guest_name}"</div>
+                            <div class="example-after">Resultado: "Estimado Sr. Juan Pérez"</div>
+                        </div>
+                    </div>
+                    
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="variable-icon">🎫</span>
+                            <code>{reservation_number}</code>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Descripción:</strong> Se reemplaza con el número único de reserva</p>
+                            <p><strong>Ejemplo:</strong></p>
+                            <div class="example-before">Texto: "Reserva #{reservation_number}"</div>
+                            <div class="example-after">Resultado: "Reserva #jdgChd070000307dfbed-jhHERuhg454hg"</div>
+                        </div>
+                    </div>
+                    
+                    <div class="example-card">
+                        <div class="example-header">
+                            <span class="variable-icon">🔗</span>
+                            <code>{checkin_url}</code>
+                        </div>
+                        <div class="example-content">
+                            <p><strong>Descripción:</strong> Se reemplaza con la URL completa del formulario de check-in</p>
+                            <p><strong>Ejemplo:</strong></p>
+                            <div class="example-before">Texto: "Complete el formulario: {checkin_url}"</div>
+                            <div class="example-after">Resultado: "Complete el formulario: https://selfcheckin.minihotel.info/?hotelID=..."</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="usage-tips">
+                    <h4>💡 Consejos de Uso</h4>
+                    <ul>
+                        <li><strong>Obligatorias:</strong> {hotel_name} y {checkin_url} deben estar siempre presentes</li>
+                        <li><strong>Opcionales:</strong> {guest_name} y {reservation_number} son recomendadas para personalización</li>
+                        <li><strong>Formato:</strong> Siempre usa llaves {} alrededor del nombre de la variable</li>
+                        <li><strong>Mayúsculas:</strong> Respeta exactamente el nombre (hotel_name, no Hotel_Name)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="preview-modal" style="display: none;">
+        <div class="preview-modal-content">
+            <div class="preview-modal-header">
+                <h3>📱 Vista Previa del Mensaje</h3>
+                <button class="preview-modal-close" id="close-preview-modal">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <div class="preview-content" id="preview-content">
+                <!-- El contenido de la vista previa se generará aquí -->
+            </div>
+            <div class="preview-variables">
+                <h4>📋 Variables utilizadas en este ejemplo:</h4>
+                <ul>
+                    <li><strong>{hotel_name}</strong> → Demo Bitrix (Test Fabi)</li>
+                    <li><strong>{guest_name}</strong> → Sr. Juan Pérez</li>
+                     <li><strong>{reservation_number}</strong> → jdgChd070000307dfbed-jhHERuhg454hg-gdfg070000307GRK</li>
+                    <li><strong>{checkin_url}</strong> → https://selfcheckin.minihotel.info/?hotelID=demobi05&reservationNumber=...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Language Modal -->
+    <div id="add-language-modal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) closeAddLanguageModal()">
+        <div class="modal-content add-language-modal">
+            <div class="modal-header">
+                <h3>➕ Agregar Nuevo Idioma</h3>
+                <button class="modal-close" onclick="closeAddLanguageModal()">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="add-language-form" class="language-form">
+                    <div class="form-group">
+                        <label for="country-select">Seleccionar País/Idioma *</label>
+                        <select id="country-select" required>
+                            <option value="">Cargando países...</option>
+                        </select>
+                        <small class="form-help">Selecciona un país para obtener automáticamente el código e idioma</small>
+                    </div>
+                    
+                    <!-- Hidden fields for selected language data -->
+                    <input type="hidden" id="lang-code" name="lang-code">
+                    <input type="hidden" id="lang-name" name="lang-name">
+                    
+                    
+                    <div class="form-group">
+                        <label for="lang-template">Plantilla por Defecto</label>
+                        <textarea id="lang-template" name="lang-template" rows="8" placeholder="🏨 Check-in Online – ¡Simplificá tu llegada a {hotel_name}!&#10;&#10;¡Gracias por elegirnos..."></textarea>
+                        <small class="form-help">Plantilla de mensaje por defecto (opcional)</small>
+                    </div>
+                    
+                    <!-- Variables Section for Add Modal -->
+                    <div class="variables-section">
+                        <h4>🔧 Variables Disponibles</h4>
+                        <p>Haz clic en cualquier variable para insertarla en el mensaje actual:</p>
+                        
+                        <div class="variables-grid">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{hotel_name}', 'lang-template')" title="Insertar nombre del hotel">
+                                <span class="variable-icon">🏨</span>
+                                <span class="variable-code">{hotel_name}</span>
+                                <span class="variable-desc">Nombre del hotel</span>
+                            </button>
+                            
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{guest_name}', 'lang-template')" title="Insertar nombre del huésped">
+                                <span class="variable-icon">👤</span>
+                                <span class="variable-code">{guest_name}</span>
+                                <span class="variable-desc">Nombre del huésped</span>
+                            </button>
+                            
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{reservation_number}', 'lang-template')" title="Insertar número de reserva">
+                                <span class="variable-icon">🎫</span>
+                                <span class="variable-code">{reservation_number}</span>
+                                <span class="variable-desc">Número de reserva</span>
+                            </button>
+                            
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{checkin_url}', 'lang-template')" title="Insertar URL de check-in">
+                                <span class="variable-icon">🔗</span>
+                                <span class="variable-code">{checkin_url}</span>
+                                <span class="variable-desc">URL de check-in</span>
+                            </button>
+                        </div>
+                        
+                        <div class="variables-actions">
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="showVariableExamples()">Ver Ejemplos</button>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyAllVariables()">Copiar Todas</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="add-language-form" class="btn btn-primary">
+                    <span data-lucide="plus"></span>
+                    Agregar Idioma
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeAddLanguageModal()">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/cache-manager.js"></script>
     <script src="js/data.js"></script>
@@ -677,7 +892,92 @@
     <script src="js/auth.js"></script>
     <script src="js/charts.js"></script>
     <script src="js/hotels.js"></script>
+    <!-- Edit Language Modal -->
+    <div id="edit-language-modal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) closeEditLanguageModal()">
+        <div class="modal-content edit-language-modal">
+            <div class="modal-header">
+                <h3>✏️ Editar Idioma</h3>
+                <button class="modal-close" onclick="closeEditLanguageModal()">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-language-form" class="language-form">
+                    <!-- Language Info Card -->
+                    <div class="language-info-card">
+                        <div class="language-info-header">
+                            <div class="language-info-icon">
+                                <span id="edit-lang-flag" class="language-flag-large"></span>
+                            </div>
+                            <div class="language-info-details">
+                                <h4 id="edit-lang-name" class="language-name-large"></h4>
+                                <span id="edit-lang-code" class="language-code-badge"></span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-lang-code-hidden" name="lang-code">
+                    </div>
+                    
+                    <!-- Template Editor -->
+                    <div class="template-editor-section">
+                        <div class="section-header">
+                            <h4>📝 Plantilla del Mensaje</h4>
+                            <small class="section-description">Personaliza el mensaje que recibirán los huéspedes en este idioma</small>
+                        </div>
+                        <div class="template-editor-wrapper">
+                            <textarea id="edit-lang-template" name="lang-template" rows="12" placeholder="Ingrese la plantilla para este idioma..." class="template-textarea"></textarea>
+                            <div class="template-editor-footer">
+                                <span class="character-count">0 caracteres</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Variables Section for Edit Modal -->
+                    <div class="variables-section">
+                        <h4>🔧 Variables Disponibles</h4>
+                        <p>Haz clic en cualquier variable para insertarla en el mensaje actual:</p>
+                        
+                        <div class="variables-grid">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{hotel_name}', 'edit-lang-template')" title="Insertar nombre del hotel">
+                                <span class="variable-icon">🏨</span>
+                                <span class="variable-code">{hotel_name}</span>
+                                <span class="variable-desc">Nombre del hotel</span>
+                            </button>
+                            
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{guest_name}', 'edit-lang-template')" title="Insertar nombre del huésped">
+                                <span class="variable-icon">👤</span>
+                                <span class="variable-code">{guest_name}</span>
+                                <span class="variable-desc">Nombre del huésped</span>
+                            </button>
+                            
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{reservation_number}', 'edit-lang-template')" title="Insertar número de reserva">
+                                <span class="variable-icon">🎫</span>
+                                <span class="variable-code">{reservation_number}</span>
+                                <span class="variable-desc">Número de reserva</span>
+                            </button>
+                            
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{checkin_url}', 'edit-lang-template')" title="Insertar URL de check-in">
+                                <span class="variable-icon">🔗</span>
+                                <span class="variable-code">{checkin_url}</span>
+                                <span class="variable-desc">URL de check-in</span>
+                            </button>
+                        </div>
+                        
+                        <div class="variables-actions">
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="showVariableExamples()">Ver Ejemplos</button>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyAllVariables()">Copiar Todas</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditLanguageModal()">Cancelar</button>
+                <button class="btn btn-primary" id="edit-language-submit-btn" onclick="languageManager.handleEditLanguage(event)">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/services.js"></script>
+    <script src="js/message-templates.js"></script>
     <script src="js/reports.js"></script>
     <script src="js/tutorial.js"></script>
     <script src="js/app.js"></script>

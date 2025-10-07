@@ -225,13 +225,17 @@ function buildWebhookUrl(params) {
 
 async function fetchWebhook(params) {
   const url = buildWebhookUrl(params);
-  console.log('Llamando webhook:', url);
+  console.log('fetchWebhook - Parámetros:', params);
+  console.log('fetchWebhook - URL generada:', url);
+  
   const response = await fetch(url, { method: 'GET' });
+  console.log('fetchWebhook - Response status:', response.status, response.statusText);
+  
   if (!response.ok) {
     throw new Error(`Webhook HTTP ${response.status}`);
   }
   let payload = await response.json();
-  console.log('Respuesta del webhook:', payload);
+  console.log('fetchWebhook - Payload recibido:', payload);
   
   // Para países, extraer el array de datos
   if (params.func === 'country') {
@@ -402,7 +406,7 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     send_by_whatsapp: serviceData.whatsapp || false,
   };
 
-  // Agregar statusIN y URL para el servicio SELF_IN
+  // Agregar statusIN, URL y plantillas para el servicio SELF_IN
   if (serviceCode === 'SELF_IN') {
     if (serviceData.hasOwnProperty('status_in')) {
       webhookData.status_in = serviceData.status_in;
@@ -411,6 +415,15 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     if (serviceData.hasOwnProperty('self_in_url')) {
       webhookData.self_in_url = serviceData.self_in_url;
       console.log('Agregando URL para SELF_IN:', serviceData.self_in_url);
+    }
+    if (serviceData.hasOwnProperty('message_templates')) {
+      // Enviar cada plantilla como parámetro separado para facilitar el manejo en el backend
+      Object.keys(serviceData.message_templates).forEach(langCode => {
+        if (serviceData.message_templates[langCode]) {
+          webhookData[`template_${langCode}`] = serviceData.message_templates[langCode];
+        }
+      });
+      console.log('Agregando plantillas para SELF_IN:', serviceData.message_templates);
     }
   }
 
@@ -468,7 +481,7 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     send_by_whatsapp: serviceData.whatsapp || false,
   };
 
-  // Agregar statusIN y URL para el servicio SELF_IN si están presentes
+  // Agregar statusIN, URL y plantillas para el servicio SELF_IN si están presentes
   if (serviceData.hasOwnProperty('status_in')) {
     webhookData.status_in = serviceData.status_in;
     console.log('Actualizando statusIN para SELF_IN:', serviceData.status_in);
@@ -476,6 +489,15 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
   if (serviceData.hasOwnProperty('self_in_url')) {
     webhookData.self_in_url = serviceData.self_in_url;
     console.log('Actualizando URL para SELF_IN:', serviceData.self_in_url);
+  }
+  if (serviceData.hasOwnProperty('message_templates')) {
+    // Enviar cada plantilla como parámetro separado para facilitar el manejo en el backend
+    Object.keys(serviceData.message_templates).forEach(langCode => {
+      if (serviceData.message_templates[langCode]) {
+        webhookData[`template_${langCode}`] = serviceData.message_templates[langCode];
+      }
+    });
+    console.log('Actualizando plantillas para SELF_IN:', serviceData.message_templates);
   }
 
   const res = await fetchWebhook(webhookData);
@@ -495,22 +517,63 @@ window.removeHotelServiceAsync = removeHotelServiceAsync;
 window.updateHotelServiceAsync = updateHotelServiceAsync;
 
 // =============================================
-// Countries operations with webhook
+// Countries operations with webhook and cache
 // =============================================
 
+// Cache en memoria para countries
+let countriesMemoryCache = null;
+const COUNTRIES_CACHE_KEY = 'countriesCache';
+const COUNTRIES_CACHE_TIMESTAMP_KEY = 'countriesCacheTimestamp';
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas en millisegundos
+
+/**
+ * Obtiene países desde caché (memoria o localStorage) o desde API
+ * @returns {Promise<Array>} Array de países
+ */
 async function getCountriesAsync() {
   try {
+    // 1. Verificar caché en memoria primero
+    if (countriesMemoryCache) {
+      console.log('Países obtenidos desde caché en memoria:', countriesMemoryCache.length);
+      return countriesMemoryCache;
+    }
+    
+    // 2. Verificar caché en localStorage
+    const cachedData = localStorage.getItem(COUNTRIES_CACHE_KEY);
+    const cacheTimestamp = localStorage.getItem(COUNTRIES_CACHE_TIMESTAMP_KEY);
+    
+    if (cachedData && cacheTimestamp) {
+      const now = Date.now();
+      const cacheAge = now - parseInt(cacheTimestamp);
+      
+      if (cacheAge < CACHE_DURATION) {
+        const countries = JSON.parse(cachedData);
+        countriesMemoryCache = countries; // Guardar en memoria también
+        console.log('Países obtenidos desde localStorage:', countries.length);
+        return countries;
+      } else {
+        console.log('Caché de países expirado, obteniendo datos frescos...');
+      }
+    }
+    
+    // 3. Obtener desde API si no hay caché válido
+    console.log('Obteniendo países desde API...');
     const countries = await fetchWebhook({ 
       func: 'country', 
       method: 'list'
     });
     
     if (countries && Array.isArray(countries)) {
-      console.log('Países obtenidos:', countries.length);
+      console.log('Países obtenidos desde API:', countries.length);
       
-      // Actualizar cache con el nuevo sistema
+      // Guardar en ambos cachés
+      countriesMemoryCache = countries;
+      localStorage.setItem(COUNTRIES_CACHE_KEY, JSON.stringify(countries));
+      localStorage.setItem(COUNTRIES_CACHE_TIMESTAMP_KEY, Date.now().toString());
+      
+      // Actualizar cache manager si existe
       if (window.cacheManager) {
-        localStorage.setItem('countriesCache', JSON.stringify(countries));
+        setTimeout(() => window.cacheManager.updateVersionIndicator(), 100);
       }
       
       return countries;
@@ -520,9 +583,349 @@ async function getCountriesAsync() {
     }
   } catch (error) {
     console.error('Error en getCountriesAsync:', error);
+    
+    // En caso de error, intentar usar caché expirado como fallback
+    const cachedData = localStorage.getItem(COUNTRIES_CACHE_KEY);
+    if (cachedData) {
+      console.log('Usando caché expirado como fallback');
+      const countries = JSON.parse(cachedData);
+      countriesMemoryCache = countries;
+      return countries;
+    }
+    
     throw error;
   }
 }
 
-// Make countries function globally available
+/**
+ * Limpia el caché de países (útil para debugging o actualizaciones forzadas)
+ */
+function clearCountriesCache() {
+  countriesMemoryCache = null;
+  localStorage.removeItem(COUNTRIES_CACHE_KEY);
+  localStorage.removeItem(COUNTRIES_CACHE_TIMESTAMP_KEY);
+  console.log('Caché de países limpiado');
+}
+
+/**
+ * Fuerza la actualización del caché de países
+ */
+async function refreshCountriesCache() {
+  clearCountriesCache();
+  return await getCountriesAsync();
+}
+
+// Make countries functions globally available
 window.getCountriesAsync = getCountriesAsync;
+window.clearCountriesCache = clearCountriesCache;
+window.refreshCountriesCache = refreshCountriesCache;
+
+// =============================================
+// Message Templates operations with webhook
+// =============================================
+
+async function getMessageTemplatesAsync(serviceId = 6) {
+  try {
+    const templates = await fetchWebhook({ 
+      func: 'message_templates', 
+      method: 'list',
+      service_id: serviceId
+    });
+    
+    if (templates && Array.isArray(templates)) {
+      console.log('Plantillas obtenidas:', templates.length);
+      
+      // Convertir array de plantillas a objeto por idioma
+      const templatesObj = {};
+      templates.forEach(template => {
+        if (template.language_code && template.template_content) {
+          templatesObj[template.language_code] = template.template_content;
+        }
+      });
+      
+      return templatesObj;
+    } else {
+      console.error('Respuesta inválida de plantillas:', templates);
+      return {};
+    }
+  } catch (error) {
+    console.error('Error en getMessageTemplatesAsync:', error);
+    return {};
+  }
+}
+
+async function saveMessageTemplateAsync(serviceId, languageCode, templateContent) {
+  try {
+    const requestData = {
+      func: 'services',
+      method: 'save_template',
+      service_id: serviceId,
+      language_code: languageCode,
+      template_text: templateContent
+    };
+    
+    console.log('saveMessageTemplateAsync - Enviando request:', requestData);
+    
+    const result = await fetchWebhook(requestData);
+    
+    console.log('saveMessageTemplateAsync - Respuesta recibida:', result);
+    return result;
+  } catch (error) {
+    console.error('saveMessageTemplateAsync - Error:', error);
+    throw error;
+  }
+}
+
+async function deleteMessageTemplateAsync(serviceId, languageCode) {
+  try {
+    const requestData = {
+      func: 'services',
+      method: 'delete_template',
+      service_id: serviceId,
+      language_code: languageCode
+    };
+    
+    console.log('deleteMessageTemplateAsync - Enviando request:', requestData);
+    
+    const result = await fetchWebhook(requestData);
+    
+    console.log('deleteMessageTemplateAsync - Respuesta recibida:', result);
+    return result;
+  } catch (error) {
+    console.error('deleteMessageTemplateAsync - Error:', error);
+    throw error;
+  }
+}
+
+// Función para obtener plantilla basada en el país del hotel
+async function getTemplateByHotelCountryAsync(hotelId, serviceId = 6) {
+  try {
+    const result = await fetchWebhook({
+      func: 'message_templates',
+      method: 'get_by_hotel',
+      hotel_id: hotelId,
+      service_id: serviceId
+    });
+    
+    if (result && result.template_content) {
+      return result.template_content;
+    }
+    
+    // Fallback: obtener plantilla en español por defecto
+    const templates = await getMessageTemplatesAsync(serviceId);
+    return templates.es || templates.en || Object.values(templates)[0] || '';
+  } catch (error) {
+    console.error('Error obteniendo plantilla por país:', error);
+    return '';
+  }
+}
+
+/**
+ * Obtiene las plantillas por defecto desde la API
+ * @param {number} serviceId - ID del servicio (por defecto 6 para SELF_IN)
+ * @returns {Promise<Object>} Objeto con plantillas por defecto organizadas por idioma
+ */
+async function getTemplateDefaultsAsync(serviceId = 6) {
+  try {
+    const response = await fetchWebhook({ 
+      func: 'services', 
+      method: 'list_template',
+      service_id: serviceId
+    });
+    
+    console.log('Respuesta completa de plantillas:', response);
+    
+    // Manejar la estructura de respuesta real de la API
+    if (response && response.success && response.data) {
+      const template = response.data;
+      
+      // Si es un solo template (no array)
+      if (template.language_code && template.template_text) {
+        console.log('Plantilla por defecto obtenida:', template.language_code);
+        
+        const defaultsObj = {};
+        const languageInfo = await getLanguageInfo(template.language_code);
+        const languageName = template.language_name || languageInfo.name;
+        const languageFlag = languageInfo.flag;
+        
+        defaultsObj[template.language_code] = {
+          content: template.template_text,
+          name: languageName,
+          flag: languageFlag,
+          updated_at: template.updated_at || null,
+          id: template.id || null
+        };
+        
+        console.log('Template procesado:', {
+          language_code: template.language_code,
+          language_name: template.language_name,
+          final_name: languageName,
+          flag: languageFlag
+        });
+        
+        return defaultsObj;
+      }
+      
+      // Si es un array de templates
+      if (Array.isArray(template)) {
+        console.log('Plantillas por defecto obtenidas:', template.length);
+        
+        const defaultsObj = {};
+        for (const tmpl of template) {
+          if (tmpl.language_code && tmpl.template_text) {
+            const languageInfo = await getLanguageInfo(tmpl.language_code);
+            const languageName = tmpl.language_name || languageInfo.name;
+            const languageFlag = languageInfo.flag;
+            
+            defaultsObj[tmpl.language_code] = {
+              content: tmpl.template_text,
+              name: languageName,
+              flag: languageFlag,
+              updated_at: tmpl.updated_at || null,
+              id: tmpl.id || null
+            };
+          }
+        }
+        
+        return defaultsObj;
+      }
+    }
+    
+    console.warn('No se encontraron plantillas por defecto o estructura inesperada:', response);
+    return {};
+    
+  } catch (error) {
+    console.error('Error en getTemplateDefaultsAsync:', error);
+    return {};
+  }
+}
+
+/**
+ * Convierte código de país a emoji de bandera
+ * @param {string} countryCode - Código del país (AR, BR, US, etc.)
+ * @returns {string} Emoji de la bandera
+ */
+function countryCodeToFlag(countryCode) {
+  if (!countryCode || countryCode.length !== 2) return '🌐';
+  
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt());
+  
+  return String.fromCodePoint(...codePoints);
+}
+
+/**
+ * Obtiene información del idioma (bandera y nombre) usando datos del API
+ * @param {string} langCode - Código del idioma (es, en, pt, etc.)
+ * @returns {Promise<{flag: string, name: string}>} Objeto con bandera y nombre
+ */
+async function getLanguageInfo(langCode) {
+  try {
+    const countries = await getCountriesAsync();
+    
+    // Buscar países que tengan este idioma, excluyendo GB para inglés
+    let country = countries.find(c => c.language === langCode);
+    
+    // Para inglés, evitar Reino Unido (GB) y preferir US
+    if (langCode === 'en') {
+      const usCountry = countries.find(c => c.language === 'en' && c.abbreviation === 'US');
+      if (usCountry) {
+        country = usCountry;
+      } else {
+        // Si no hay US, buscar cualquier país de inglés que no sea GB
+        const nonGBCountry = countries.find(c => c.language === 'en' && c.abbreviation !== 'GB');
+        if (nonGBCountry) {
+          country = nonGBCountry;
+        }
+      }
+    }
+    
+    let flag = '🌐';
+    let name = langCode.toUpperCase();
+    
+    if (country) {
+      // Obtener bandera desde abbreviation
+      if (country.abbreviation) {
+        flag = countryCodeToFlag(country.abbreviation);
+      }
+      
+      // Obtener nombre desde language_name o fallback
+      if (country.language_name) {
+        name = country.language_name;
+      }
+    }
+    
+    // Fallbacks si no se encuentra en el API
+    if (flag === '🌐') {
+      const fallbackFlags = {
+        'es': '🇪🇸',
+        'en': '🇺🇸', 
+        'pt': '🇧🇷',
+        'fr': '🇫🇷',
+        'it': '🇮🇹',
+        'de': '🇩🇪',
+        'he': '🇮🇱',
+        'ar': '🇸🇦',
+        'ja': '🇯🇵',
+        'zh': '🇨🇳',
+        'ru': '🇷🇺'
+      };
+      flag = fallbackFlags[langCode] || '🌐';
+    }
+    
+    if (name === langCode.toUpperCase()) {
+      const languageNames = {
+        'es': 'Español',
+        'en': 'English', 
+        'pt': 'Português',
+        'fr': 'Français',
+        'it': 'Italiano',
+        'de': 'Deutsch',
+        'he': 'עברית',
+        'ar': 'العربية',
+        'ja': '日本語',
+        'zh': '中文',
+        'ru': 'Русский'
+      };
+      name = languageNames[langCode] || langCode.toUpperCase();
+    }
+    
+    return { flag, name };
+  } catch (error) {
+    console.error('Error obteniendo información del idioma:', error);
+    return { flag: '🌐', name: langCode.toUpperCase() };
+  }
+}
+
+/**
+ * Obtiene la bandera del idioma basado en el código usando datos del API
+ * @param {string} langCode - Código del idioma (es, en, pt, etc.)
+ * @returns {Promise<string>} Emoji de la bandera
+ */
+async function getLanguageFlag(langCode) {
+  const info = await getLanguageInfo(langCode);
+  return info.flag;
+}
+
+/**
+ * Obtiene el nombre completo del idioma basado en el código usando datos del API
+ * @param {string} langCode - Código del idioma (es, en, pt, etc.)
+ * @returns {Promise<string>} Nombre completo del idioma
+ */
+async function getLanguageNameFromCode(langCode) {
+  const info = await getLanguageInfo(langCode);
+  return info.name;
+}
+
+// Make template functions globally available
+window.getMessageTemplatesAsync = getMessageTemplatesAsync;
+window.saveMessageTemplateAsync = saveMessageTemplateAsync;
+window.deleteMessageTemplateAsync = deleteMessageTemplateAsync;
+window.getLanguageFlag = getLanguageFlag;
+window.getLanguageNameFromCode = getLanguageNameFromCode;
+window.getLanguageInfo = getLanguageInfo;
+window.countryCodeToFlag = countryCodeToFlag;
+window.getTemplateByHotelCountryAsync = getTemplateByHotelCountryAsync;
+window.getTemplateDefaultsAsync = getTemplateDefaultsAsync;
