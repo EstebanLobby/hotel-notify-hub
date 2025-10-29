@@ -1069,14 +1069,24 @@ async function handleAddServiceSubmit(e) {
     whatsapp: formData.send_by_whatsapp
   };
 
-  // Agregar statusIN, URL y plantillas solo para el servicio SELF_IN
+  // Agregar statusIN, URL y configuración de campos solo para el servicio SELF_IN
   if (formData.service_code === 'SELF_IN') {
     serviceData.status_in = formData.status_in === 'true';
     serviceData.self_in_url = formData.self_in_url || '';
     
+    // Agregar configuración de campos del formulario
+    serviceData.fields_config = {
+      country_required: formData.field_country_required === true,
+      state_required: formData.field_state_required === true,
+      city_required: formData.field_city_required === true,
+      comments_required: formData.field_comments_required === true,
+      guest_documents_required: formData.field_guest_documents_required === true,
+      companion_documents_required: formData.field_companion_documents_required === true
+    };
     
     console.log('SELF_IN detectado - statusIN:', serviceData.status_in);
     console.log('SELF_IN detectado - URL:', serviceData.self_in_url);
+    console.log('SELF_IN detectado - Configuración de campos:', serviceData.fields_config);
   }
 
   try {
@@ -1106,18 +1116,77 @@ async function handleAddServiceSubmit(e) {
   }
 }
 
+// Función para cargar la configuración de campos desde los datos del servicio
+function loadFieldsConfiguration(service) {
+  // Mapear los campos del backend (pueden venir con diferentes nombres)
+  // El backend devuelve: field_country_required, field_state_required, etc.
+  
+  if (service) {
+    // Intentar obtener los valores desde diferentes posibles nombres de propiedades
+    const countryRequired = service.field_country_required ?? service.fields_config?.country_required ?? true;
+    const stateRequired = service.field_state_required ?? service.fields_config?.state_required ?? true;
+    const cityRequired = service.field_city_required ?? service.fields_config?.city_required ?? true;
+    const commentsRequired = service.field_comments_required ?? service.fields_config?.comments_required ?? false;
+    const guestDocsRequired = service.field_guest_documents_required ?? service.fields_config?.guest_documents_required ?? false;
+    const companionDocsRequired = service.field_companion_documents_required ?? service.fields_config?.companion_documents_required ?? false;
+    
+    // Establecer los valores en los checkboxes
+    document.getElementById('field-country-required').checked = countryRequired !== false;
+    document.getElementById('field-state-required').checked = stateRequired !== false;
+    document.getElementById('field-city-required').checked = cityRequired !== false;
+    document.getElementById('field-comments-required').checked = commentsRequired === true;
+    document.getElementById('field-guest-documents-required').checked = guestDocsRequired === true;
+    document.getElementById('field-companion-documents-required').checked = companionDocsRequired === true;
+    
+    console.log('Configuración de campos cargada:', {
+      country: countryRequired,
+      state: stateRequired,
+      city: cityRequired,
+      comments: commentsRequired,
+      guestDocs: guestDocsRequired,
+      companionDocs: companionDocsRequired
+    });
+  } else {
+    // Si no hay datos del servicio, usar valores por defecto
+    resetFieldsConfiguration();
+  }
+}
+
+// Función para resetear la configuración de campos del formulario
+function resetFieldsConfiguration() {
+  // Resetear a valores por defecto
+  const defaultCheckedFields = ['field-country-required', 'field-state-required', 'field-city-required'];
+  const allFieldCheckboxes = document.querySelectorAll('.field-checkbox');
+  
+  allFieldCheckboxes.forEach(checkbox => {
+    if (defaultCheckedFields.includes(checkbox.id)) {
+      checkbox.checked = true;
+    } else {
+      checkbox.checked = false;
+    }
+  });
+}
+
 // Función para manejar cambios en la selección de servicio
 function handleServiceSelectionChange(e) {
   const selectedServiceCode = e.target.value;
   const selfInSection = document.getElementById('self-in-status-section');
+  const selfInFieldsPanel = document.getElementById('self-in-fields-panel');
   
   if (selectedServiceCode === 'SELF_IN') {
-    // Mostrar la sección de statusIN para el servicio SELF_IN
+    // Mostrar la sección de statusIN y el panel de campos para el servicio SELF_IN
     selfInSection.style.display = 'block';
+    if (selfInFieldsPanel) {
+      selfInFieldsPanel.style.display = 'block';
+    }
     
   } else {
-    // Ocultar la sección de statusIN para otros servicios
+    // Ocultar la sección de statusIN y el panel de campos para otros servicios
     selfInSection.style.display = 'none';
+    if (selfInFieldsPanel) {
+      selfInFieldsPanel.style.display = 'none';
+    }
+    
     // Resetear valores de statusIN y URL
     const statusInFalse = document.getElementById('status-in-false');
     const selfInUrl = document.getElementById('self-in-url');
@@ -1128,6 +1197,8 @@ function handleServiceSelectionChange(e) {
       selfInUrl.value = '';
     }
     
+    // Resetear checkboxes de campos configurables
+    resetFieldsConfiguration();
   }
 }
 
@@ -1153,10 +1224,14 @@ function resetAddServiceForm() {
     }
     
     
-  // Ocultar sección de statusIN y resetear a FALSE, limpiar URL
+  // Ocultar sección de statusIN, panel de campos y resetear a FALSE, limpiar URL
   const selfInSection = document.getElementById('self-in-status-section');
+  const selfInFieldsPanel = document.getElementById('self-in-fields-panel');
   if (selfInSection) {
     selfInSection.style.display = 'none';
+  }
+  if (selfInFieldsPanel) {
+    selfInFieldsPanel.style.display = 'none';
   }
   const statusInFalse = document.getElementById('status-in-false');
   const selfInUrl = document.getElementById('self-in-url');
@@ -1166,6 +1241,9 @@ function resetAddServiceForm() {
   if (selfInUrl) {
     selfInUrl.value = '';
   }
+  
+  // Resetear configuración de campos
+  resetFieldsConfiguration();
   
     
     // Limpiar dataset
@@ -1209,10 +1287,16 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     document.getElementById('send-email').checked = service.send_by_email;
     document.getElementById('send-whatsapp').checked = service.send_by_whatsapp;
     
-    // Manejar campo statusIN y URL para servicio SELF_IN
+    // Manejar campo statusIN, URL y panel de campos para servicio SELF_IN
     const selfInSection = document.getElementById('self-in-status-section');
+    const selfInFieldsPanel = document.getElementById('self-in-fields-panel');
+    
     if (serviceCode === 'SELF_IN') {
       selfInSection.style.display = 'block';
+      if (selfInFieldsPanel) {
+        selfInFieldsPanel.style.display = 'block';
+      }
+      
       // Configurar valor de statusIN basado en los datos del servicio
       const statusInValue = service.status_in !== undefined ? service.status_in : false;
       document.getElementById('status-in-true').checked = statusInValue === true;
@@ -1224,11 +1308,16 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
         selfInUrl.value = service.self_in_url || '';
       }
       
+      // Cargar configuración de campos si existe
+      loadFieldsConfiguration(service);
       
       console.log('Cargando statusIN para edición:', statusInValue);
       console.log('Cargando URL para edición:', service.self_in_url || '');
     } else {
       selfInSection.style.display = 'none';
+      if (selfInFieldsPanel) {
+        selfInFieldsPanel.style.display = 'none';
+      }
     }
     
     

@@ -56,7 +56,9 @@ function setupLoginListeners() {
       
       const icon = togglePasswordBtn.querySelector('span');
       icon.setAttribute('data-lucide', type === 'password' ? 'eye' : 'eye-off');
-      lucide.createIcons();
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
     });
   }
 }
@@ -137,9 +139,11 @@ async function handleLogin(e) {
     showToast('Error al iniciar sesión', 'error');
   } finally {
     // Restaurar botón
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
-    lucide.createIcons();
   }
 }
 
@@ -337,8 +341,9 @@ function addLogoutButton() {
   sidebar.appendChild(sessionInfo);
   
   // Crear iconos
-  lucide.createIcons();
-  
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
   // Actualizar información de sesión cada minuto
   setInterval(updateSessionInfo, 60000);
 }

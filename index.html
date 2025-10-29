@@ -16,8 +16,14 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+        </script>
     <!-- Intro.js for interactive tutorial -->
     <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
     <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
 </head>
 <body>
@@ -276,7 +282,7 @@
                 <!-- Services View -->
                 <div id="services-view" class="view">
                     <div class="page-header">
-                        <h2>Gestión de Servicios 2</h2>
+                        <h2>Gestión de Servicios</h2>
                         <div class="header-actions">
                             <button id="manage-languages-btn" class="btn btn-secondary">
                                 <span data-lucide="globe"></span>
@@ -505,6 +511,187 @@
                             title="URL donde se redirigirá al usuario después del check-in automático"
                         >
                         <small class="form-help">URL de destino para la redirección después del check-in automático</small>
+                    </div>
+
+                    <!-- Información de Campos del Formulario -->
+                    <div class="form-group" id="self-in-fields-panel" style="display: none;">
+                        <div class="info-panel">
+                            <div class="info-panel-header">
+                                <span class="info-icon">📋 </span>
+                                <h4>Configuración de Campos del Formulario</h4>
+                            </div>
+                            <div class="info-panel-body">
+                                <p class="info-description">Configure qué campos serán obligatorios u opcionales para este hotel:</p>
+                                
+                                <!-- Campos Siempre Obligatorios (No configurables) -->
+                                <div class="fields-section">
+                                    <div class="fields-section-header">
+                                        <span class="badge badge-locked">🔒 SIEMPRE OBLIGATORIOS</span>
+                                        <small class="field-note">(No se pueden cambiar)</small>
+                                    </div>
+                                    <div class="fields-list locked-fields">
+                                        <div class="field-category">
+                                            <strong>👤 Datos del Huésped Principal:</strong>
+                                            <ul>
+                                                <li>Número de DNI/Pasaporte/Doc. de Identidad</li>
+                                                <li>Teléfono</li>
+                                                <li>Correo Electrónico</li>
+                                                <li>Fecha de Nacimiento (Día, Mes, Año)</li>
+                                            </ul>
+                                        </div>
+                                        <div class="field-category">
+                                            <strong>🇨🇴 Datos Adicionales Colombia (con parámetro co=true):</strong>
+                                            <ul>
+                                                <li>Dirección de Residencia</li>
+                                                <li>Nacionalidad</li>
+                                                <li>Procedencia (Ciudad y País)</li>
+                                                <li>Destino (Ciudad y País)</li>
+                                                <li>Fecha y Hora de Llegada</li>
+                                                <li>Ciudad de Residencia</li>
+                                                <li>Motivo de Viaje</li>
+                                            </ul>
+                                        </div>
+                                        <div class="field-category">
+                                            <strong>👥 Acompañantes (por cada uno):</strong>
+                                            <ul>
+                                                <li>Nombre y Apellido</li>
+                                                <li>Número de DNI/Pasaporte</li>
+                                                <li>Teléfono</li>
+                                                <li>Correo Electrónico</li>
+                                                <li>Fecha de Nacimiento</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Campos Configurables -->
+                                <div class="fields-section">
+                                    <div class="fields-section-header">
+                                        <span class="badge badge-configurable">⚙️ CONFIGURABLES</span>
+                                        <small class="field-note">(Marque si son obligatorios)</small>
+                                    </div>
+                                    <div class="fields-list configurable-fields">
+                                        
+                                        <!-- País -->
+                                        <div class="field-item-configurable">
+                                            <label class="field-checkbox-label">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="field_country_required" 
+                                                    id="field-country-required"
+                                                    class="field-checkbox"
+                                                    checked
+                                                >
+                                                <span class="field-checkbox-custom"></span>
+                                                <div class="field-info">
+                                                    <span class="field-icon">🌍</span>
+                                                    <span class="field-name">País</span>
+                                                    <span class="field-status"></span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Estado/Provincia -->
+                                        <div class="field-item-configurable">
+                                            <label class="field-checkbox-label">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="field_state_required" 
+                                                    id="field-state-required"
+                                                    class="field-checkbox"
+                                                    checked
+                                                >
+                                                <span class="field-checkbox-custom"></span>
+                                                <div class="field-info">
+                                                    <span class="field-icon">🗺️</span>
+                                                    <span class="field-name">Estado/Provincia</span>
+                                                    <span class="field-status"></span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Ciudad -->
+                                        <div class="field-item-configurable">
+                                            <label class="field-checkbox-label">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="field_city_required" 
+                                                    id="field-city-required"
+                                                    class="field-checkbox"
+                                                    checked
+                                                >
+                                                <span class="field-checkbox-custom"></span>
+                                                <div class="field-info">
+                                                    <span class="field-icon">🏙️</span>
+                                                    <span class="field-name">Ciudad</span>
+                                                    <span class="field-status"></span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Comentarios -->
+                                        <div class="field-item-configurable">
+                                            <label class="field-checkbox-label">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="field_comments_required" 
+                                                    id="field-comments-required"
+                                                    class="field-checkbox"
+                                                >
+                                                <span class="field-checkbox-custom"></span>
+                                                <div class="field-info">
+                                                    <span class="field-icon">💬</span>
+                                                    <span class="field-name">Comentarios del Huésped</span>
+                                                    <span class="field-status"></span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Documentos del Huésped Principal -->
+                                        <div class="field-item-configurable">
+                                            <label class="field-checkbox-label">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="field_guest_documents_required" 
+                                                    id="field-guest-documents-required"
+                                                    class="field-checkbox"
+                                                >
+                                                <span class="field-checkbox-custom"></span>
+                                                <div class="field-info">
+                                                    <span class="field-icon">📄</span>
+                                                    <span class="field-name">Carga de Documentos (Huésped Principal)</span>
+                                                    <span class="field-status"></span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Documentos de Acompañantes -->
+                                        <div class="field-item-configurable">
+                                            <label class="field-checkbox-label">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="field_companion_documents_required" 
+                                                    id="field-companion-documents-required"
+                                                    class="field-checkbox"
+                                                >
+                                                <span class="field-checkbox-custom"></span>
+                                                <div class="field-info">
+                                                    <span class="field-icon">📑</span>
+                                                    <span class="field-name">Carga de Documentos (Acompañantes)</span>
+                                                    <span class="field-status"></span>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="info-note">
+                                    <span class="note-icon">💡</span>
+                                    <span><strong>Nota:</strong> Los campos marcados con 🔒 son siempre obligatorios por requisitos del sistema. Los campos adicionales de Colombia solo aparecen cuando se incluye el parámetro <code>co=true</code> en la URL del formulario.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>

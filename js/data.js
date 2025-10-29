@@ -264,6 +264,9 @@ async function fetchWebhook(params) {
 // Asynchronous getters (no rompen las funciones síncronas existentes)
 
 async function getHotelsAsync(options = {}) {
+
+  console.log('getHotelsAsync llamada con:', options);
+  console.log('testinggggggg');
   const { limit = 100, offset = 0, q = '' } = options;
   console.log('getHotelsAsync llamada con:', options);
   const res = await fetchWebhook({ func: 'hotels', method: 'list', limit, offset, q });
@@ -406,7 +409,7 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
     send_by_whatsapp: serviceData.whatsapp || false,
   };
 
-  // Agregar statusIN, URL y plantillas para el servicio SELF_IN
+  // Agregar statusIN, URL, configuración de campos y plantillas para el servicio SELF_IN
   if (serviceCode === 'SELF_IN') {
     if (serviceData.hasOwnProperty('status_in')) {
       webhookData.status_in = serviceData.status_in;
@@ -416,6 +419,18 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
       webhookData.self_in_url = serviceData.self_in_url;
       console.log('Agregando URL para SELF_IN:', serviceData.self_in_url);
     }
+    
+    // Agregar configuración de campos del formulario
+    if (serviceData.hasOwnProperty('fields_config')) {
+      webhookData.field_country_required = serviceData.fields_config.country_required;
+      webhookData.field_state_required = serviceData.fields_config.state_required;
+      webhookData.field_city_required = serviceData.fields_config.city_required;
+      webhookData.field_comments_required = serviceData.fields_config.comments_required;
+      webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
+      webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
+      console.log('Agregando configuración de campos para SELF_IN:', serviceData.fields_config);
+    }
+    
     if (serviceData.hasOwnProperty('message_templates')) {
       // Enviar cada plantilla como parámetro separado para facilitar el manejo en el backend
       Object.keys(serviceData.message_templates).forEach(langCode => {
@@ -481,7 +496,7 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     send_by_whatsapp: serviceData.whatsapp || false,
   };
 
-  // Agregar statusIN, URL y plantillas para el servicio SELF_IN si están presentes
+  // Agregar statusIN, URL, configuración de campos y plantillas para el servicio SELF_IN si están presentes
   if (serviceData.hasOwnProperty('status_in')) {
     webhookData.status_in = serviceData.status_in;
     console.log('Actualizando statusIN para SELF_IN:', serviceData.status_in);
@@ -490,6 +505,18 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     webhookData.self_in_url = serviceData.self_in_url;
     console.log('Actualizando URL para SELF_IN:', serviceData.self_in_url);
   }
+  
+  // Agregar configuración de campos del formulario si están presentes
+  if (serviceData.hasOwnProperty('fields_config')) {
+    webhookData.field_country_required = serviceData.fields_config.country_required;
+    webhookData.field_state_required = serviceData.fields_config.state_required;
+    webhookData.field_city_required = serviceData.fields_config.city_required;
+    webhookData.field_comments_required = serviceData.fields_config.comments_required;
+    webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
+    webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
+    console.log('Actualizando configuración de campos para SELF_IN:', serviceData.fields_config);
+  }
+  
   if (serviceData.hasOwnProperty('message_templates')) {
     // Enviar cada plantilla como parámetro separado para facilitar el manejo en el backend
     Object.keys(serviceData.message_templates).forEach(langCode => {
