@@ -862,11 +862,12 @@ class LanguageManager {
       const config = {
         name: langName,
         flag: languageInfo.flag,
-        helpText: langHelp || `Variables disponibles: {hotel_name}, {guest_name}, {reservation_number}, {checkin_url}`,
-        placeholder: langPlaceholder || `Ingrese el mensaje de Self Check-IN en ${langName}...`
+        helpText: `Variables disponibles: {hotel_name}, {guest_name}, {reservation_number}, {checkin_url}`,
+        placeholder: `Ingrese el mensaje de Self Check-IN en ${langName}...`
       };
       
-      addLanguageSupport(langCode, config, langTemplate);
+      // Use the resolved template that will be saved/displayed
+      addLanguageSupport(langCode, config, templateToSave);
       
       // Reload templates from API to get the updated list
       const updatedTemplates = await getTemplateDefaultsAsync(6);
