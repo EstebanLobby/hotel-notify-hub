@@ -1081,7 +1081,8 @@ async function handleAddServiceSubmit(e) {
       city_required: formData.field_city_required === true,
       comments_required: formData.field_comments_required === true,
       guest_documents_required: formData.field_guest_documents_required === true,
-      companion_documents_required: formData.field_companion_documents_required === true
+      companion_documents_required: formData.field_companion_documents_required === true,
+      license_plate_required: formData.field_license_plate_required === true
     };
     
     console.log('SELF_IN detectado - statusIN:', serviceData.status_in);
@@ -1129,6 +1130,7 @@ function loadFieldsConfiguration(service) {
     const commentsRequired = service.field_comments_required ?? service.fields_config?.comments_required ?? false;
     const guestDocsRequired = service.field_guest_documents_required ?? service.fields_config?.guest_documents_required ?? false;
     const companionDocsRequired = service.field_companion_documents_required ?? service.fields_config?.companion_documents_required ?? false;
+    const licensePlateRequired = service.field_license_plate_required ?? service.fields_config?.license_plate_required ?? false;
     
     // Establecer los valores en los checkboxes
     document.getElementById('field-country-required').checked = countryRequired !== false;
@@ -1137,6 +1139,7 @@ function loadFieldsConfiguration(service) {
     document.getElementById('field-comments-required').checked = commentsRequired === true;
     document.getElementById('field-guest-documents-required').checked = guestDocsRequired === true;
     document.getElementById('field-companion-documents-required').checked = companionDocsRequired === true;
+    document.getElementById('field-license-plate-required').checked = licensePlateRequired === true;
     
     console.log('Configuración de campos cargada:', {
       country: countryRequired,
@@ -1144,7 +1147,8 @@ function loadFieldsConfiguration(service) {
       city: cityRequired,
       comments: commentsRequired,
       guestDocs: guestDocsRequired,
-      companionDocs: companionDocsRequired
+      companionDocs: companionDocsRequired,
+      licensePlate: licensePlateRequired
     });
   } else {
     // Si no hay datos del servicio, usar valores por defecto

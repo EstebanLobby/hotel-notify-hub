@@ -428,6 +428,7 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
       webhookData.field_comments_required = serviceData.fields_config.comments_required;
       webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
       webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
+      webhookData.field_license_plate_required = serviceData.fields_config.license_plate_required;
       console.log('Agregando configuración de campos para SELF_IN:', serviceData.fields_config);
     }
     
@@ -514,6 +515,7 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     webhookData.field_comments_required = serviceData.fields_config.comments_required;
     webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
     webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
+    webhookData.field_license_plate_required = serviceData.fields_config.license_plate_required;
     console.log('Actualizando configuración de campos para SELF_IN:', serviceData.fields_config);
   }
   
