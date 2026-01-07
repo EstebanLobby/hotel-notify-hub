@@ -3,7 +3,12 @@
 let currentView = 'dashboard';
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar sistema de cache primero
+  // Inicializar sistema de i18n primero
+  if (window.i18n) {
+    window.i18n.init();
+  }
+  
+  // Inicializar sistema de cache
   if (window.cacheManager) {
     window.cacheManager.initialize();
   }
@@ -17,6 +22,9 @@ function initializeApp() {
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
   }
+  
+  // Setup language selector
+  setupLanguageSelector();
   
   // Setup navigation
   setupNavigation();
@@ -89,15 +97,9 @@ function navigateToView(viewName, pushState = true) {
     
     // Update page title
     const pageTitle = document.getElementById('page-title');
-    const titles = {
-      'dashboard': 'Dashboard',
-      'hotels': 'Hoteles',
-      'services': 'Servicios',
-      'reports': 'Reportes'
-    };
-    
-    if (pageTitle && titles[viewName]) {
-      pageTitle.textContent = titles[viewName];
+    if (pageTitle && window.i18n) {
+      const viewKey = `nav.${viewName}`;
+      pageTitle.textContent = window.i18n.t(viewKey);
     }
     
     // Update browser history
@@ -160,6 +162,86 @@ function closeSidebar() {
   const sidebar = document.getElementById('sidebar');
   if (sidebar && window.innerWidth <= 768) {
     sidebar.classList.remove('open');
+  }
+}
+
+// Setup language selector functionality
+function setupLanguageSelector() {
+  const languageToggle = document.getElementById('language-toggle');
+  const languageDropdown = document.getElementById('language-dropdown');
+  const langOptions = document.querySelectorAll('.lang-option');
+  const currentLangDisplay = document.getElementById('current-lang-display');
+  
+  if (!languageToggle || !languageDropdown) return;
+  
+  // Toggle dropdown
+  languageToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    languageDropdown.classList.toggle('show');
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!languageToggle.contains(e.target) && !languageDropdown.contains(e.target)) {
+      languageDropdown.classList.remove('show');
+    }
+  });
+  
+  // Handle language selection
+  langOptions.forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const selectedLang = option.dataset.lang;
+      
+      if (window.i18n) {
+        window.i18n.changeLanguage(selectedLang);
+      }
+      
+      // Update current language display
+      currentLangDisplay.textContent = selectedLang.toUpperCase();
+      
+      // Update active state
+      langOptions.forEach(opt => opt.classList.remove('active'));
+      option.classList.add('active');
+      
+      // Close dropdown
+      languageDropdown.classList.remove('show');
+      
+      // Re-initialize icons after language change
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+  });
+  
+  // Set initial active language
+  const currentLang = window.i18n ? window.i18n.getCurrentLanguage() : 'es';
+  currentLangDisplay.textContent = currentLang.toUpperCase();
+  langOptions.forEach(opt => {
+    if (opt.dataset.lang === currentLang) {
+      opt.classList.add('active');
+    }
+  });
+  
+  // Listen for language change events
+  window.addEventListener('languageChanged', (e) => {
+    const newLang = e.detail.language;
+    currentLangDisplay.textContent = newLang.toUpperCase();
+    
+    // Update page title
+    updatePageTitle();
+    
+    // Re-render current view
+    initializeCurrentView();
+  });
+}
+
+// Update page title based on current view and language
+function updatePageTitle() {
+  const pageTitle = document.getElementById('page-title');
+  if (pageTitle && window.i18n) {
+    const viewKey = `nav.${currentView}`;
+    pageTitle.textContent = window.i18n.t(viewKey);
   }
 }
 

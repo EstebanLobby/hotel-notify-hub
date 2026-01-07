@@ -104,14 +104,16 @@ async function handleLogin(e) {
       // Mostrar mensaje de éxito con información del cliente
       const clientInfo = response.client_info;
       const country = clientInfo?.country ? ` (${clientInfo.country})` : '';
-      showToast(`Sesión iniciada correctamente${country}`, 'success');
+      const successMsg = window.i18n ? window.i18n.t('login.success', {country}) : `Sesión iniciada correctamente${country}`;
+      showToast(successMsg, 'success');
       
       // Mostrar la aplicación
       showApp();
       
     } else {
       // Login fallido
-      const errorMessage = response?.message || 'Credenciales incorrectas';
+      const defaultError = window.i18n ? window.i18n.t('login.errorInvalid') : 'Contraseña incorrecta';
+      const errorMessage = response?.message || defaultError;
       const attemptsRemaining = response?.attempts_remaining;
       
       if (attemptsRemaining && attemptsRemaining > 0) {
@@ -126,17 +128,19 @@ async function handleLogin(e) {
     
     // Mostrar error
     if (errorDiv) {
+      const defaultError = window.i18n ? window.i18n.t('login.error') : 'Error al iniciar sesión';
       const errorText = errorDiv.querySelector('.error-text');
       if (errorText) {
-        errorText.textContent = error.message || 'Error al iniciar sesión';
+        errorText.textContent = error.message || defaultError;
       } else {
-        errorDiv.textContent = error.message || 'Error al iniciar sesión';
+        errorDiv.textContent = error.message || defaultError;
       }
       errorDiv.style.display = 'flex';
       errorDiv.classList.add('show');
     }
     
-    showToast('Error al iniciar sesión', 'error');
+    const errorMsg = window.i18n ? window.i18n.t('login.error') : 'Error al iniciar sesión';
+    showToast(errorMsg, 'error');
   } finally {
     // Restaurar botón
     if (typeof lucide !== 'undefined') {
@@ -158,7 +162,8 @@ function logout() {
   localStorage.removeItem('hotel_notify_session_expires');
   
   // Mostrar mensaje
-  showToast('Sesión cerrada correctamente', 'info');
+  const logoutMsg = window.i18n ? window.i18n.t('login.logoutSuccess') : 'Sesión cerrada correctamente';
+  showToast(logoutMsg, 'info');
   
   // Mostrar login
   showLogin();

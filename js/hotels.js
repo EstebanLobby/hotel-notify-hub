@@ -222,7 +222,8 @@ async function renderHotelsTable(query = '') {
   
   // Update count
   if (countElement) {
-    countElement.textContent = `${filteredHotels.length} hoteles`;
+    const hotelWord = window.i18n ? window.i18n.t('hotels.count') : 'hoteles';
+    countElement.textContent = `${filteredHotels.length} ${hotelWord}`;
   }
   
   // Clear table
@@ -243,9 +244,14 @@ async function renderHotelsTable(query = '') {
   // Show empty state if needed
   if (paginatedData.items.length === 0) {
     const emptyRow = document.createElement('tr');
+    const hasSearchQuery = document.getElementById('hotel-search')?.value || '';
+    const emptyMessage = hasSearchQuery 
+      ? (window.i18n ? window.i18n.t('hotels.noResults', {query: hasSearchQuery}) : 'No se encontraron hoteles con ese criterio')
+      : (window.i18n ? window.i18n.t('hotels.noHotels') : 'No hay hoteles registrados');
+    
     emptyRow.innerHTML = `
       <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-        ${(document.getElementById('hotel-search')?.value || '') ? 'No se encontraron hoteles con ese criterio' : 'No hay hoteles registrados'}
+        ${emptyMessage}
       </td>
     `;
     tbody.appendChild(emptyRow);
@@ -301,13 +307,27 @@ function exportHotelsToCSV() {
   const hotels = filteredHotels.length > 0 ? filteredHotels : hotelsCache;
   
   if (hotels.length === 0) {
-    showToast('No hay datos para exportar', 'warning');
+    const noDataText = window.i18n ? window.i18n.t('hotels.noDataToExport') : 'No hay datos para exportar';
+    showToast(noDataText, 'warning');
     return;
   }
   
+  const idText = window.i18n ? window.i18n.t('hotels.csvId') : 'ID';
+  const codeText = window.i18n ? window.i18n.t('hotels.csvCode') : 'Código';
+  const nameText = window.i18n ? window.i18n.t('hotels.csvName') : 'Nombre';
+  const emailText = window.i18n ? window.i18n.t('hotels.csvEmail') : 'Email';
+  const phoneText = window.i18n ? window.i18n.t('hotels.csvPhone') : 'Teléfono';
+  const languageText = window.i18n ? window.i18n.t('hotels.csvLanguage') : 'Idioma';
+  const statusText = window.i18n ? window.i18n.t('hotels.csvStatus') : 'Estado';
+  const countryText = window.i18n ? window.i18n.t('hotels.csvCountry') : 'País';
+  const servicesText = window.i18n ? window.i18n.t('hotels.csvServices') : 'Servicios Activos';
+  const dateText = window.i18n ? window.i18n.t('hotels.csvDate') : 'Fecha Creación';
+  const activeText = window.i18n ? window.i18n.t('hotels.active') : 'Activo';
+  const inactiveText = window.i18n ? window.i18n.t('hotels.inactive') : 'Inactivo';
+  
   const headers = [
-    'ID', 'Código', 'Nombre', 'Email', 'Teléfono', 'Idioma', 
-    'Estado', 'País', 'Servicios Activos', 'Fecha Creación'
+    idText, codeText, nameText, emailText, phoneText, languageText, 
+    statusText, countryText, servicesText, dateText
   ];
   
   const csvContent = [
@@ -319,7 +339,7 @@ function exportHotelsToCSV() {
       `"${hotel.email}"`,
       `"${(hotel.phone && hotel.phone !== 'undefined') ? hotel.phone : ''}"`,
       hotel.language,
-      hotel.active ? 'Activo' : 'Inactivo',
+      hotel.active ? activeText : inactiveText,
       getCountryName(hotel.country_id),
       `"${hotel.active_services?.map(s => s.service_code).join(', ') || ''}"`,
       new Date(hotel.created_at).toLocaleDateString('es-ES')
@@ -330,13 +350,15 @@ function exportHotelsToCSV() {
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
   link.setAttribute('href', url);
-  link.setAttribute('download', `hoteles_${new Date().toISOString().split('T')[0]}.csv`);
+  const filenameText = window.i18n ? window.i18n.t('hotels.csvFilename') : 'hoteles';
+  link.setAttribute('download', `${filenameText}_${new Date().toISOString().split('T')[0]}.csv`);
   link.style.visibility = 'hidden';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   
-  showToast('Archivo CSV exportado correctamente', 'success');
+  const successMsg = window.i18n ? window.i18n.t('hotels.csvExportSuccess') : 'Archivo CSV exportado correctamente';
+  showToast(successMsg, 'success');
 }
 
 function createHotelRow(hotel) {
@@ -359,7 +381,7 @@ function createHotelRow(hotel) {
     </td>
     <td>
       <span class="badge ${hotel.active ? 'badge-success' : 'badge-secondary'}">
-        ${hotel.active ? 'Activo' : 'Inactivo'}
+        ${hotel.active ? (window.i18n ? window.i18n.t('hotels.active') : 'Activo') : (window.i18n ? window.i18n.t('hotels.inactive') : 'Inactivo')}
       </span>
     </td>
     <td>
@@ -380,7 +402,7 @@ function createHotelRow(hotel) {
     </td>
     <td>
       <div class="dropdown">
-        <button class="btn btn-ghost btn-sm" onclick="toggleDropdown(this)" title="Acciones" style="min-width: 32px; min-height: 32px; font-size: 18px; line-height: 1;">
+        <button class="btn btn-ghost btn-sm" onclick="toggleDropdown(this)" title="${window.i18n ? window.i18n.t('hotels.tableActions') : 'Acciones'}" style="min-width: 32px; min-height: 32px; font-size: 18px; line-height: 1;">
           ⋮
         </button>
         <div class="dropdown-content">
@@ -454,7 +476,10 @@ function toggleDropdown(button) {
 
 async function openAddHotelModal() {
   editingHotel = null;
-  document.getElementById('modal-title').textContent = 'Nuevo Hotel';
+  const modalTitle = document.getElementById('modal-title');
+  if (modalTitle) {
+    modalTitle.textContent = window.i18n ? window.i18n.t('hotelForm.titleNew') : 'Nuevo Hotel';
+  }
   resetForm('hotel-form');
   await loadCountriesSelect();
   openModal('hotel-modal');
@@ -560,7 +585,8 @@ async function loadCountriesSelect() {
     console.log('Poblando select con países del cache:', countriesCache.length);
     
     // Limpiar opciones existentes excepto la primera
-    countrySelect.innerHTML = '<option value="">Seleccionar país...</option>';
+    const selectCountryText = window.i18n ? window.i18n.t('hotelForm.selectCountry') : 'Seleccionar país...';
+    countrySelect.innerHTML = `<option value="">${selectCountryText}</option>`;
     
     // Agregar países al select
     countriesCache.forEach(country => {
@@ -574,14 +600,18 @@ async function loadCountriesSelect() {
     
   } catch (error) {
     console.error('Error poblando select de países:', error);
-    showToast('Error al cargar la lista de países', 'error');
+    const errorMsg = window.i18n ? window.i18n.t('hotels.errorLoadingCountries') : 'Error al cargar la lista de países';
+    showToast(errorMsg, 'error');
   }
 }
 
 function getCountryName(countryId) {
-  if (!countryId || !countriesCache.length) return 'País no especificado';
+  const notSpecifiedText = window.i18n ? window.i18n.t('hotelServices.countryNotSpecified') : 'País no especificado';
+  const notFoundText = window.i18n ? window.i18n.t('hotels.countryNotFound') : 'País no encontrado';
+  
+  if (!countryId || !countriesCache.length) return notSpecifiedText;
   const country = countriesCache.find(c => c.id == countryId);
-  return country ? country.name : 'País no encontrado';
+  return country ? country.name : notFoundText;
 }
 
 async function editHotel(id) {
@@ -589,7 +619,10 @@ async function editHotel(id) {
   if (!hotel) return;
   
   editingHotel = hotel;
-  document.getElementById('modal-title').textContent = 'Editar Hotel';
+  const modalTitle = document.getElementById('modal-title');
+  if (modalTitle) {
+    modalTitle.textContent = window.i18n ? window.i18n.t('hotelForm.titleEdit') : 'Editar Hotel';
+  }
   
   // Cargar países antes de llenar el formulario
   await loadCountriesSelect();
@@ -615,22 +648,26 @@ async function handleHotelSubmit(e) {
   
   // Validation
   if (!validateHotelCode(formData.hotel_code)) {
-    showToast('Código de hotel inválido. Debe contener solo letras y números (3-20 caracteres)', 'error');
+    const invalidCodeMsg = window.i18n ? window.i18n.t('hotels.invalidCode') : 'Código de hotel inválido. Debe contener solo letras y números (3-20 caracteres)';
+    showToast(invalidCodeMsg, 'error');
     return;
   }
   
   if (!validateEmail(formData.email)) {
-    showToast('Email inválido', 'error');
+    const invalidEmailMsg = window.i18n ? window.i18n.t('hotels.invalidEmail') : 'Email inválido';
+    showToast(invalidEmailMsg, 'error');
     return;
   }
   
   if (formData.phone && !validatePhone(formData.phone)) {
-    showToast('Teléfono inválido. Solo se permiten números', 'error');
+    const invalidPhoneMsg = window.i18n ? window.i18n.t('hotels.invalidPhone') : 'Teléfono inválido. Solo se permiten números';
+    showToast(invalidPhoneMsg, 'error');
     return;
   }
   
   if (!formData.country_id) {
-    showToast('Debe seleccionar un país', 'error');
+    const selectCountryMsg = window.i18n ? window.i18n.t('hotels.mustSelectCountry') : 'Debe seleccionar un país';
+    showToast(selectCountryMsg, 'error');
     return;
   }
   
@@ -641,7 +678,8 @@ async function handleHotelSubmit(e) {
   );
   
   if (existingHotel) {
-    showToast('Ya existe un hotel con ese código', 'error');
+    const duplicateCodeMsg = window.i18n ? window.i18n.t('hotels.duplicateCode') : 'Ya existe un hotel con ese código';
+    showToast(duplicateCodeMsg, 'error');
     return;
   }
   
@@ -652,11 +690,13 @@ async function handleHotelSubmit(e) {
       console.log('Función updateHotelAsync disponible:', typeof updateHotelAsync);
       const updatedHotel = await updateHotelAsync(editingHotel.id, formData);
       if (updatedHotel) {
-        showToast('Hotel actualizado correctamente', 'success');
+        const successMsg = window.i18n ? window.i18n.t('hotels.updateSuccess') : 'Hotel actualizado correctamente';
+        showToast(successMsg, 'success');
         // Refresh the hotels list
         await renderHotelsTable();
       } else {
-        showToast('Error al actualizar el hotel', 'error');
+        const errorMsg = window.i18n ? window.i18n.t('hotels.updateError') : 'Error al actualizar el hotel';
+        showToast(errorMsg, 'error');
       }
     } else {
       // Create new hotel
@@ -666,11 +706,13 @@ async function handleHotelSubmit(e) {
       const newHotel = await createHotelAsync(formData);
       console.log('Respuesta de createHotelAsync:', newHotel);
       if (newHotel) {
-        showToast('Hotel creado correctamente', 'success');
+        const successMsg = window.i18n ? window.i18n.t('hotels.createSuccess') : 'Hotel creado correctamente';
+        showToast(successMsg, 'success');
         // Refresh the hotels list
         await renderHotelsTable();
       } else {
-        showToast('Error al crear el hotel', 'error');
+        const errorMsg = window.i18n ? window.i18n.t('hotels.createError') : 'Error al crear el hotel';
+        showToast(errorMsg, 'error');
       }
     }
     
@@ -678,27 +720,32 @@ async function handleHotelSubmit(e) {
     
   } catch (error) {
     console.error('Error en handleHotelSubmit:', error);
-    showToast(`Error al guardar el hotel: ${error.message}`, 'error');
+    const errorMsg = window.i18n ? window.i18n.t('hotels.errorSaving') : 'Error al guardar el hotel';
+    showToast(`${errorMsg}: ${error.message}`, 'error');
   }
 }
 async function deleteHotel(id) {
   const hotel = hotelsCache.find(h => h.id === id);
   if (!hotel) return;
   
-  if (confirm(`¿Estás seguro de que quieres eliminar el hotel "${hotel.hotel_name}"?`)) {
+  const confirmMsg = window.i18n ? window.i18n.t('hotels.confirmDelete') : `¿Estás seguro de que deseas eliminar este hotel?`;
+  if (confirm(confirmMsg)) {
     try {
       console.log('Eliminando hotel:', id);
       const result = await deleteHotelAsync(id);
       if (result) {
-        showToast('Hotel eliminado correctamente', 'success');
+        const successMsg = window.i18n ? window.i18n.t('hotels.deleteSuccess') : 'Hotel eliminado correctamente';
+        showToast(successMsg, 'success');
         // Refresh the hotels list
         await renderHotelsTable();
       } else {
-        showToast('Error al eliminar el hotel', 'error');
+        const errorMsg = window.i18n ? window.i18n.t('hotels.deleteError') : 'Error al eliminar el hotel';
+        showToast(errorMsg, 'error');
       }
     } catch (error) {
       console.error('Error eliminando hotel:', error);
-      showToast(`Error al eliminar el hotel: ${error.message}`, 'error');
+      const errorMsg = window.i18n ? window.i18n.t('hotels.errorDeleting') : 'Error al eliminar el hotel';
+      showToast(`${errorMsg}: ${error.message}`, 'error');
     }
   }
 }
@@ -713,11 +760,13 @@ async function viewHotelServices(id) {
   currentHotelIdForServices = id;
   
   // Actualizar título del modal
-  document.getElementById('hotel-services-title').textContent = `Servicios de ${hotel.hotel_name}`;
+  const servicesOfText = window.i18n ? window.i18n.t('hotelServices.servicesOf') : 'Servicios de';
+  document.getElementById('hotel-services-title').textContent = `${servicesOfText} ${hotel.hotel_name}`;
   
   // Mostrar modal con spinner de carga mejorado
+  const loadingText = window.i18n ? window.i18n.t('hotelServices.loading') : 'Cargando servicios...';
   const contentDiv = document.getElementById('hotel-services-content');
-  contentDiv.innerHTML = '<div class="services-loading">Cargando servicios...</div>';
+  contentDiv.innerHTML = `<div class="services-loading">${loadingText}</div>`;
   openModal('hotel-services-modal');
   
   try {
@@ -735,30 +784,38 @@ async function viewHotelServices(id) {
     
     if (services && services.length > 0) {
       // Crear header con información del hotel mejorado
+      const servicesActiveText = window.i18n ? window.i18n.t('hotelServices.servicesActive', {count: services.length}) : `${services.length} servicios activos`;
+      const codeText = window.i18n ? window.i18n.t('hotelServices.code') : 'Código:';
+      const emailText = window.i18n ? window.i18n.t('hotelServices.email') : 'Email:';
+      const phoneText = window.i18n ? window.i18n.t('hotelServices.phone') : 'Teléfono:';
+      const languageText = window.i18n ? window.i18n.t('hotelServices.language') : 'Idioma:';
+      const countryText = window.i18n ? window.i18n.t('hotelServices.country') : 'País:';
+      const countryNotSpecified = window.i18n ? window.i18n.t('hotelServices.countryNotSpecified') : 'País no especificado';
+      
       const hotelInfo = document.createElement('div');
       hotelInfo.className = 'hotel-info';
       hotelInfo.innerHTML = `
         <div class="hotel-info-header">
           <h4>${hotelData.data.hotel_name}</h4>
-          <span class="badge badge-success">${services.length} servicios activos</span>
+          <span class="badge badge-success">${servicesActiveText}</span>
         </div>
         <div class="hotel-info-details">
           <div class="hotel-info-detail">
-            <strong>Código:</strong> ${hotelData.data.hotel_code}
+            <strong>${codeText}</strong> ${hotelData.data.hotel_code}
           </div>
           <div class="hotel-info-detail">
-            <strong>Email:</strong> ${hotelData.data.email}
+            <strong>${emailText}</strong> ${hotelData.data.email}
           </div>
           ${(hotelData.data.phone && hotelData.data.phone !== 'undefined') ? `
             <div class="hotel-info-detail">
-              <strong>Teléfono:</strong> ${hotelData.data.phone}
+              <strong>${phoneText}</strong> ${hotelData.data.phone}
             </div>
           ` : ''}
           <div class="hotel-info-detail">
-            <strong>Idioma:</strong> ${getLanguageLabel(hotelData.data.language)}
+            <strong>${languageText}</strong> ${getLanguageLabel(hotelData.data.language)}
           </div>
           <div class="hotel-info-detail">
-            <strong>País:</strong> ${hotelData.data.country_name || 'País no especificado'}
+            <strong>${countryText}</strong> ${hotelData.data.country_name || countryNotSpecified}
           </div>
         </div>
       `;
@@ -775,12 +832,15 @@ async function viewHotelServices(id) {
         if (service.send_by_email) channels.push('Email');
         if (service.send_by_whatsapp) channels.push('WhatsApp');
         
+        const channelsLabel = window.i18n ? window.i18n.t('hotelServices.channels') : 'Canales:';
+        
         serviceItem.innerHTML = `
           <div class="service-item-content">
             <div class="service-info">
               <div class="service-name">${service.service_name || service.service_code}</div>
               <div class="service-code">ID: ${service.service_id} | ${service.service_code}</div>
               <div class="service-channels">
+                <span class="service-channels-label">${channelsLabel}</span>
                 ${channels.map(channel => {
                   const channelClass = channel === 'Email' ? 'channel-email' : 'channel-whatsapp';
                   const channelIcon = channel === 'Email' ? '📧' : '📱';
@@ -790,7 +850,7 @@ async function viewHotelServices(id) {
               ${service.service_code === 'SELF_IN' ? `
                 <div class="service-status-in">
                   <span class="status-in-badge ${service.status_in ? 'status-in-active' : 'status-in-inactive'}">
-                    ${service.status_in ? '✅ StatusIN: ACTIVO' : '❌ StatusIN: INACTIVO'}
+                    ${service.status_in ? `✅ StatusIN: ${window.i18n ? window.i18n.t('hotelServices.statusActive') : 'ACTIVO'}` : `❌ StatusIN: ${window.i18n ? window.i18n.t('hotelServices.statusInactive') : 'INACTIVO'}`}
                   </span>
                   ${service.self_in_url ? `
                     <div class="service-url">
@@ -803,16 +863,16 @@ async function viewHotelServices(id) {
               ` : ''}
             </div>
             <div class="service-status">
-              <span class="status-badge active">✓ Activo</span>
+              <span class="status-badge active">✓ ${window.i18n ? window.i18n.t('hotels.active') : 'Activo'}</span>
               <div class="service-actions">
                 <button class="service-action-btn edit" 
                         onclick="editHotelService(${id}, ${service.service_id}, '${service.service_code}')" 
-                        title="Editar canales de comunicación">
+                        title="${window.i18n ? window.i18n.t('hotelServices.editChannels') : 'Editar canales de comunicación'}">
                   ✏️
                 </button>
                 <button class="service-action-btn remove" 
                         onclick="removeHotelService(${id}, ${service.service_id})" 
-                        title="Quitar servicio del hotel">
+                        title="${window.i18n ? window.i18n.t('hotelServices.removeService') : 'Quitar servicio del hotel'}">
                   🗑️
                 </button>
               </div>
@@ -828,40 +888,51 @@ async function viewHotelServices(id) {
       contentDiv.appendChild(servicesList);
     } else {
       // Mostrar mensaje mejorado si no hay servicios
+      const noServicesText = window.i18n ? window.i18n.t('hotelServices.noServicesLabel') : 'Sin servicios';
+      const codeText = window.i18n ? window.i18n.t('hotelServices.code') : 'Código:';
+      const emailText = window.i18n ? window.i18n.t('hotelServices.email') : 'Email:';
+      const countryText = window.i18n ? window.i18n.t('hotelServices.country') : 'País:';
+      const countryNotSpecified = window.i18n ? window.i18n.t('hotelServices.countryNotSpecified') : 'País no especificado';
+      const noServicesConfigured = window.i18n ? window.i18n.t('hotelServices.noServicesConfigured') : 'Este hotel no tiene servicios configurados';
+      const addServicesText = window.i18n ? window.i18n.t('hotelServices.addServicesText') : 'Agregue servicios para comenzar a recibir notificaciones automatizadas';
+      
       contentDiv.innerHTML = `
         <div class="hotel-info">
           <div class="hotel-info-header">
             <h4>${hotelData.data.hotel_name}</h4>
-            <span class="badge badge-secondary">Sin servicios</span>
+            <span class="badge badge-secondary">${noServicesText}</span>
           </div>
           <div class="hotel-info-details">
             <div class="hotel-info-detail">
-              <strong>Código:</strong> ${hotelData.data.hotel_code}
+              <strong>${codeText}</strong> ${hotelData.data.hotel_code}
             </div>
             <div class="hotel-info-detail">
-              <strong>Email:</strong> ${hotelData.data.email}
+              <strong>${emailText}</strong> ${hotelData.data.email}
             </div>
             <div class="hotel-info-detail">
-              <strong>País:</strong> ${hotelData.data.country_name || 'País no especificado'}
+              <strong>${countryText}</strong> ${hotelData.data.country_name || countryNotSpecified}
             </div>
           </div>
         </div>
         <div class="services-empty-state">
-          <p>Este hotel no tiene servicios configurados</p>
+          <p>${noServicesConfigured}</p>
           <p style="font-size: 0.875rem; margin-top: 0.5rem; opacity: 0.7;">
-            Agregue servicios para comenzar a recibir notificaciones automatizadas
+            ${addServicesText}
           </p>
         </div>
       `;
     }
   } catch (error) {
     console.error('Error obteniendo servicios del hotel:', error);
+    const errorLoadingText = window.i18n ? window.i18n.t('hotelServices.errorLoading') : 'Error al cargar los servicios';
+    const tryAgainText = window.i18n ? window.i18n.t('hotelServices.tryAgain') : 'Intentar nuevamente';
+    
     contentDiv.innerHTML = `
       <div class="services-empty-state" style="border-color: var(--error); color: var(--error);">
-        <p>❌ Error al cargar los servicios</p>
+        <p>❌ ${errorLoadingText}</p>
         <p style="font-size: 0.875rem; margin-top: 0.5rem;">${error.message}</p>
         <button class="btn btn-secondary btn-sm" onclick="viewHotelServices(${id})" style="margin-top: 1rem;">
-          🔄 Intentar nuevamente
+          🔄 ${tryAgainText}
         </button>
       </div>
     `;
@@ -910,9 +981,10 @@ function updateServiceSelect(availableServices) {
     });
   } else {
     // No hay servicios disponibles para agregar
+    const noAvailableText = window.i18n ? window.i18n.t('addService.noAvailableServices') : 'No hay servicios disponibles para agregar';
     const option = document.createElement('option');
     option.value = "";
-    option.textContent = "No hay servicios disponibles para agregar";
+    option.textContent = noAvailableText;
     option.disabled = true;
     serviceSelect.appendChild(option);
   }
@@ -929,12 +1001,14 @@ async function loadServicesSelect(excludeServiceCodes = [], selectedServiceCode 
   await loadServicesCache();
 
   // Limpiar opciones existentes
-  serviceSelect.innerHTML = '<option value="">Seleccionar servicio...</option>';
+  const selectServiceText = window.i18n ? window.i18n.t('addService.selectService') : 'Seleccionar servicio...';
+  serviceSelect.innerHTML = `<option value="">${selectServiceText}</option>`;
   
   if (servicesCache.length === 0) {
+    const noServicesText = window.i18n ? window.i18n.t('addService.noServices') : 'No hay servicios disponibles';
     const noServicesOption = document.createElement('option');
     noServicesOption.value = '';
-    noServicesOption.textContent = 'No hay servicios disponibles';
+    noServicesOption.textContent = noServicesText;
     noServicesOption.disabled = true;
     serviceSelect.appendChild(noServicesOption);
     return;
@@ -976,7 +1050,8 @@ async function openAddServiceModal(hotelId) {
   const hotel = hotelsCache.find(h => h.id === hotelId);
   if (!hotel) return;
   
-  document.getElementById('add-service-title').textContent = `Agregar Servicio - ${hotel.hotel_name}`;
+  const addServiceText = window.i18n ? window.i18n.t('addService.titleNew') : 'Agregar Servicio';
+  document.getElementById('add-service-title').textContent = `${addServiceText} - ${hotel.hotel_name}`;
   
   // Resetear formulario
   resetAddServiceForm();
@@ -1002,7 +1077,8 @@ async function openAddServiceModal(hotelId) {
     
   } catch (error) {
     console.error('Error cargando servicios:', error);
-    showToast('Error al cargar servicios disponibles', 'error');
+    const errorMsg = window.i18n ? window.i18n.t('addService.errorLoading') : 'Error al cargar servicios disponibles';
+    showToast(errorMsg, 'error');
     // Cargar servicios sin filtros como fallback
     await loadServicesSelect([]);
   }
@@ -1015,20 +1091,24 @@ async function removeHotelService(hotelId, serviceId) {
   const hotel = hotelsCache.find(h => h.id === hotelId);
   if (!hotel) return;
 
-  if (confirm(`¿Estás seguro de que quieres quitar este servicio del hotel "${hotel.hotel_name}"?`)) {
+  const confirmMsg = window.i18n ? window.i18n.t('hotelServices.confirmRemove') : `¿Estás seguro de que deseas eliminar este servicio?`;
+  if (confirm(confirmMsg)) {
     try {
       console.log('Quitando servicio:', serviceId, 'del hotel:', hotelId);
       const result = await removeHotelServiceAsync(hotelId, serviceId);
       if (result) {
-        showToast('Servicio quitado correctamente', 'success');
+        const successMsg = window.i18n ? window.i18n.t('addService.removeSuccess') : 'Servicio quitado correctamente';
+        showToast(successMsg, 'success');
         // Recargar servicios del hotel
         await viewHotelServices(hotelId);
       } else {
-        showToast('Error al quitar el servicio', 'error');
+        const errorMsg = window.i18n ? window.i18n.t('addService.removeError') : 'Error al quitar el servicio';
+        showToast(errorMsg, 'error');
       }
     } catch (error) {
       console.error('Error quitando servicio:', error);
-      showToast(`Error al quitar el servicio: ${error.message}`, 'error');
+      const errorMsg = window.i18n ? window.i18n.t('addService.errorRemoving') : 'Error al quitar el servicio';
+      showToast(`${errorMsg}: ${error.message}`, 'error');
     }
   }
 }
@@ -1055,12 +1135,14 @@ async function handleAddServiceSubmit(e) {
   console.log('currentHotelIdForServices:', currentHotelIdForServices);
 
   if (!formData.service_code) {
-    showToast('Debe seleccionar un servicio', 'error');
+    const selectServiceMsg = window.i18n ? window.i18n.t('addService.mustSelectService') : 'Debe seleccionar un servicio';
+    showToast(selectServiceMsg, 'error');
     return;
   }
 
   if (!formData.send_by_email && !formData.send_by_whatsapp) {
-    showToast('Debe seleccionar al menos un canal de notificación', 'error');
+    const selectChannelMsg = window.i18n ? window.i18n.t('addService.mustSelectChannel') : 'Debe seleccionar al menos un canal de notificación';
+    showToast(selectChannelMsg, 'error');
     return;
   }
 
@@ -1103,17 +1185,24 @@ async function handleAddServiceSubmit(e) {
     }
 
     if (result) {
-      showToast(editingServiceId ? 'Servicio actualizado correctamente' : 'Servicio agregado correctamente', 'success');
+      const successMsg = editingServiceId 
+        ? (window.i18n ? window.i18n.t('addService.updateSuccess') : 'Servicio actualizado correctamente')
+        : (window.i18n ? window.i18n.t('addService.addSuccess') : 'Servicio agregado correctamente');
+      showToast(successMsg, 'success');
       closeModal('add-service-modal');
       resetAddServiceForm();
       // Recargar servicios del hotel
       await viewHotelServices(currentHotelIdForServices);
     } else {
-      showToast(editingServiceId ? 'Error al actualizar el servicio' : 'Error al agregar el servicio', 'error');
+      const errorMsg = editingServiceId
+        ? (window.i18n ? window.i18n.t('addService.updateError') : 'Error al actualizar el servicio')
+        : (window.i18n ? window.i18n.t('addService.addError') : 'Error al agregar el servicio');
+      showToast(errorMsg, 'error');
     }
   } catch (error) {
     console.error('Error en handleAddServiceSubmit:', error);
-    showToast(`Error: ${error.message}`, 'error');
+    const errorText = window.i18n ? window.i18n.t('common.error') : 'Error';
+    showToast(`${errorText}: ${error.message}`, 'error');
   }
 }
 
@@ -1219,12 +1308,14 @@ function resetAddServiceForm() {
     if (serviceSelect) {
       serviceSelect.disabled = false;
       // Restaurar opciones básicas (se cargarán dinámicamente cuando se abra el modal)
-      serviceSelect.innerHTML = '<option value="">Seleccionar servicio...</option>';
+      const selectServiceText = window.i18n ? window.i18n.t('addService.selectService') : 'Seleccionar servicio...';
+      serviceSelect.innerHTML = `<option value="">${selectServiceText}</option>`;
     }
     
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
     if (submitBtn) {
-      submitBtn.textContent = 'Agregar Servicio';
+      const addServiceBtnText = window.i18n ? window.i18n.t('addService.submit') : 'Agregar Servicio';
+      submitBtn.textContent = addServiceBtnText;
     }
     
     
@@ -1254,7 +1345,8 @@ function resetAddServiceForm() {
     delete form.dataset.serviceId;
     
     // Restaurar título
-    document.getElementById('add-service-title').textContent = 'Agregar Servicio';
+    const addServiceText = window.i18n ? window.i18n.t('addService.titleNew') : 'Agregar Servicio';
+    document.getElementById('add-service-title').textContent = addServiceText;
   }
 }
 
@@ -1273,13 +1365,15 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     
     const service = hotelData?.data?.active_services?.find(s => s.service_id === serviceId);
     if (!service) {
-      showToast('No se pudo encontrar el servicio', 'error');
+      const errorMsg = window.i18n ? window.i18n.t('addService.serviceNotFound') : 'No se pudo encontrar el servicio';
+      showToast(errorMsg, 'error');
       return;
     }
 
     // Configurar modal para edición
     currentHotelIdForServices = hotelId;
-    document.getElementById('add-service-title').textContent = `Editar ${service.service_name || serviceCode} - ${hotel.hotel_name}`;
+    const editText = window.i18n ? window.i18n.t('addService.titleEdit') : 'Editar';
+    document.getElementById('add-service-title').textContent = `${editText} ${service.service_name || serviceCode} - ${hotel.hotel_name}`;
     
     // Cargar servicios dinámicamente y preseleccionar el actual
     await loadServicesSelect([], serviceCode);
@@ -1326,8 +1420,9 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     
     
     // Cambiar texto del botón
+    const updateBtnText = window.i18n ? window.i18n.t('addService.update') : 'Actualizar Servicio';
     const submitBtn = document.querySelector('#add-service-form button[type="submit"]');
-    submitBtn.textContent = 'Actualizar Servicio';
+    submitBtn.textContent = updateBtnText;
     
     // Guardar service_id para la actualización
     document.getElementById('add-service-form').dataset.serviceId = String(serviceId);
@@ -1335,7 +1430,8 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
     openModal('add-service-modal');
   } catch (error) {
     console.error('Error obteniendo datos del servicio:', error);
-    showToast(`Error al obtener datos del servicio: ${error.message}`, 'error');
+    const errorMsg = window.i18n ? window.i18n.t('addService.errorGettingData') : 'Error al obtener datos del servicio';
+    showToast(`${errorMsg}: ${error.message}`, 'error');
   }
 }
 

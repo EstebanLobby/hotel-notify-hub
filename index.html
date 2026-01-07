@@ -9,6 +9,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/language-selector.css">
     
     <!-- Chart.js for charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -45,8 +46,8 @@
                         </div>
                         <div class="logo-glow"></div>
                     </div>
-                    <h1 class="login-title">Hotel Notify Hub</h1>
-                    <p class="login-subtitle">Sistema de Gestión de Notificaciones</p>
+                    <h1 class="login-title" data-i18n="login.title">Hotel Notify Hub</h1>
+                    <p class="login-subtitle" data-i18n="login.subtitle">Sistema de Gestión de Notificaciones</p>
                 </div>
 
                 <!-- Form -->
@@ -54,7 +55,7 @@
                     <div class="form-group">
                         <label for="password" class="form-label">
                             <span data-lucide="lock" class="label-icon"></span>
-                            Contraseña
+                            <span data-i18n="login.password">Contraseña</span>
                         </label>
                         <div class="input-container">
                             <input 
@@ -62,6 +63,7 @@
                                 id="password" 
                                 name="password" 
                                 required 
+                                data-i18n-placeholder="login.passwordPlaceholder"
                                 placeholder="Ingresa tu contraseña"
                                 class="form-input"
                             >
@@ -73,7 +75,7 @@
 
                     <button type="submit" class="login-button">
                         <span data-lucide="log-in" class="button-icon"></span>
-                        <span class="button-text">Iniciar Sesión</span>
+                        <span class="button-text" data-i18n="login.submit">Iniciar Sesión</span>
                         <div class="button-shine"></div>
                     </button>
                 </form>
@@ -88,7 +90,7 @@
                 <div class="login-footer">
                     <p class="footer-text">
                         <span data-lucide="shield" class="footer-icon"></span>
-                        Acceso seguro y encriptado
+                        <span data-i18n="login.secureAccess">Acceso seguro y encriptado</span>
                     </p>
                 </div>
             </div>
@@ -109,24 +111,24 @@
                            data-intro="Dashboard: Aquí ves un resumen general con estadísticas y gráficos de tu sistema de notificaciones." 
                            data-step="5">
                         <span data-lucide="bar-chart-3"></span>
-                        Dashboard
+                        <span data-i18n="nav.dashboard">Dashboard</span>
                     </a></li>
                     <li><a href="#hotels" class="nav-link" data-route="hotels"
                            data-intro="Hoteles: Esta es la sección principal donde gestionas todos tus hoteles, agregas nuevos y configuras sus servicios de notificación." 
                            data-step="6">
                         <span data-lucide="building"></span>
-                        Hoteles
+                        <span data-i18n="nav.hotels">Hoteles</span>
                     </a></li>
                     <li><a href="#services" class="nav-link" data-route="services"
                            data-intro="Servicios: Aquí puedes ver todos los tipos de servicios disponibles para configurar en tus hoteles." 
                            data-step="7">
                         <span data-lucide="settings"></span>
-                        Servicios
+                        <span data-i18n="nav.services">Servicios</span>
                     </a></li>
                     <!--
                     <li><a href="#reports" class="nav-link" data-route="reports">
                         <span data-lucide="file-text"></span>
-                        Reportes
+                        <span data-i18n="nav.reports">Reportes</span>
                     </a></li>
                     -->
                 </ul>
@@ -142,9 +144,30 @@
                         data-intro="¡Bienvenido al Hotel Notify Hub! Este es tu panel principal donde puedes gestionar hoteles y sus servicios de notificación." 
                         data-step="1">Dashboard</h1>
                     <div class="header-actions">
+                        <!-- Language Selector -->
+                        <div class="language-selector">
+                            <button id="language-toggle" class="btn btn-outline-secondary btn-sm" title="Cambiar idioma">
+                                <span data-lucide="globe"></span>
+                                <span id="current-lang-display">ES</span>
+                            </button>
+                            <div id="language-dropdown" class="language-dropdown">
+                                <button class="lang-option" data-lang="es">
+                                    <span class="lang-flag">🇪🇸</span>
+                                    <span class="lang-name">Español</span>
+                                </button>
+                                <button class="lang-option" data-lang="en">
+                                    <span class="lang-flag">🇬🇧</span>
+                                    <span class="lang-name">English</span>
+                                </button>
+                                <button class="lang-option" data-lang="pt">
+                                    <span class="lang-flag">🇵🇹</span>
+                                    <span class="lang-name">Português</span>
+                                </button>
+                            </div>
+                        </div>
                         <button id="tutorial-btn" class="btn btn-primary btn-sm" title="Iniciar tutorial">
                             <span data-lucide="help-circle"></span>
-                            Tutorial
+                            <span data-i18n="header.tutorial">Tutorial</span>
                         </button>
                         <button id="cache-info-btn" class="btn btn-outline-secondary btn-sm" title="Información de caché"
                                 data-intro="Aquí puedes ver la información del sistema, versión actual y gestionar el caché de la aplicación." 
@@ -172,7 +195,7 @@
                         <div class="metric-card metric-card-primary">
                             <div class="metric-content">
                                 <div class="metric-value" id="total-hotels">0</div>
-                                <div class="metric-label">Hoteles Activos</div>
+                                <div class="metric-label" data-i18n="dashboard.activeHotels">Hoteles Activos</div>
                             </div>
                             <div class="metric-icon">
                                 <span data-lucide="building"></span>
@@ -182,7 +205,7 @@
                         <div class="metric-card metric-card-success">
                             <div class="metric-content">
                                 <div class="metric-value" id="total-notifications">0</div>
-                                <div class="metric-label">Notificaciones (Mes)</div>
+                                <div class="metric-label" data-i18n="dashboard.notifications">Notificaciones (Mes)</div>
                             </div>
                             <div class="metric-icon">
                                 <span data-lucide="send"></span>
@@ -192,7 +215,7 @@
                         <div class="metric-card metric-card-info">
                             <div class="metric-content">
                                 <div class="metric-value" id="success-rate">0%</div>
-                                <div class="metric-label">Tasa de Éxito</div>
+                                <div class="metric-label" data-i18n="dashboard.successRate">Tasa de Éxito</div>
                             </div>
                             <div class="metric-icon">
                                 <span data-lucide="check-circle"></span>
@@ -202,7 +225,7 @@
                         <div class="metric-card">
                             <div class="metric-content">
                                 <div class="metric-value" id="active-services">0</div>
-                                <div class="metric-label">Servicios Activos</div>
+                                <div class="metric-label" data-i18n="dashboard.activeServices">Servicios Activos</div>
                             </div>
                             <div class="metric-icon">
                                 <span data-lucide="settings"></span>
@@ -212,11 +235,11 @@
 
                     <div class="charts-grid">
                         <div class="chart-card">
-                            <h3>Notificaciones Mensuales</h3>
+                            <h3 data-i18n="dashboard.monthlyNotifications">Notificaciones Mensuales</h3>
                             <canvas id="notifications-chart"></canvas>
                         </div>
                         <div class="chart-card">
-                            <h3>Distribución de Servicios</h3>
+                            <h3 data-i18n="dashboard.serviceDistribution">Distribución de Servicios</h3>
                             <canvas id="services-chart"></canvas>
                         </div>
                     </div>
@@ -225,12 +248,12 @@
                 <!-- Hotels View -->
                 <div id="hotels-view" class="view">
                     <div class="page-header">
-                        <h2>Gestión de Hoteles</h2>
+                        <h2 data-i18n="hotels.title">Gestión de Hoteles</h2>
                         <button id="add-hotel-btn" class="btn btn-primary"
                                 data-intro="¡Aquí puedes agregar un nuevo hotel! Haz clic para abrir el formulario donde ingresarás la información básica del hotel." 
                                 data-step="8">
                             <span data-lucide="plus"></span>
-                            Nuevo Hotel
+                            <span data-i18n="hotels.newHotel">Nuevo Hotel</span>
                         </button>
                     </div>
 
@@ -238,12 +261,12 @@
                         <div class="search-box" 
                              data-intro="Usa este buscador para encontrar hoteles rápidamente. Puedes buscar por nombre, código o email del hotel." 
                              data-step="9">
-                            <input type="text" id="hotel-search" placeholder="Buscar por nombre, código o email...">
+                            <input type="text" id="hotel-search" data-i18n-placeholder="hotels.searchPlaceholder" placeholder="Buscar por nombre, código o email...">
                             <span data-lucide="search"></span>
                         </div>
                         <button id="hotel-search-btn" class="btn btn-primary">
                             <span data-lucide="search"></span>
-                            Buscar
+                            <span data-i18n="hotels.search">Buscar</span>
                         </button>
                     </div>
                     <div class="filters-section">
@@ -257,15 +280,15 @@
                         <table class="data-table" id="hotels-table">
                             <thead>
                                 <tr>
-                                    <th>Hotel</th>
-                                    <th>Contacto</th>
-                                    <th>Idioma</th>
-                                    <th>Estado</th>
-                                    <th>País</th>
+                                    <th data-i18n="hotels.tableHotel">Hotel</th>
+                                    <th data-i18n="hotels.tableContact">Contacto</th>
+                                    <th data-i18n="hotels.tableLanguage">Idioma</th>
+                                    <th data-i18n="hotels.tableStatus">Estado</th>
+                                    <th data-i18n="hotels.tableCountry">País</th>
                                     <th data-intro="La columna 'Servicios' muestra cuántos servicios de notificación tiene configurados cada hotel. Haz clic en el ícono de configuración para gestionar los servicios." 
-                                        data-step="11">Servicios</th>
-                                    <th>Creado</th>
-                                    <th>Acciones</th>
+                                        data-step="11" data-i18n="hotels.tableServices">Servicios</th>
+                                    <th data-i18n="hotels.tableCreated">Creado</th>
+                                    <th data-i18n="hotels.tableActions">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="hotels-tbody">
@@ -282,11 +305,11 @@
                 <!-- Services View -->
                 <div id="services-view" class="view">
                     <div class="page-header">
-                        <h2>Gestión de Servicios</h2>
+                        <h2 data-i18n="services.title">Gestión de Servicios</h2>
                         <div class="header-actions">
                             <button id="manage-languages-btn" class="btn btn-secondary">
                                 <span data-lucide="globe"></span>
-                                Gestionar Idiomas
+                                <span data-i18n="services.manageLanguages">Gestionar Idiomas</span>
                             </button>
                         </div>
                     </div>
@@ -294,7 +317,7 @@
                     <!-- Language Management Section -->
                     <div id="language-management" class="management-section" style="display: none;">
                         <div class="section-header">
-                            <h3>🌍 Gestión de Idiomas para Plantillas</h3>
+                            <h3>🌍 <span data-i18n="lang.title">Gestión de Idiomas para Plantillas</span></h3>
                             <button id="close-language-management" class="btn btn-ghost btn-sm">
                                 <span data-lucide="x"></span>
                             </button>
@@ -304,10 +327,10 @@
                 <!-- Current Languages -->
                 <div class="active-languages-section">
                     <div class="section-header-with-action">
-                        <h4>📋 Idiomas Activos</h4>
+                        <h4>📋 <span data-i18n="lang.activeLanguages">Idiomas Activos</span></h4>
                         <button id="add-new-language-btn" class="btn btn-primary" onclick="openAddLanguageModal()">
                             <span data-lucide="plus"></span>
-                            Agregar Idioma
+                            <span data-i18n="lang.addLanguage">Agregar Idioma</span>
                         </button>
                     </div>
                     <div id="active-languages-list" class="languages-list">
@@ -322,12 +345,12 @@
                         <table class="data-table" id="services-table">
                             <thead>
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Nombre</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
-                                    <th>Hoteles Suscritos</th>
-                                    <th>Acciones</th>
+                                    <th data-i18n="services.tableCode">Código</th>
+                                    <th data-i18n="services.tableName">Nombre</th>
+                                    <th data-i18n="services.tableDescription">Descripción</th>
+                                    <th data-i18n="services.tableStatus">Estado</th>
+                                    <th data-i18n="services.tableSubscribed">Hoteles Suscritos</th>
+                                    <th data-i18n="services.tableActions">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="services-tbody">
@@ -370,30 +393,30 @@
     <div id="hotel-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title">Nuevo Hotel</h3>
+                <h3 id="modal-title" data-i18n="hotelForm.titleNew">Nuevo Hotel</h3>
                 <button class="modal-close" id="close-modal">
                     <span data-lucide="x"></span>
                 </button>
             </div>
             <form id="hotel-form" class="modal-body">
                 <div class="form-group">
-                    <label for="hotel-code">Código Hotel *</label>
+                    <label for="hotel-code"><span data-i18n="hotelForm.code">Código Hotel</span> *</label>
                     <input type="text" id="hotel-code" name="hotel_code" required>
                 </div>
                 <div class="form-group">
-                    <label for="hotel-name">Nombre Hotel *</label>
+                    <label for="hotel-name"><span data-i18n="hotelForm.name">Nombre Hotel</span> *</label>
                     <input type="text" id="hotel-name" name="hotel_name" required>
                 </div>
                 <div class="form-group">
-                    <label for="hotel-email">Email *</label>
+                    <label for="hotel-email"><span data-i18n="hotelForm.email">Email</span> *</label>
                     <input type="email" id="hotel-email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="hotel-phone">Teléfono</label>
+                    <label for="hotel-phone" data-i18n="hotelForm.phone">Teléfono</label>
                     <input type="tel" id="hotel-phone" name="phone">
                 </div>
                 <div class="form-group">
-                    <label for="hotel-language">Idioma</label>
+                    <label for="hotel-language" data-i18n="hotelForm.language">Idioma</label>
                     <select id="hotel-language" name="language">
                         <option value="es">Español</option>
                         <option value="en">English</option>
@@ -404,19 +427,19 @@
                     <label class="checkbox-label">
                         <input type="checkbox" id="hotel-active" name="active" checked>
                         <span class="checkmark"></span>
-                        Hotel Activo
+                        <span data-i18n="hotelForm.active">Hotel Activo</span>
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="hotel-country">País *</label>
+                    <label for="hotel-country"><span data-i18n="hotelForm.country">País</span> *</label>
                     <select id="hotel-country" name="country_id" required>
-                        <option value="">Seleccionar país...</option>
+                        <option value="" data-i18n="hotelForm.selectCountry">Seleccionar país...</option>
                         <!-- Los países se cargarán dinámicamente -->
                     </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-btn" data-i18n="hotelForm.cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="hotelForm.save">Guardar</button>
                 </div>
             </form>
         </div>
@@ -426,22 +449,22 @@
     <div id="hotel-services-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="hotel-services-title">Servicios del Hotel</h3>
+                <h3 id="hotel-services-title" data-i18n="hotelServices.title">Servicios del Hotel</h3>
                 <button class="modal-close" id="close-services-modal">
                     <span data-lucide="x"></span>
                 </button>
             </div>
             <div class="modal-body">
                 <div id="hotel-services-content">
-                    <div class="loading-spinner">Cargando servicios...</div>
+                    <div class="loading-spinner" data-i18n="hotelServices.loading">Cargando servicios...</div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="add-service-btn">
                     <span data-lucide="plus"></span>
-                    Agregar Servicio
+                    <span data-i18n="hotelServices.addService">Agregar Servicio</span>
                 </button>
-                <button type="button" class="btn btn-secondary" id="close-services-btn">Cerrar</button>
+                <button type="button" class="btn btn-secondary" id="close-services-btn" data-i18n="hotelServices.close">Cerrar</button>
             </div>
         </div>
     </div>
@@ -450,7 +473,7 @@
     <div id="add-service-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="add-service-title">Agregar Servicio</h3>
+                <h3 id="add-service-title" data-i18n="addService.title">Agregar Servicio</h3>
                 <button class="modal-close" id="close-add-service-modal">
                     <span data-lucide="x"></span>
                 </button>
@@ -458,9 +481,9 @@
             <form id="add-service-form" class="modal-body">
                 <!-- Service Selection Section -->
                 <div class="form-group">
-                    <label for="service-select">🔧 Servicio *</label>
+                    <label for="service-select">🔧 <span data-i18n="addService.service">Servicio</span> *</label>
                     <select id="service-select" name="service_code" required>
-                        <option value="">Seleccionar servicio...</option>
+                        <option value="" data-i18n="addService.selectService">Seleccionar servicio...</option>
                         <!-- Las opciones se cargan dinámicamente desde el backend -->
                     </select>
                 </div>
@@ -468,49 +491,51 @@
                 <!-- Communication Channels Section -->
                 <div class="form-section">
                     <div class="form-group">
-                        <label>📢 Canales de Notificación *</label>
+                        <label>📢 <span data-i18n="addService.channels">Canales de Notificación</span> *</label>
                         <div class="checkbox-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="send-email" name="send_by_email" checked>
-                                <p>📧 Email</p>
+                                <p>📧 <span data-i18n="addService.email">Email</span></p>
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="send-whatsapp" name="send_by_whatsapp" checked>
-                                <p>📱 WhatsApp</p>
+                                <p>📱 <span data-i18n="addService.whatsapp">WhatsApp</span></p>
                             </label>
                         </div>
-                        <small class="form-help">Selecciona al menos un canal de comunicación</small>
+                        <small class="form-help" data-i18n="addService.channelsHelp">Selecciona al menos un canal de comunicación</small>
                     </div>
                 </div>
 
                 <!-- SELF_IN Status Section (only visible for SELF_IN service) -->
                 <div class="form-section" id="self-in-status-section" style="display: none;">
                     <div class="form-group">
-                        <label>🏨 Estado Check-in Automático</label>
+                        <label data-i18n="addService.selfInStatus">🏨 Estado Check-in Automático</label>
                         <div class="checkbox-group">
                             <label class="checkbox-label">
                                 <input type="radio" id="status-in-true" name="status_in" value="true">
-                                <p>✅ Activo (TRUE)</p>
+                                <p data-i18n="addService.selfInActive">✅ Activo (TRUE)</p>
                             </label>
                             <label class="checkbox-label">
                                 <input type="radio" id="status-in-false" name="status_in" value="false" checked>
-                                <p>❌ Inactivo (FALSE)</p>
+                                <p data-i18n="addService.selfInInactive">❌ Inactivo (FALSE)</p>
                             </label>
                         </div>
-                        <small class="form-help">Configuración específica para el servicio de Auto Check-in</small>
+                        <small class="form-help" data-i18n="addService.selfInHelp">Configuración específica para el servicio de Auto Check-in</small>
                     </div>
                     
                     <div class="form-group">
-                        <label for="self-in-url">🔗 URL de Redirección</label>
+                        <label for="self-in-url" data-i18n="addService.selfInUrl">🔗 URL de Redirección</label>
                         <input 
                             type="url" 
                             id="self-in-url" 
                             name="self_in_url" 
                             class="form-control"
+                            data-i18n-placeholder="addService.selfInUrlPlaceholder"
                             placeholder="https://ejemplo.com/checkin"
+                            data-i18n-title="addService.selfInUrlHelp"
                             title="URL donde se redirigirá al usuario después del check-in automático"
                         >
-                        <small class="form-help">URL de destino para la redirección después del check-in automático</small>
+                        <small class="form-help" data-i18n="addService.selfInUrlHelp">URL de destino para la redirección después del check-in automático</small>
                     </div>
 
                     <!-- Información de Campos del Formulario -->
@@ -518,47 +543,47 @@
                         <div class="info-panel">
                             <div class="info-panel-header">
                                 <span class="info-icon">📋 </span>
-                                <h4>Configuración de Campos del Formulario</h4>
+                                <h4 data-i18n="addService.formFields">Configuración de Campos del Formulario</h4>
                             </div>
                             <div class="info-panel-body">
-                                <p class="info-description">Configure qué campos serán obligatorios u opcionales para este hotel:</p>
+                                <p class="info-description" data-i18n="addService.formFieldsDesc">Configure qué campos serán obligatorios u opcionales para este hotel:</p>
                                 
                                 <!-- Campos Siempre Obligatorios (No configurables) -->
                                 <div class="fields-section">
                                     <div class="fields-section-header">
-                                        <span class="badge badge-locked">🔒 SIEMPRE OBLIGATORIOS</span>
-                                        <small class="field-note">(No se pueden cambiar)</small>
+                                        <span class="badge badge-locked" data-i18n="addService.alwaysRequired">🔒 SIEMPRE OBLIGATORIOS</span>
+                                        <small class="field-note" data-i18n="addService.alwaysRequiredNote">(No se pueden cambiar)</small>
                                     </div>
                                     <div class="fields-list locked-fields">
                                         <div class="field-category">
-                                            <strong>👤 Datos del Huésped Principal:</strong>
+                                            <strong data-i18n="addService.guestData">👤 Datos del Huésped Principal:</strong>
                                             <ul>
-                                                <li>Número de DNI/Pasaporte/Doc. de Identidad</li>
-                                                <li>Teléfono</li>
-                                                <li>Correo Electrónico</li>
-                                                <li>Fecha de Nacimiento (Día, Mes, Año)</li>
+                                                <li data-i18n="addService.guestIdNumber">Número de DNI/Pasaporte/Doc. de Identidad</li>
+                                                <li data-i18n="addService.guestPhone">Teléfono</li>
+                                                <li data-i18n="addService.guestEmail">Correo Electrónico</li>
+                                                <li data-i18n="addService.guestBirthdate">Fecha de Nacimiento (Día, Mes, Año)</li>
                                             </ul>
                                         </div>
                                         <div class="field-category">
-                                            <strong>🇨🇴 Datos Adicionales Colombia (con parámetro co=true):</strong>
+                                            <strong data-i18n="addService.colombiaData">🇨🇴 Datos Adicionales Colombia (con parámetro co=true):</strong>
                                             <ul>
-                                                <li>Dirección de Residencia</li>
-                                                <li>Nacionalidad</li>
-                                                <li>Procedencia (Ciudad y País)</li>
-                                                <li>Destino (Ciudad y País)</li>
-                                                <li>Fecha y Hora de Llegada</li>
-                                                <li>Ciudad de Residencia</li>
-                                                <li>Motivo de Viaje</li>
+                                                <li data-i18n="addService.colombiaAddress">Dirección de Residencia</li>
+                                                <li data-i18n="addService.colombiaNationality">Nacionalidad</li>
+                                                <li data-i18n="addService.colombiaOrigin">Procedencia (Ciudad y País)</li>
+                                                <li data-i18n="addService.colombiaDestination">Destino (Ciudad y País)</li>
+                                                <li data-i18n="addService.colombiaArrival">Fecha y Hora de Llegada</li>
+                                                <li data-i18n="addService.colombiaCity">Ciudad de Residencia</li>
+                                                <li data-i18n="addService.colombiaTravelReason">Motivo de Viaje</li>
                                             </ul>
                                         </div>
                                         <div class="field-category">
-                                            <strong>👥 Acompañantes (por cada uno):</strong>
+                                            <strong data-i18n="addService.companionData">👥 Acompañantes (por cada uno):</strong>
                                             <ul>
-                                                <li>Nombre y Apellido</li>
-                                                <li>Número de DNI/Pasaporte</li>
-                                                <li>Teléfono</li>
-                                                <li>Correo Electrónico</li>
-                                                <li>Fecha de Nacimiento</li>
+                                                <li data-i18n="addService.companionName">Nombre y Apellido</li>
+                                                <li data-i18n="addService.companionIdNumber">Número de DNI/Pasaporte</li>
+                                                <li data-i18n="addService.companionPhone">Teléfono</li>
+                                                <li data-i18n="addService.companionEmail">Correo Electrónico</li>
+                                                <li data-i18n="addService.companionBirthdate">Fecha de Nacimiento</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -567,8 +592,8 @@
                                 <!-- Campos Configurables -->
                                 <div class="fields-section">
                                     <div class="fields-section-header">
-                                        <span class="badge badge-configurable">⚙️ CONFIGURABLES</span>
-                                        <small class="field-note">(Marque si son obligatorios)</small>
+                                        <span class="badge badge-configurable" data-i18n="addService.configurable">⚙️ CONFIGURABLES</span>
+                                        <small class="field-note" data-i18n="addService.configurableNote">(Marque si son obligatorios)</small>
                                     </div>
                                     <div class="fields-list configurable-fields">
                                         
@@ -585,7 +610,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">🌍</span>
-                                                    <span class="field-name">País</span>
+                                                    <span class="field-name" data-i18n="addService.country">País</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -604,7 +629,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">🗺️</span>
-                                                    <span class="field-name">Estado/Provincia</span>
+                                                    <span class="field-name" data-i18n="addService.state">Estado/Provincia</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -623,7 +648,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">🏙️</span>
-                                                    <span class="field-name">Ciudad</span>
+                                                    <span class="field-name" data-i18n="addService.city">Ciudad</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -641,7 +666,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">💬</span>
-                                                    <span class="field-name">Comentarios del Huésped</span>
+                                                    <span class="field-name" data-i18n="addService.comments">Comentarios del Huésped</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -659,7 +684,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">📄</span>
-                                                    <span class="field-name">Carga de Documentos (Huésped Principal)</span>
+                                                    <span class="field-name" data-i18n="addService.guestDocuments">Carga de Documentos (Huésped Principal)</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -677,7 +702,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">📑</span>
-                                                    <span class="field-name">Carga de Documentos (Acompañantes)</span>
+                                                    <span class="field-name" data-i18n="addService.companionDocuments">Carga de Documentos (Acompañantes)</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -695,7 +720,7 @@
                                                 <span class="field-checkbox-custom"></span>
                                                 <div class="field-info">
                                                     <span class="field-icon">🚗</span>
-                                                    <span class="field-name">Patente del Vehículo (License Plate)</span>
+                                                    <span class="field-name" data-i18n="addService.licensePlate">Patente del Vehículo (License Plate)</span>
                                                     <span class="field-status"></span>
                                                 </div>
                                             </label>
@@ -706,7 +731,7 @@
 
                                 <div class="info-note">
                                     <span class="note-icon">💡</span>
-                                    <span><strong>Nota:</strong> Los campos marcados con 🔒 son siempre obligatorios por requisitos del sistema. Los campos adicionales de Colombia solo aparecen cuando se incluye el parámetro <code>co=true</code> en la URL del formulario.</span>
+                                    <span><strong data-i18n="addService.note">Nota:</strong> <span data-i18n="addService.noteText">Los campos marcados con 🔒 son siempre obligatorios por requisitos del sistema. Los campos adicionales de Colombia solo aparecen cuando se incluye el parámetro <code>co=true</code> en la URL del formulario.</span></span>
                                 </div>
                             </div>
                         </div>
@@ -715,8 +740,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancel-add-service-btn">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Agregar Servicio</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-add-service-btn" data-i18n="addService.cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="addService.submit">Agregar Servicio</button>
                 </div>
             </form>
         </div>
@@ -726,13 +751,13 @@
     <div id="tutorial-menu-modal" class="modal">
         <div class="modal-content tutorial-menu-content">
             <div class="modal-header">
-                <h3>🎓 Selecciona un Tutorial</h3>
+                <h3>🎓 <span data-i18n="tutorial.title">Selecciona un Tutorial</span></h3>
                 <button class="modal-close" id="close-tutorial-menu">
                     <span data-lucide="x"></span>
                 </button>
             </div>
             <div class="modal-body">
-                <p class="tutorial-menu-subtitle">¿Qué tutorial te gustaría ver?</p>
+                <p class="tutorial-menu-subtitle" data-i18n="tutorial.subtitle">¿Qué tutorial te gustaría ver?</p>
                 <div class="tutorial-options">
                     <button class="tutorial-option-btn" data-tutorial="main">
                         <div class="tutorial-option-icon">🎯</div>
@@ -784,8 +809,8 @@
                     </div>
                     <div class="welcome-glow"></div>
                 </div>
-                <h2 class="welcome-title">¡Bienvenido a Hotel Notify Hub! 🏨</h2>
-                <p class="welcome-subtitle">Sistema de Gestión de Notificaciones Hoteleras</p>
+                <h2 class="welcome-title" data-i18n="welcome.title">¡Bienvenido a Hotel Notify Hub! 🏨</h2>
+                <p class="welcome-subtitle" data-i18n="welcome.subtitle">Sistema de Gestión de Notificaciones Hoteleras</p>
             </div>
             
             <div class="welcome-modal-body">
@@ -833,11 +858,11 @@
             <div class="welcome-modal-footer">
                 <button id="welcome-skip-btn" class="btn btn-secondary">
                     <span data-lucide="x"></span>
-                    No, gracias
+                    <span data-i18n="welcome.noThanks">No, gracias</span>
                 </button>
                 <button id="welcome-start-btn" class="btn btn-primary">
                     <span data-lucide="play"></span>
-                    ¡Empezar Tour!
+                    <span data-i18n="welcome.start">¡Empezar Tour!</span>
                 </button>
             </div>
         </div>
@@ -1014,7 +1039,7 @@
     <div id="add-language-modal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) closeAddLanguageModal()">
         <div class="modal-content add-language-modal">
             <div class="modal-header">
-                <h3>➕ Agregar Nuevo Idioma</h3>
+                <h3>➕ <span data-i18n="langAdd.title">Agregar Nuevo Idioma</span></h3>
                 <button class="modal-close" onclick="closeAddLanguageModal()">
                     <span data-lucide="x"></span>
                 </button>
@@ -1022,11 +1047,11 @@
             <div class="modal-body">
                 <form id="add-language-form" class="language-form">
                     <div class="form-group">
-                        <label for="country-select">Seleccionar País/Idioma *</label>
+                        <label for="country-select"><span data-i18n="langAdd.selectCountry">Seleccionar País/Idioma</span> *</label>
                         <select id="country-select" required>
-                            <option value="">Cargando países...</option>
+                            <option value="" data-i18n="langAdd.selectCountryPlaceholder">Cargando países...</option>
                         </select>
-                        <small class="form-help">Selecciona un país para obtener automáticamente el código e idioma</small>
+                        <small class="form-help" data-i18n="langAdd.selectCountryHelp">Selecciona un país para obtener automáticamente el código e idioma</small>
                     </div>
                     
                     <!-- Hidden fields for selected language data -->
@@ -1035,45 +1060,45 @@
                     
                     
                     <div class="form-group">
-                        <label for="lang-template">Plantilla por Defecto</label>
-                        <textarea id="lang-template" name="lang-template" rows="8" placeholder="🏨 Check-in Online – ¡Simplificá tu llegada a {hotel_name}!&#10;&#10;¡Gracias por elegirnos..."></textarea>
-                        <small class="form-help">Plantilla de mensaje por defecto (opcional)</small>
+                        <label for="lang-template" data-i18n="langAdd.template">Plantilla por Defecto</label>
+                        <textarea id="lang-template" name="lang-template" rows="8" data-i18n-placeholder="langAdd.templatePlaceholder" placeholder="🏨 Check-in Online – ¡Simplificá tu llegada a {hotel_name}!&#10;&#10;¡Gracias por elegirnos..."></textarea>
+                        <small class="form-help" data-i18n="langAdd.templateHelp">Plantilla de mensaje por defecto (opcional)</small>
                     </div>
                     
                     <!-- Variables Section for Add Modal -->
                     <div class="variables-section">
-                        <h4>🔧 Variables Disponibles</h4>
-                        <p>Haz clic en cualquier variable para insertarla en el mensaje actual:</p>
+                        <h4>🔧 <span data-i18n="langAdd.variables">Variables Disponibles</span></h4>
+                        <p data-i18n="langAdd.variablesDesc">Haz clic en cualquier variable para insertarla en el mensaje actual:</p>
                         
                         <div class="variables-grid">
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{hotel_name}', 'lang-template')" title="Insertar nombre del hotel">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{hotel_name}', 'lang-template')" data-i18n-title="langAdd.varHotelNameTitle" title="Insertar nombre del hotel">
                                 <span class="variable-icon">🏨</span>
                                 <span class="variable-code">{hotel_name}</span>
-                                <span class="variable-desc">Nombre del hotel</span>
+                                <span class="variable-desc" data-i18n="langAdd.varHotelName">Nombre del hotel</span>
                             </button>
                             
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{guest_name}', 'lang-template')" title="Insertar nombre del huésped">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{guest_name}', 'lang-template')" data-i18n-title="langAdd.varGuestNameTitle" title="Insertar nombre del huésped">
                                 <span class="variable-icon">👤</span>
                                 <span class="variable-code">{guest_name}</span>
-                                <span class="variable-desc">Nombre del huésped</span>
+                                <span class="variable-desc" data-i18n="langAdd.varGuestName">Nombre del huésped</span>
                             </button>
                             
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{reservation_number}', 'lang-template')" title="Insertar número de reserva">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{reservation_number}', 'lang-template')" data-i18n-title="langAdd.varReservationTitle" title="Insertar número de reserva">
                                 <span class="variable-icon">🎫</span>
                                 <span class="variable-code">{reservation_number}</span>
-                                <span class="variable-desc">Número de reserva</span>
+                                <span class="variable-desc" data-i18n="langAdd.varReservation">Número de reserva</span>
                             </button>
                             
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{checkin_url}', 'lang-template')" title="Insertar URL de check-in">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{checkin_url}', 'lang-template')" data-i18n-title="langAdd.varCheckinUrlTitle" title="Insertar URL de check-in">
                                 <span class="variable-icon">🔗</span>
                                 <span class="variable-code">{checkin_url}</span>
-                                <span class="variable-desc">URL de check-in</span>
+                                <span class="variable-desc" data-i18n="langAdd.varCheckinUrl">URL de check-in</span>
                             </button>
                         </div>
                         
                         <div class="variables-actions">
-                            <button type="button" class="btn btn-ghost btn-sm" onclick="showVariableExamples()">Ver Ejemplos</button>
-                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyAllVariables()">Copiar Todas</button>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="showVariableExamples()" data-i18n="langAdd.viewExamples">Ver Ejemplos</button>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyAllVariables()" data-i18n="langAdd.copyAll">Copiar Todas</button>
                         </div>
                     </div>
                 </form>
@@ -1081,16 +1106,17 @@
             <div class="modal-footer">
                 <button type="submit" form="add-language-form" class="btn btn-primary">
                     <span data-lucide="plus"></span>
-                    Agregar Idioma
+                    <span data-i18n="langAdd.submit">Agregar Idioma</span>
                 </button>
                 <button type="button" class="btn btn-secondary" onclick="closeAddLanguageModal()">
-                    Cancelar
+                    <span data-i18n="langAdd.cancel">Cancelar</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
+    <script src="js/i18n.js"></script>
     <script src="js/cache-manager.js"></script>
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
@@ -1101,7 +1127,7 @@
     <div id="edit-language-modal" class="modal-overlay" style="display: none;" onclick="if(event.target === this) closeEditLanguageModal()">
         <div class="modal-content edit-language-modal">
             <div class="modal-header">
-                <h3>✏️ Editar Idioma</h3>
+                <h3>✏️ <span data-i18n="langEdit.title">Editar Idioma</span></h3>
                 <button class="modal-close" onclick="closeEditLanguageModal()">
                     <span data-lucide="x"></span>
                 </button>
@@ -1125,58 +1151,58 @@
                     <!-- Template Editor -->
                     <div class="template-editor-section">
                         <div class="section-header">
-                            <h4>📝 Plantilla del Mensaje</h4>
-                            <small class="section-description">Personaliza el mensaje que recibirán los huéspedes en este idioma</small>
+                            <h4>📝 <span data-i18n="langEdit.templateLabel">Plantilla del Mensaje</span></h4>
+                            <small class="section-description" data-i18n="langEdit.templateDesc">Personaliza el mensaje que recibirán los huéspedes en este idioma</small>
                         </div>
                         <div class="template-editor-wrapper">
-                            <textarea id="edit-lang-template" name="lang-template" rows="12" placeholder="Ingrese la plantilla para este idioma..." class="template-textarea"></textarea>
+                            <textarea id="edit-lang-template" name="lang-template" rows="12" data-i18n-placeholder="langEdit.templatePlaceholder" placeholder="Ingrese la plantilla para este idioma..." class="template-textarea"></textarea>
                             <div class="template-editor-footer">
-                                <span class="character-count">0 caracteres</span>
+                                <span class="character-count">0 <span data-i18n="langEdit.characters">caracteres</span></span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Variables Section for Edit Modal -->
                     <div class="variables-section">
-                        <h4>🔧 Variables Disponibles</h4>
-                        <p>Haz clic en cualquier variable para insertarla en el mensaje actual:</p>
+                        <h4>🔧 <span data-i18n="langAdd.variables">Variables Disponibles</span></h4>
+                        <p data-i18n="langAdd.variablesDesc">Haz clic en cualquier variable para insertarla en el mensaje actual:</p>
                         
                         <div class="variables-grid">
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{hotel_name}', 'edit-lang-template')" title="Insertar nombre del hotel">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{hotel_name}', 'edit-lang-template')" data-i18n-title="langAdd.varHotelNameTitle" title="Insertar nombre del hotel">
                                 <span class="variable-icon">🏨</span>
                                 <span class="variable-code">{hotel_name}</span>
-                                <span class="variable-desc">Nombre del hotel</span>
+                                <span class="variable-desc" data-i18n="langAdd.varHotelName">Nombre del hotel</span>
                             </button>
                             
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{guest_name}', 'edit-lang-template')" title="Insertar nombre del huésped">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{guest_name}', 'edit-lang-template')" data-i18n-title="langAdd.varGuestNameTitle" title="Insertar nombre del huésped">
                                 <span class="variable-icon">👤</span>
                                 <span class="variable-code">{guest_name}</span>
-                                <span class="variable-desc">Nombre del huésped</span>
+                                <span class="variable-desc" data-i18n="langAdd.varGuestName">Nombre del huésped</span>
                             </button>
                             
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{reservation_number}', 'edit-lang-template')" title="Insertar número de reserva">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{reservation_number}', 'edit-lang-template')" data-i18n-title="langAdd.varReservationTitle" title="Insertar número de reserva">
                                 <span class="variable-icon">🎫</span>
                                 <span class="variable-code">{reservation_number}</span>
-                                <span class="variable-desc">Número de reserva</span>
+                                <span class="variable-desc" data-i18n="langAdd.varReservation">Número de reserva</span>
                             </button>
                             
-                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{checkin_url}', 'edit-lang-template')" title="Insertar URL de check-in">
+                            <button type="button" class="variable-btn" onclick="insertVariableInModal('{checkin_url}', 'edit-lang-template')" data-i18n-title="langAdd.varCheckinUrlTitle" title="Insertar URL de check-in">
                                 <span class="variable-icon">🔗</span>
                                 <span class="variable-code">{checkin_url}</span>
-                                <span class="variable-desc">URL de check-in</span>
+                                <span class="variable-desc" data-i18n="langAdd.varCheckinUrl">URL de check-in</span>
                             </button>
                         </div>
                         
                         <div class="variables-actions">
-                            <button type="button" class="btn btn-ghost btn-sm" onclick="showVariableExamples()">Ver Ejemplos</button>
-                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyAllVariables()">Copiar Todas</button>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="showVariableExamples()" data-i18n="langAdd.viewExamples">Ver Ejemplos</button>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyAllVariables()" data-i18n="langAdd.copyAll">Copiar Todas</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeEditLanguageModal()">Cancelar</button>
-                <button class="btn btn-primary" id="edit-language-submit-btn" onclick="languageManager.handleEditLanguage(event)">Guardar Cambios</button>
+                <button class="btn btn-secondary" onclick="closeEditLanguageModal()" data-i18n="langEdit.cancel">Cancelar</button>
+                <button class="btn btn-primary" id="edit-language-submit-btn" onclick="languageManager.handleEditLanguage(event)" data-i18n="langEdit.save">Guardar Cambios</button>
             </div>
         </div>
     </div>

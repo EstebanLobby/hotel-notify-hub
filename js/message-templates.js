@@ -346,7 +346,8 @@ class MessageTemplateManager {
   }
 
   loadDefaultTemplates(silent = false) {
-    if (!silent && !confirm('¿Estás seguro de que quieres cargar las plantillas por defecto? Esto sobrescribirá cualquier cambio no guardado.')) {
+    const confirmMsg = window.i18n ? window.i18n.t('templates.confirmLoadDefault') : '¿Estás seguro de que quieres cargar las plantillas por defecto? Esto sobrescribirá cualquier cambio no guardado.';
+    if (!silent && !confirm(confirmMsg)) {
       return;
     }
     
@@ -359,14 +360,16 @@ class MessageTemplateManager {
     });
     
     if (!silent) {
-      showToast('Plantillas por defecto cargadas correctamente', 'success');
+      const successMsg = window.i18n ? window.i18n.t('templates.defaultLoaded') : 'Plantillas por defecto cargadas correctamente';
+      showToast(successMsg, 'success');
     }
   }
 
   showPreview() {
     const currentTextarea = document.getElementById(`template-${this.currentLanguage}`);
     if (!currentTextarea || !currentTextarea.value.trim()) {
-      showToast('No hay contenido para mostrar en la vista previa', 'warning');
+      const warningMsg = window.i18n ? window.i18n.t('templates.noPreviewContent') : 'No hay contenido para mostrar en la vista previa';
+      showToast(warningMsg, 'warning');
       return;
     }
 
@@ -408,13 +411,15 @@ class MessageTemplateManager {
     // Validate variable parameter
     if (!variable || typeof variable !== 'string') {
       console.error('Variable inválida:', variable);
-      showToast('Error: Variable inválida', 'error');
+      const errorMsg = window.i18n ? window.i18n.t('templates.invalidVariable') : 'Error: Variable inválida';
+      showToast(errorMsg, 'error');
       return;
     }
-
+    
     const currentTextarea = document.getElementById(`template-${this.currentLanguage}`);
     if (!currentTextarea) {
-      showToast('No hay textarea activo para insertar la variable', 'error');
+      const errorMsg = window.i18n ? window.i18n.t('templates.noActiveTextarea') : 'No hay textarea activo para insertar la variable';
+      showToast(errorMsg, 'error');
       return;
     }
 
@@ -437,7 +442,8 @@ class MessageTemplateManager {
     this.showVariableInsertedFeedback(buttonElement);
 
     // Show success message
-    showToast(`Variable ${variable} insertada`, 'success');
+    const successMsg = window.i18n ? window.i18n.t('templates.variableInserted', {variable}) : `Variable ${variable} insertada`;
+    showToast(successMsg, 'success');
   }
 
   showVariableInsertedFeedback(buttonElement) {
@@ -501,7 +507,8 @@ class MessageTemplateManager {
     // Try to copy to clipboard
     if (navigator.clipboard) {
       navigator.clipboard.writeText(variablesText).then(() => {
-        showToast('Todas las variables copiadas al portapapeles', 'success');
+        const successMsg = window.i18n ? window.i18n.t('templates.variablesCopied') : 'Todas las variables copiadas al portapapeles';
+        showToast(successMsg, 'success');
       }).catch(() => {
         this.fallbackCopyToClipboard(variablesText);
       });
@@ -734,21 +741,26 @@ class LanguageManager {
       const item = document.createElement('div');
       item.className = 'language-item';
       
+      const hasDefaultTitle = window.i18n ? window.i18n.t('templates.hasDefaultTemplate') : 'Tiene plantilla por defecto';
+      const viewTitle = window.i18n ? window.i18n.t('templates.viewDefaultTemplate') : 'Ver plantilla por defecto';
+      const editTitle = window.i18n ? window.i18n.t('templates.editTemplate') : 'Editar plantilla';
+      const deleteTitle = window.i18n ? window.i18n.t('templates.deleteTemplate') : 'Eliminar plantilla';
+      
       item.innerHTML = `
         <div class="language-info">
           <span class="language-flag">${langInfo.flag}</span>
           <span class="language-name">${langInfo.name}</span>
           <span class="language-code">${langCode}</span>
-          <span class="default-indicator" title="Tiene plantilla por defecto">📝</span>
+          <span class="default-indicator" title="${hasDefaultTitle}">📝</span>
         </div>
         <div class="language-actions">
-          <button class="btn btn-ghost btn-sm" onclick="languageManager.viewDefaultTemplate('${langCode}')" title="Ver plantilla por defecto">
+          <button class="btn btn-ghost btn-sm" onclick="languageManager.viewDefaultTemplate('${langCode}')" title="${viewTitle}">
             <span data-lucide="eye"></span>
           </button>
-          <button class="btn btn-ghost btn-sm btn-primary" onclick="languageManager.editLanguageTemplate('${langCode}')" title="Editar plantilla">
+          <button class="btn btn-ghost btn-sm btn-primary" onclick="languageManager.editLanguageTemplate('${langCode}')" title="${editTitle}">
             <span data-lucide="edit"></span>
           </button>
-          <button class="btn btn-ghost btn-sm btn-danger" onclick="languageManager.deleteLanguageTemplate('${langCode}')" title="Eliminar plantilla">
+          <button class="btn btn-ghost btn-sm btn-danger" onclick="languageManager.deleteLanguageTemplate('${langCode}')" title="${deleteTitle}">
             <span data-lucide="trash-2"></span>
           </button>
         </div>
@@ -962,7 +974,8 @@ class LanguageManager {
   viewDefaultTemplate(langCode) {
     const defaultTemplate = this.defaultTemplates?.[langCode];
     if (!defaultTemplate) {
-      showToast('No hay plantilla por defecto disponible para este idioma', 'error');
+      const errorMsg = window.i18n ? window.i18n.t('templates.noDefaultAvailable') : 'No hay plantilla por defecto disponible para este idioma';
+      showToast(errorMsg, 'error');
       return;
     }
 
@@ -980,28 +993,35 @@ class LanguageManager {
     modal.style.alignItems = 'center';
     modal.style.justifyContent = 'center';
     
+    const titleText = window.i18n ? window.i18n.t('templates.defaultTemplateTitle') : 'Plantilla por Defecto';
+    const languageText = window.i18n ? window.i18n.t('templates.language') : 'Idioma';
+    const codeText = window.i18n ? window.i18n.t('templates.code') : 'Código';
+    const updatedText = window.i18n ? window.i18n.t('templates.updated') : 'Actualizada';
+    const contentText = window.i18n ? window.i18n.t('templates.templateContent') : 'Contenido de la plantilla';
+    const closeText = window.i18n ? window.i18n.t('common.close') : 'Cerrar';
+    
     modal.innerHTML = `
       <div class="modal-content default-template-modal">
         <div class="modal-header">
-          <h3>📝 Plantilla por Defecto - ${defaultTemplate.name || this.getLanguageName(langCode)}</h3>
+          <h3>📝 ${titleText} - ${defaultTemplate.name || this.getLanguageName(langCode)}</h3>
           <button class="modal-close" onclick="languageManager.closeDefaultTemplateModal(this)">
             <span data-lucide="x"></span>
           </button>
         </div>
         <div class="modal-body">
           <div class="template-info">
-            <p><strong>Idioma:</strong> ${defaultTemplate.flag} ${defaultTemplate.name || this.getLanguageName(langCode)}</p>
-            <p><strong>Código:</strong> ${langCode}</p>
-            ${defaultTemplate.updated_at ? `<p><strong>Actualizada:</strong> ${new Date(defaultTemplate.updated_at).toLocaleString()}</p>` : ''}
+            <p><strong>${languageText}:</strong> ${defaultTemplate.flag} ${defaultTemplate.name || this.getLanguageName(langCode)}</p>
+            <p><strong>${codeText}:</strong> ${langCode}</p>
+            ${defaultTemplate.updated_at ? `<p><strong>${updatedText}:</strong> ${new Date(defaultTemplate.updated_at).toLocaleString()}</p>` : ''}
           </div>
           <div class="template-content">
-            <label>Contenido de la plantilla:</label>
+            <label>${contentText}:</label>
             <textarea readonly rows="15" class="form-control">${defaultTemplate.content}</textarea>
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" onclick="languageManager.closeDefaultTemplateModal(this)">
-            Cerrar
+            ${closeText}
           </button>
         </div>
       </div>
@@ -1097,7 +1117,8 @@ class LanguageManager {
       if (!select || !countries) return;
       
       // Clear existing options
-      select.innerHTML = '<option value="">Selecciona un país...</option>';
+      const placeholderText = window.i18n ? window.i18n.t('langAdd.selectCountry') : 'Selecciona un país...';
+      select.innerHTML = `<option value="">${placeholderText}</option>`;
       
       // Group countries by language to avoid duplicates
       const languageGroups = {};
