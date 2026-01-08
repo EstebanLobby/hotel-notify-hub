@@ -172,12 +172,21 @@ function setupLanguageSelector() {
   const langOptions = document.querySelectorAll('.lang-option');
   const currentLangDisplay = document.getElementById('current-lang-display');
   
-  if (!languageToggle || !languageDropdown) return;
+  console.log('setupLanguageSelector - languageToggle:', languageToggle);
+  console.log('setupLanguageSelector - languageDropdown:', languageDropdown);
+  
+  if (!languageToggle || !languageDropdown) {
+    console.error('Language selector elements not found!');
+    return;
+  }
   
   // Toggle dropdown
   languageToggle.addEventListener('click', (e) => {
+    console.log('Language toggle clicked!');
     e.stopPropagation();
+    e.preventDefault();
     languageDropdown.classList.toggle('show');
+    console.log('Dropdown has show class:', languageDropdown.classList.contains('show'));
   });
   
   // Close dropdown when clicking outside

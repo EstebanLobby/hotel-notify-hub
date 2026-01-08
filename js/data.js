@@ -864,7 +864,7 @@ async function getLanguageInfo(langCode) {
         country = usCountry;
       } else {
         // Si no hay US, buscar cualquier país de inglés que no sea GB
-        const nonGBCountry = countries.find(c => c.language === 'en' && c.abbreviation !== 'GB');
+        const nonGBCountry = countries.find(c => c.language === 'en' && c.abbreviation !== 'EN');
         if (nonGBCountry) {
           country = nonGBCountry;
         }
@@ -919,6 +919,11 @@ async function getLanguageInfo(langCode) {
         'ru': 'Русский'
       };
       name = languageNames[langCode] || langCode.toUpperCase();
+    }
+    
+    // Reemplazar GB por EN para el idioma inglés
+    if (langCode === 'en' && name === 'GB') {
+      name = 'EN';
     }
     
     return { flag, name };
