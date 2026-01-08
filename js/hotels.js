@@ -362,6 +362,11 @@ function exportHotelsToCSV() {
 }
 
 function createHotelRow(hotel) {
+  // Obtener traducciones
+  const editText = window.i18n ? window.i18n.t('hotels.edit') : 'Editar';
+  const viewServicesText = window.i18n ? window.i18n.t('hotels.viewServices') : 'Ver Servicios';
+  const deleteText = window.i18n ? window.i18n.t('hotels.delete') : 'Eliminar';
+  
   const row = document.createElement('tr');
   row.innerHTML = `
     <td>
@@ -407,13 +412,13 @@ function createHotelRow(hotel) {
         </button>
         <div class="dropdown-content">
           <button class="dropdown-item" onclick="editHotel(${hotel.id})">
-            ✏️ Editar
+            ✏️ ${editText}
           </button>
           <button class="dropdown-item" onclick="viewHotelServices(${hotel.id})">
-            👁️ Ver Servicios
+            👁️ ${viewServicesText}
           </button>
           <button class="dropdown-item danger" onclick="deleteHotel(${hotel.id})">
-            🗑️ Eliminar
+            🗑️ ${deleteText}
           </button>
         </div>
       </div>

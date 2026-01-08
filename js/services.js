@@ -55,7 +55,7 @@ function createServiceRow(service, subscribedCount) {
     </td>
     <td>
       <span class="badge ${service.active ? 'badge-success' : 'badge-secondary'}">
-        ${service.active ? 'Activo' : 'Inactivo'}
+        ${service.active ? window.i18n ? window.i18n.t('services.active') : 'Activo' : window.i18n ? window.i18n.t('services.inactive') : 'Inactivo'}
       </span>
     </td>
     <td>

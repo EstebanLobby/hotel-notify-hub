@@ -287,7 +287,7 @@ function addLogoutButton() {
             box-shadow: 0 0 8px ${timeColor};
           "></div>
           <span data-lucide="shield-check" style="width: 1rem; height: 1rem; color: rgba(255, 255, 255, 0.7);"></span>
-          <span>Sesión Activa</span>
+          <span data-i18n="session.active">Sesión Activa</span>
         </div>
         <div style="
           display: flex;
@@ -324,7 +324,8 @@ function addLogoutButton() {
     justify-content: center;
     gap: 0.5rem;
   `;
-  logoutBtn.innerHTML = '<span data-lucide="log-out" style="width: 1rem; height: 1rem;"></span>Cerrar Sesión';
+  const logoutText = window.i18n ? window.i18n.t('session.logout') : 'Cerrar Sesión';
+  logoutBtn.innerHTML = `<span data-lucide="log-out" style="width: 1rem; height: 1rem;"></span><span data-i18n="session.logout">${logoutText}</span>`;
   
   // Agregar efectos hover
   logoutBtn.addEventListener('mouseenter', function() {
@@ -349,8 +350,33 @@ function addLogoutButton() {
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
   }
+  
   // Actualizar información de sesión cada minuto
   setInterval(updateSessionInfo, 60000);
+  
+  // Escuchar cambios de idioma para actualizar el botón
+  window.addEventListener('languageChanged', () => {
+    updateLogoutButton();
+  });
+}
+
+// Función para actualizar el botón de logout cuando cambia el idioma
+function updateLogoutButton() {
+  const logoutBtn = document.getElementById('logout-btn');
+  if (!logoutBtn) return;
+  
+  const logoutText = window.i18n ? window.i18n.t('session.logout') : 'Cerrar Sesión';
+  logoutBtn.innerHTML = `<span data-lucide="log-out" style="width: 1rem; height: 1rem;"></span><span data-i18n="session.logout">${logoutText}</span>`;
+  
+  // Aplicar traducciones
+  if (window.i18n) {
+    window.i18n.applyTranslations();
+  }
+  
+  // Recrear iconos
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 }
 
 // Función para actualizar la información de sesión

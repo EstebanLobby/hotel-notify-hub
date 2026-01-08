@@ -59,6 +59,7 @@ const i18n = {
       'hotels.active': 'Activo',
       'hotels.inactive': 'Inactivo',
       'hotels.edit': 'Editar',
+      'hotels.viewServices': 'Ver Servicios',
       'hotels.delete': 'Eliminar',
       'hotels.manageServices': 'Gestionar servicios',
       'hotels.confirmDelete': '¿Estás seguro de que deseas eliminar este hotel?',
@@ -338,6 +339,10 @@ const i18n = {
       'templates.editTemplate': 'Editar plantilla',
       'templates.deleteTemplate': 'Eliminar plantilla',
       
+      // Session
+      'session.active': 'Sesión Activa',
+      'session.logout': 'Cerrar Sesión',
+      
       // Common
       'common.close': 'Cerrar',
       'common.save': 'Guardar',
@@ -416,6 +421,7 @@ const i18n = {
       'hotels.active': 'Active',
       'hotels.inactive': 'Inactive',
       'hotels.edit': 'Edit',
+      'hotels.viewServices': 'View Services',
       'hotels.delete': 'Delete',
       'hotels.manageServices': 'Manage services',
       'hotels.confirmDelete': 'Are you sure you want to delete this hotel?',
@@ -695,6 +701,10 @@ const i18n = {
       'templates.editTemplate': 'Edit template',
       'templates.deleteTemplate': 'Delete template',
       
+      // Session
+      'session.active': 'Active Session',
+      'session.logout': 'Logout',
+      
       // Common
       'common.close': 'Close',
       'common.save': 'Save',
@@ -773,6 +783,7 @@ const i18n = {
       'hotels.active': 'Ativo',
       'hotels.inactive': 'Inativo',
       'hotels.edit': 'Editar',
+      'hotels.viewServices': 'Ver Serviços',
       'hotels.delete': 'Excluir',
       'hotels.manageServices': 'Gerenciar serviços',
       'hotels.confirmDelete': 'Tem certeza de que deseja excluir este hotel?',
@@ -1052,6 +1063,10 @@ const i18n = {
       'templates.editTemplate': 'Editar modelo',
       'templates.deleteTemplate': 'Excluir modelo',
       
+      // Session
+      'session.active': 'Sessão Ativa',
+      'session.logout': 'Sair',
+      
       // Common
       'common.close': 'Fechar',
       'common.save': 'Salvar',
@@ -1182,6 +1197,14 @@ const i18n = {
     document.querySelectorAll('[data-i18n-title]').forEach(element => {
       const key = element.getAttribute('data-i18n-title');
       element.title = this.t(key);
+    });
+    
+    // Actualizar atributos data-required-text y data-optional-text para los checkboxes
+    const requiredText = this.t('common.required');
+    const optionalText = this.t('common.optional');
+    document.querySelectorAll('.field-info').forEach(fieldInfo => {
+      fieldInfo.setAttribute('data-required-text', requiredText);
+      fieldInfo.setAttribute('data-optional-text', optionalText);
     });
     
     // Actualizar título de la página
