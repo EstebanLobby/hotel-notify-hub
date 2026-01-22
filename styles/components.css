@@ -4308,11 +4308,13 @@ select:focus {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.25rem;
+  padding: 0;
   cursor: pointer;
   user-select: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   position: relative;
+  width: 100%;
 }
 
 .field-checkbox-label:hover .field-checkbox-custom {
@@ -4367,6 +4369,8 @@ select:focus {
   align-items: center;
   gap: 0.75rem;
   flex: 1;
+  min-width: 0;
+  position: relative;
 }
 
 .field-icon {
@@ -4381,6 +4385,10 @@ select:focus {
   font-size: 0.9rem;
   font-weight: 500;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .field-status {
@@ -4403,6 +4411,8 @@ select:focus {
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(16, 185, 129, 0.2);
   margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .field-checkbox:not(:checked) ~ .field-info::after {
@@ -4415,7 +4425,112 @@ select:focus {
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(245, 158, 11, 0.2);
   margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
+
+/* Field Controls Wrapper */
+.field-controls-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+}
+
+/* Field Hide Toggle Button */
+.field-hide-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.2);
+  position: relative;
+  white-space: nowrap;
+}
+
+.field-hide-toggle:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
+}
+
+.field-hide-toggle:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.2);
+}
+
+.field-hide-toggle.hidden {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+}
+
+.field-hide-toggle.hidden:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+.field-hide-toggle .hide-icon,
+.field-hide-toggle .show-icon {
+  font-size: 0.875rem;
+  line-height: 1;
+  display: inline-block;
+}
+
+.field-hide-toggle .hide-text,
+.field-hide-toggle .show-text {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.field-hide-toggle .hide-icon {
+  display: inline-block;
+}
+
+.field-hide-toggle .hide-text {
+  display: inline-block;
+}
+
+.field-hide-toggle .show-icon {
+  display: none;
+}
+
+.field-hide-toggle .show-text {
+  display: none;
+}
+
+.field-hide-toggle.hidden .hide-icon {
+  display: none;
+}
+
+.field-hide-toggle.hidden .hide-text {
+  display: none;
+}
+
+.field-hide-toggle.hidden .show-icon {
+  display: inline-block !important;
+}
+
+.field-hide-toggle.hidden .show-text {
+  display: inline-block !important;
+}
+
 
 .info-note {
   display: flex;

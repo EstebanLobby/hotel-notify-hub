@@ -429,6 +429,22 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
       webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
       webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
       webhookData.field_license_plate_required = serviceData.fields_config.license_plate_required;
+      // Estados de ocultar/mostrar
+      if (serviceData.fields_config.location_hidden !== undefined) {
+        webhookData.field_location_hidden = serviceData.fields_config.location_hidden;
+      }
+      if (serviceData.fields_config.comments_hidden !== undefined) {
+        webhookData.field_comments_hidden = serviceData.fields_config.comments_hidden;
+      }
+      if (serviceData.fields_config.guest_documents_hidden !== undefined) {
+        webhookData.field_guest_documents_hidden = serviceData.fields_config.guest_documents_hidden;
+      }
+      if (serviceData.fields_config.companion_documents_hidden !== undefined) {
+        webhookData.field_companion_documents_hidden = serviceData.fields_config.companion_documents_hidden;
+      }
+      if (serviceData.fields_config.license_plate_hidden !== undefined) {
+        webhookData.field_license_plate_hidden = serviceData.fields_config.license_plate_hidden;
+      }
       console.log('Agregando configuración de campos para SELF_IN:', serviceData.fields_config);
     }
     
@@ -516,6 +532,22 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
     webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
     webhookData.field_license_plate_required = serviceData.fields_config.license_plate_required;
+    // Estados de ocultar/mostrar
+    if (serviceData.fields_config.location_hidden !== undefined) {
+      webhookData.field_location_hidden = serviceData.fields_config.location_hidden;
+    }
+    if (serviceData.fields_config.comments_hidden !== undefined) {
+      webhookData.field_comments_hidden = serviceData.fields_config.comments_hidden;
+    }
+    if (serviceData.fields_config.guest_documents_hidden !== undefined) {
+      webhookData.field_guest_documents_hidden = serviceData.fields_config.guest_documents_hidden;
+    }
+    if (serviceData.fields_config.companion_documents_hidden !== undefined) {
+      webhookData.field_companion_documents_hidden = serviceData.fields_config.companion_documents_hidden;
+    }
+    if (serviceData.fields_config.license_plate_hidden !== undefined) {
+      webhookData.field_license_plate_hidden = serviceData.fields_config.license_plate_hidden;
+    }
     console.log('Actualizando configuración de campos para SELF_IN:', serviceData.fields_config);
   }
   

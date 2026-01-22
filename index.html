@@ -640,120 +640,162 @@
                                     </div>
                                     <div class="fields-list configurable-fields">
                                         
-                                        <!-- País -->
+                                        <!-- Ubicación (País, Estado/Provincia, Ciudad) -->
                                         <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_country_required" 
-                                                    id="field-country-required"
-                                                    class="field-checkbox"
-                                                    checked
+                                            <div class="field-controls-wrapper">
+                                                <label class="field-checkbox-label">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="field_location_required" 
+                                                        id="field-location-required"
+                                                        class="field-checkbox"
+                                                        checked
+                                                    >
+                                                    
+                                                    <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
+                                                        <span class="field-icon">📍</span>
+                                                        <span class="field-name" data-i18n="addService.location">Ubicación (País, Estado/Provincia, Ciudad)</span>
+                                                    </div>
+                                                    
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    class="field-hide-toggle" 
+                                                    data-field="location"
+                                                    id="field-location-hide"
+                                                    title="Ocultar/Mostrar campo"
+                                                    aria-label="Ocultar/Mostrar campo"
                                                 >
-                                                
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">🌍</span>
-                                                    <span class="field-name" data-i18n="addService.country">País</span>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        <!-- Estado/Provincia -->
-                                        <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_state_required" 
-                                                    id="field-state-required"
-                                                    class="field-checkbox"
-                                                    checked
-                                                >
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">🗺️</span>
-                                                    <span class="field-name" data-i18n="addService.state">Estado/Provincia</span>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        <!-- Ciudad -->
-                                        <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_city_required" 
-                                                    id="field-city-required"
-                                                    class="field-checkbox"
-                                                    checked
-                                                >
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">🏙️</span>
-                                                    <span class="field-name" data-i18n="addService.city">Ciudad</span>
-                                                </div>
-                                            </label>
+                                                    
+                                                    <span class="hide-text" data-i18n="addService.show">Mostrar</span>
+                                                    
+                                                    <span class="show-text" style="display: none;" data-i18n="addService.hide">Ocultar</span>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <!-- Comentarios -->
                                         <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_comments_required" 
-                                                    id="field-comments-required"
-                                                    class="field-checkbox"
+                                            <div class="field-controls-wrapper">
+                                                <label class="field-checkbox-label">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="field_comments_required" 
+                                                        id="field-comments-required"
+                                                        class="field-checkbox"
+                                                    >
+                                                    <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
+                                                        <span class="field-icon">💬</span>
+                                                        <span class="field-name" data-i18n="addService.comments">Comentarios del Huésped</span>
+                                                    </div>
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    class="field-hide-toggle" 
+                                                    data-field="comments"
+                                                    id="field-comments-hide"
+                                                    title="Ocultar/Mostrar campo"
+                                                    aria-label="Ocultar/Mostrar campo"
                                                 >
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">💬</span>
-                                                    <span class="field-name" data-i18n="addService.comments">Comentarios del Huésped</span>
-                                                </div>
-                                            </label>
+                                                    
+                                                    <span class="hide-text" data-i18n="addService.show">Mostrar</span>
+                                                    
+                                                    <span class="show-text" style="display: none;" data-i18n="addService.hide">Ocultar</span>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <!-- Documentos del Huésped Principal -->
                                         <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_guest_documents_required" 
-                                                    id="field-guest-documents-required"
-                                                    class="field-checkbox"
+                                            <div class="field-controls-wrapper">
+                                                <label class="field-checkbox-label">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="field_guest_documents_required" 
+                                                        id="field-guest-documents-required"
+                                                        class="field-checkbox"
+                                                    >
+                                                    <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
+                                                        <span class="field-icon">📄</span>
+                                                        <span class="field-name" data-i18n="addService.guestDocuments">Carga de Documentos (Huésped Principal)</span>
+                                                    </div>
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    class="field-hide-toggle" 
+                                                    data-field="guest_documents"
+                                                    id="field-guest-documents-hide"
+                                                    title="Ocultar/Mostrar campo"
+                                                    aria-label="Ocultar/Mostrar campo"
                                                 >
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">📄</span>
-                                                    <span class="field-name" data-i18n="addService.guestDocuments">Carga de Documentos (Huésped Principal)</span>
-                                                </div>
-                                            </label>
+                                                    
+                                                    <span class="hide-text" data-i18n="addService.show">Mostrar</span>
+                                                    
+                                                    <span class="show-text" style="display: none;" data-i18n="addService.hide">Ocultar</span>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <!-- Documentos de Acompañantes -->
                                         <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_companion_documents_required" 
-                                                    id="field-companion-documents-required"
-                                                    class="field-checkbox"
+                                            <div class="field-controls-wrapper">
+                                                <label class="field-checkbox-label">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="field_companion_documents_required" 
+                                                        id="field-companion-documents-required"
+                                                        class="field-checkbox"
+                                                    >
+                                                    <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
+                                                        <span class="field-icon">📑</span>
+                                                        <span class="field-name" data-i18n="addService.companionDocuments">Carga de Documentos (Acompañantes)</span>
+                                                    </div>
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    class="field-hide-toggle" 
+                                                    data-field="companion_documents"
+                                                    id="field-companion-documents-hide"
+                                                    title="Ocultar/Mostrar campo"
+                                                    aria-label="Ocultar/Mostrar campo"
                                                 >
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">📑</span>
-                                                    <span class="field-name" data-i18n="addService.companionDocuments">Carga de Documentos (Acompañantes)</span>
-                                                </div>
-                                            </label>
+                                                    
+                                                    <span class="hide-text" data-i18n="addService.show">Mostrar</span>
+                                                    
+                                                    <span class="show-text" style="display: none;" data-i18n="addService.hide">Ocultar</span>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <!-- Patente del Vehículo -->
                                         <div class="field-item-configurable">
-                                            <label class="field-checkbox-label">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="field_license_plate_required" 
-                                                    id="field-license-plate-required"
-                                                    class="field-checkbox"
+                                            <div class="field-controls-wrapper">
+                                                <label class="field-checkbox-label">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="field_license_plate_required" 
+                                                        id="field-license-plate-required"
+                                                        class="field-checkbox"
+                                                    >
+                                                    <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
+                                                        <span class="field-icon">🚗</span>
+                                                        <span class="field-name" data-i18n="addService.licensePlate">Patente del Vehículo (License Plate)</span>
+                                                    </div>
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    class="field-hide-toggle" 
+                                                    data-field="license_plate"
+                                                    id="field-license-plate-hide"
+                                                    title="Ocultar/Mostrar campo"
+                                                    aria-label="Ocultar/Mostrar campo"
                                                 >
-                                                <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
-                                                    <span class="field-icon">🚗</span>
-                                                    <span class="field-name" data-i18n="addService.licensePlate">Patente del Vehículo (License Plate)</span>
-                                                </div>
-                                            </label>
+                                                    
+                                                    <span class="hide-text" data-i18n="addService.show">Mostrar</span>
+                                                    
+                                                    <span class="show-text" style="display: none;" data-i18n="addService.hide">Ocultar</span>
+                                                </button>
+                                            </div>
                                         </div>
 
                                     </div>

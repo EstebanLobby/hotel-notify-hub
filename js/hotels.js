@@ -1162,14 +1162,30 @@ async function handleAddServiceSubmit(e) {
     serviceData.self_in_url = formData.self_in_url || '';
     
     // Agregar configuración de campos del formulario
+    // Si la ubicación está marcada como requerida, todas las partes (país, estado, ciudad) son obligatorias
+    const locationRequired = formData.field_location_required === true;
+    
+    // Obtener estados de ocultar/mostrar desde los botones toggle
+    const locationHidden = document.getElementById('field-location-hide')?.classList.contains('hidden') || false;
+    const commentsHidden = document.getElementById('field-comments-hide')?.classList.contains('hidden') || false;
+    const guestDocsHidden = document.getElementById('field-guest-documents-hide')?.classList.contains('hidden') || false;
+    const companionDocsHidden = document.getElementById('field-companion-documents-hide')?.classList.contains('hidden') || false;
+    const licensePlateHidden = document.getElementById('field-license-plate-hide')?.classList.contains('hidden') || false;
+    
     serviceData.fields_config = {
-      country_required: formData.field_country_required === true,
-      state_required: formData.field_state_required === true,
-      city_required: formData.field_city_required === true,
+      country_required: locationRequired,
+      state_required: locationRequired,
+      city_required: locationRequired,
       comments_required: formData.field_comments_required === true,
       guest_documents_required: formData.field_guest_documents_required === true,
       companion_documents_required: formData.field_companion_documents_required === true,
-      license_plate_required: formData.field_license_plate_required === true
+      license_plate_required: formData.field_license_plate_required === true,
+      // Estados de ocultar/mostrar
+      location_hidden: locationHidden,
+      comments_hidden: commentsHidden,
+      guest_documents_hidden: guestDocsHidden,
+      companion_documents_hidden: companionDocsHidden,
+      license_plate_hidden: licensePlateHidden
     };
     
     console.log('SELF_IN detectado - statusIN:', serviceData.status_in);
@@ -1226,16 +1242,57 @@ function loadFieldsConfiguration(service) {
     const companionDocsRequired = service.field_companion_documents_required ?? service.fields_config?.companion_documents_required ?? false;
     const licensePlateRequired = service.field_license_plate_required ?? service.fields_config?.license_plate_required ?? false;
     
+    // Si cualquiera de los campos de ubicación está requerido, marcar la opción de ubicación
+    // (ya que si se requiere uno, todos son obligatorios)
+    const locationRequired = countryRequired !== false || stateRequired !== false || cityRequired !== false;
+    
+    // Obtener estados de ocultar/mostrar desde el backend
+    const locationHidden = service.field_location_hidden ?? service.fields_config?.location_hidden ?? false;
+    const commentsHidden = service.field_comments_hidden ?? service.fields_config?.comments_hidden ?? false;
+    const guestDocsHidden = service.field_guest_documents_hidden ?? service.fields_config?.guest_documents_hidden ?? false;
+    const companionDocsHidden = service.field_companion_documents_hidden ?? service.fields_config?.companion_documents_hidden ?? false;
+    const licensePlateHidden = service.field_license_plate_hidden ?? service.fields_config?.license_plate_hidden ?? false;
+    
     // Establecer los valores en los checkboxes
-    document.getElementById('field-country-required').checked = countryRequired !== false;
-    document.getElementById('field-state-required').checked = stateRequired !== false;
-    document.getElementById('field-city-required').checked = cityRequired !== false;
+    const locationCheckbox = document.getElementById('field-location-required');
+    if (locationCheckbox) {
+      locationCheckbox.checked = locationRequired;
+    }
     document.getElementById('field-comments-required').checked = commentsRequired === true;
     document.getElementById('field-guest-documents-required').checked = guestDocsRequired === true;
     document.getElementById('field-companion-documents-required').checked = companionDocsRequired === true;
     document.getElementById('field-license-plate-required').checked = licensePlateRequired === true;
     
+    // Establecer estados de ocultar/mostrar en los botones toggle
+    const locationHideBtn = document.getElementById('field-location-hide');
+    const commentsHideBtn = document.getElementById('field-comments-hide');
+    const guestDocsHideBtn = document.getElementById('field-guest-documents-hide');
+    const companionDocsHideBtn = document.getElementById('field-companion-documents-hide');
+    const licensePlateHideBtn = document.getElementById('field-license-plate-hide');
+    
+    if (locationHideBtn) {
+      locationHideBtn.classList.toggle('hidden', locationHidden);
+      updateHideToggleIcon(locationHideBtn);
+    }
+    if (commentsHideBtn) {
+      commentsHideBtn.classList.toggle('hidden', commentsHidden);
+      updateHideToggleIcon(commentsHideBtn);
+    }
+    if (guestDocsHideBtn) {
+      guestDocsHideBtn.classList.toggle('hidden', guestDocsHidden);
+      updateHideToggleIcon(guestDocsHideBtn);
+    }
+    if (companionDocsHideBtn) {
+      companionDocsHideBtn.classList.toggle('hidden', companionDocsHidden);
+      updateHideToggleIcon(companionDocsHideBtn);
+    }
+    if (licensePlateHideBtn) {
+      licensePlateHideBtn.classList.toggle('hidden', licensePlateHidden);
+      updateHideToggleIcon(licensePlateHideBtn);
+    }
+    
     console.log('Configuración de campos cargada:', {
+      location: locationRequired,
       country: countryRequired,
       state: stateRequired,
       city: cityRequired,
@@ -1253,15 +1310,62 @@ function loadFieldsConfiguration(service) {
 // Función para resetear la configuración de campos del formulario
 function resetFieldsConfiguration() {
   // Resetear a valores por defecto
-  const defaultCheckedFields = ['field-country-required', 'field-state-required', 'field-city-required'];
-  const allFieldCheckboxes = document.querySelectorAll('.field-checkbox');
+  const locationCheckbox = document.getElementById('field-location-required');
+  if (locationCheckbox) {
+    locationCheckbox.checked = true; // Ubicación marcada por defecto
+  }
   
+  const allFieldCheckboxes = document.querySelectorAll('.field-checkbox');
   allFieldCheckboxes.forEach(checkbox => {
-    if (defaultCheckedFields.includes(checkbox.id)) {
-      checkbox.checked = true;
-    } else {
+    // Mantener ubicación marcada, desmarcar el resto
+    if (checkbox.id !== 'field-location-required') {
       checkbox.checked = false;
     }
+  });
+  
+  // Resetear estados de ocultar/mostrar (todos visibles por defecto)
+  const allHideToggles = document.querySelectorAll('.field-hide-toggle');
+  allHideToggles.forEach(toggle => {
+    toggle.classList.remove('hidden');
+    updateHideToggleIcon(toggle);
+  });
+}
+
+// Función para actualizar el icono del botón de ocultar/mostrar
+function updateHideToggleIcon(toggle) {
+  const hideIcon = toggle.querySelector('.hide-icon');
+  const showIcon = toggle.querySelector('.show-icon');
+  const hideText = toggle.querySelector('.hide-text');
+  const showText = toggle.querySelector('.show-text');
+  
+  if (toggle.classList.contains('hidden')) {
+    if (hideIcon) hideIcon.style.display = 'none';
+    if (hideText) hideText.style.display = 'none';
+    if (showIcon) showIcon.style.display = 'inline-block';
+    if (showText) showText.style.display = 'inline-block';
+  } else {
+    if (hideIcon) hideIcon.style.display = 'inline-block';
+    if (hideText) hideText.style.display = 'inline-block';
+    if (showIcon) showIcon.style.display = 'none';
+    if (showText) showText.style.display = 'none';
+  }
+}
+
+// Función para manejar el clic en los botones de ocultar/mostrar
+function handleHideToggleClick(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  
+  const toggle = e.currentTarget;
+  toggle.classList.toggle('hidden');
+  updateHideToggleIcon(toggle);
+}
+
+// Inicializar event listeners para los botones de ocultar/mostrar
+function initializeHideToggles() {
+  const hideToggles = document.querySelectorAll('.field-hide-toggle');
+  hideToggles.forEach(toggle => {
+    toggle.addEventListener('click', handleHideToggleClick);
   });
 }
 
@@ -1277,6 +1381,11 @@ function handleServiceSelectionChange(e) {
     if (selfInFieldsPanel) {
       selfInFieldsPanel.style.display = 'block';
     }
+    
+    // Inicializar botones de ocultar/mostrar cuando se muestra el panel
+    setTimeout(() => {
+      initializeHideToggles();
+    }, 100);
     
   } else {
     // Ocultar la sección de statusIN y el panel de campos para otros servicios
@@ -1344,6 +1453,9 @@ function resetAddServiceForm() {
   
   // Resetear configuración de campos
   resetFieldsConfiguration();
+  
+  // Inicializar botones de ocultar/mostrar
+  initializeHideToggles();
   
     
     // Limpiar dataset
@@ -1413,6 +1525,11 @@ async function editHotelService(hotelId, serviceId, serviceCode) {
       
       // Cargar configuración de campos si existe
       loadFieldsConfiguration(service);
+      
+      // Inicializar botones de ocultar/mostrar después de cargar la configuración
+      setTimeout(() => {
+        initializeHideToggles();
+      }, 100);
       
       console.log('Cargando statusIN para edición:', statusInValue);
       console.log('Cargando URL para edición:', service.self_in_url || '');
