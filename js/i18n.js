@@ -39,6 +39,9 @@ const i18n = {
       'dashboard.notifications': 'Notificaciones (Mes)',
       'dashboard.successRate': 'Tasa de Éxito',
       'dashboard.activeServices': 'Servicios Activos',
+      'dashboard.totalHotels': 'Total Hoteles',
+      'dashboard.hotelsWithServices': 'Hoteles con Servicios',
+      'dashboard.totalAssignments': 'Asignaciones Totales',
       'dashboard.monthlyNotifications': 'Notificaciones Mensuales',
       'dashboard.serviceDistribution': 'Distribución de Servicios',
       
@@ -122,6 +125,21 @@ const i18n = {
       'services.tableActions': 'Acciones',
       'services.active': 'Activo',
       'services.inactive': 'Inactivo',
+      
+      // Service Hotels Modal
+      'serviceHotels.title': 'Hoteles del Servicio',
+      'serviceHotels.serviceNotFound': 'Servicio no encontrado',
+      'serviceHotels.loading': 'Cargando hoteles...',
+      'serviceHotels.noHotels': 'No hay hoteles suscritos a este servicio',
+      'serviceHotels.error': 'Error al cargar los hoteles',
+      'serviceHotels.searchPlaceholder': 'Buscar por código o nombre de hotel...',
+      'serviceHotels.email': 'Email',
+      'serviceHotels.whatsapp': 'WhatsApp',
+      'serviceHotels.remove': 'Quitar',
+      'serviceHotels.confirmRemove': '¿Estás seguro de que quieres quitar el servicio "{service}" del hotel "{hotel}"?',
+      'serviceHotels.removeSuccess': 'Servicio quitado correctamente',
+      'serviceHotels.removeError': 'Error al quitar el servicio',
+      'serviceHotels.close': 'Cerrar',
       
       // Language Management
       'lang.title': 'Gestión de Idiomas para Plantillas',
@@ -404,6 +422,9 @@ const i18n = {
       'dashboard.notifications': 'Notifications (Month)',
       'dashboard.successRate': 'Success Rate',
       'dashboard.activeServices': 'Active Services',
+      'dashboard.totalHotels': 'Total Hotels',
+      'dashboard.hotelsWithServices': 'Hotels with Services',
+      'dashboard.totalAssignments': 'Total Assignments',
       'dashboard.monthlyNotifications': 'Monthly Notifications',
       'dashboard.serviceDistribution': 'Service Distribution',
       
@@ -487,6 +508,21 @@ const i18n = {
       'services.tableActions': 'Actions',
       'services.active': 'Active',
       'services.inactive': 'Inactive',
+      
+      // Service Hotels Modal
+      'serviceHotels.title': 'Service Hotels',
+      'serviceHotels.serviceNotFound': 'Service not found',
+      'serviceHotels.loading': 'Loading hotels...',
+      'serviceHotels.noHotels': 'No hotels subscribed to this service',
+      'serviceHotels.error': 'Error loading hotels',
+      'serviceHotels.searchPlaceholder': 'Search by hotel code or name...',
+      'serviceHotels.email': 'Email',
+      'serviceHotels.whatsapp': 'WhatsApp',
+      'serviceHotels.remove': 'Remove',
+      'serviceHotels.confirmRemove': 'Are you sure you want to remove the service "{service}" from hotel "{hotel}"?',
+      'serviceHotels.removeSuccess': 'Service removed successfully',
+      'serviceHotels.removeError': 'Error removing service',
+      'serviceHotels.close': 'Close',
       
       // Language Management
       'lang.title': 'Language Management for Templates',
@@ -769,6 +805,9 @@ const i18n = {
       'dashboard.notifications': 'Notificações (Mês)',
       'dashboard.successRate': 'Taxa de Sucesso',
       'dashboard.activeServices': 'Serviços Ativos',
+      'dashboard.totalHotels': 'Total de Hotéis',
+      'dashboard.hotelsWithServices': 'Hotéis com Serviços',
+      'dashboard.totalAssignments': 'Atribuições Totais',
       'dashboard.monthlyNotifications': 'Notificações Mensais',
       'dashboard.serviceDistribution': 'Distribuição de Serviços',
       
@@ -852,6 +891,21 @@ const i18n = {
       'services.tableActions': 'Ações',
       'services.active': 'Ativo',
       'services.inactive': 'Inativo',
+      
+      // Service Hotels Modal
+      'serviceHotels.title': 'Hotéis do Serviço',
+      'serviceHotels.serviceNotFound': 'Serviço não encontrado',
+      'serviceHotels.loading': 'Carregando hotéis...',
+      'serviceHotels.noHotels': 'Nenhum hotel inscrito neste serviço',
+      'serviceHotels.error': 'Erro ao carregar hotéis',
+      'serviceHotels.searchPlaceholder': 'Buscar por código ou nome do hotel...',
+      'serviceHotels.email': 'Email',
+      'serviceHotels.whatsapp': 'WhatsApp',
+      'serviceHotels.remove': 'Remover',
+      'serviceHotels.confirmRemove': 'Tem certeza de que deseja remover o serviço "{service}" do hotel "{hotel}"?',
+      'serviceHotels.removeSuccess': 'Serviço removido com sucesso',
+      'serviceHotels.removeError': 'Erro ao remover serviço',
+      'serviceHotels.close': 'Fechar',
       
       // Language Management
       'lang.title': 'Gestão de Idiomas para Modelos',

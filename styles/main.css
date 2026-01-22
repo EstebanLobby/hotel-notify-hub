@@ -338,6 +338,24 @@ body {
   border: none;
 }
 
+.metric-card-secondary {
+  background: linear-gradient(135deg, hsl(215, 16%, 47%), hsl(215, 16%, 37%));
+  color: white;
+  border: none;
+}
+
+.metric-card-warning {
+  background: linear-gradient(135deg, var(--warning), hsl(43, 96%, 46%));
+  color: white;
+  border: none;
+}
+
+.metric-card-purple {
+  background: linear-gradient(135deg, hsl(262, 83%, 58%), hsl(262, 83%, 48%));
+  color: white;
+  border: none;
+}
+
 .metric-content {
   flex: 1;
 }

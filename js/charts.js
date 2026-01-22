@@ -5,17 +5,58 @@ let servicesChart = null;
 let hotelsMetricsChart = null;
 let serviceUsageChart = null;
 
-function initializeCharts() {
-  createNotificationsChart();
+async function initializeCharts() {
+  await createNotificationsChart();
   // Ejecutar de forma asíncrona sin bloquear UI
-  createServicesChart();
+  await createServicesChart();
 }
 
-function createNotificationsChart() {
+async function createNotificationsChart() {
   const ctx = document.getElementById('notifications-chart');
   if (!ctx) return;
   
-  const data = getNotifications();
+  let data = [];
+  try {
+    // Intentar obtener datos reales del último mes
+    const today = new Date();
+    const lastMonth = new Date(today);
+    lastMonth.setDate(today.getDate() - 30);
+    
+    // Intentar obtener uso de servicios que puede incluir notificaciones
+    const serviceUsage = await getServiceUsageAsync({
+      from: lastMonth.toISOString().split('T')[0],
+      to: today.toISOString().split('T')[0]
+    });
+    
+    // Si hay datos de serviceUsage, intentar construir datos de notificaciones
+    if (Array.isArray(serviceUsage) && serviceUsage.length > 0) {
+      // Agrupar por fecha si es posible
+      data = serviceUsage.map((item, index) => ({
+        date: new Date(Date.now() - (30 - index) * 24 * 60 * 60 * 1000).toISOString(),
+        count: item.count || 0
+      }));
+    } else {
+      // Si no hay datos reales, usar array vacío (no usar mocks)
+      data = [];
+    }
+  } catch (_) {
+    // Si falla, usar array vacío (no usar mocks)
+    data = [];
+  }
+  
+  // Si no hay datos, crear un array vacío para evitar errores en el gráfico
+  if (!Array.isArray(data) || data.length === 0) {
+    // Crear datos vacíos para los últimos 7 días
+    const today = new Date();
+    data = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (6 - i));
+      return {
+        date: date.toISOString(),
+        count: 0
+      };
+    });
+  }
   
   if (notificationsChart) {
     notificationsChart.destroy();
@@ -74,10 +115,12 @@ async function createServicesChart() {
       to: today.toISOString().split('T')[0]
     });
     if (!Array.isArray(data) || data.length === 0) {
-      data = getServiceUsage();
+      // Si no hay datos reales, usar array vacío (no usar mocks)
+      data = [];
     }
   } catch (_) {
-    data = getServiceUsage();
+    // Si falla, usar array vacío (no usar mocks)
+    data = [];
   }
   
   if (servicesChart) {
@@ -188,10 +231,12 @@ async function createServiceUsageChart() {
       });
     }
     if (!Array.isArray(data) || data.length === 0) {
-      data = getServiceUsage();
+      // Si no hay datos reales, usar array vacío (no usar mocks)
+      data = [];
     }
   } catch (_) {
-    data = getServiceUsage();
+    // Si falla, usar array vacío (no usar mocks)
+    data = [];
   }
   
   if (serviceUsageChart) {
@@ -240,9 +285,9 @@ async function createServiceUsageChart() {
   });
 }
 
-function updateDashboardCharts() {
-  createNotificationsChart();
-  createServicesChart();
+async function updateDashboardCharts() {
+  await createNotificationsChart();
+  await createServicesChart();
 }
 
 async function updateReportsCharts() {

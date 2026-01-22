@@ -107,13 +107,7 @@
             </div>
             <nav class="sidebar-nav">
                 <ul class="nav-list">
-                    <li><a href="#dashboard" class="nav-link active" data-route="dashboard"
-                           data-intro="Dashboard: Aquí ves un resumen general con estadísticas y gráficos de tu sistema de notificaciones." 
-                           data-step="5">
-                        <span data-lucide="bar-chart-3"></span>
-                        <span data-i18n="nav.dashboard">Dashboard</span>
-                    </a></li>
-                    <li><a href="#hotels" class="nav-link" data-route="hotels"
+                    <li><a href="#hotels" class="nav-link active" data-route="hotels"
                            data-intro="Hoteles: Esta es la sección principal donde gestionas todos tus hoteles, agregas nuevos y configuras sus servicios de notificación." 
                            data-step="6">
                         <span data-lucide="building"></span>
@@ -142,7 +136,7 @@
                 <div class="header-content">
                     <h1 id="page-title" 
                         data-intro="¡Bienvenido al Hotel Notify Hub! Este es tu panel principal donde puedes gestionar hoteles y sus servicios de notificación." 
-                        data-step="1">Dashboard</h1>
+                        data-step="1">Hoteles</h1>
                     <div class="header-actions">
                         <!-- Language Selector -->
                         <div class="language-selector">
@@ -232,61 +226,6 @@
 
             <!-- Content Area -->
             <div class="content-wrapper">
-                <!-- Dashboard View -->
-                <div id="dashboard-view" class="view">
-                    <div class="metrics-grid">
-                        <div class="metric-card metric-card-primary">
-                            <div class="metric-content">
-                                <div class="metric-value" id="total-hotels">0</div>
-                                <div class="metric-label" data-i18n="dashboard.activeHotels">Hoteles Activos</div>
-                            </div>
-                            <div class="metric-icon">
-                                <span data-lucide="building"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="metric-card metric-card-success">
-                            <div class="metric-content">
-                                <div class="metric-value" id="total-notifications">0</div>
-                                <div class="metric-label" data-i18n="dashboard.notifications">Notificaciones (Mes)</div>
-                            </div>
-                            <div class="metric-icon">
-                                <span data-lucide="send"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="metric-card metric-card-info">
-                            <div class="metric-content">
-                                <div class="metric-value" id="success-rate">0%</div>
-                                <div class="metric-label" data-i18n="dashboard.successRate">Tasa de Éxito</div>
-                            </div>
-                            <div class="metric-icon">
-                                <span data-lucide="check-circle"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="metric-card">
-                            <div class="metric-content">
-                                <div class="metric-value" id="active-services">0</div>
-                                <div class="metric-label" data-i18n="dashboard.activeServices">Servicios Activos</div>
-                            </div>
-                            <div class="metric-icon">
-                                <span data-lucide="settings"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <h3 data-i18n="dashboard.monthlyNotifications">Notificaciones Mensuales</h3>
-                            <canvas id="notifications-chart"></canvas>
-                        </div>
-                        <div class="chart-card">
-                            <h3 data-i18n="dashboard.serviceDistribution">Distribución de Servicios</h3>
-                            <canvas id="services-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Hotels View -->
                 <div id="hotels-view" class="view">
@@ -393,7 +332,6 @@
                                     <th data-i18n="services.tableDescription">Descripción</th>
                                     <th data-i18n="services.tableStatus">Estado</th>
                                     <th data-i18n="services.tableSubscribed">Hoteles Suscritos</th>
-                                    <th data-i18n="services.tableActions">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="services-tbody">
@@ -508,6 +446,41 @@
                     <span data-i18n="hotelServices.addService">Agregar Servicio</span>
                 </button>
                 <button type="button" class="btn btn-secondary" id="close-services-btn" data-i18n="hotelServices.close">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Hotels Modal -->
+    <div id="service-hotels-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="service-hotels-title" data-i18n="serviceHotels.title">Hoteles del Servicio</h3>
+                <button class="modal-close" id="close-service-hotels-modal">
+                    <span data-lucide="x"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="service-hotels-content">
+                    <!-- Search Bar -->
+                    <div class="search-container" style="margin-bottom: 1.5rem;">
+                        <input 
+                            type="text" 
+                            id="service-hotels-search" 
+                            class="search-input" 
+                            placeholder="Buscar por código o nombre de hotel..."
+                            data-i18n-placeholder="serviceHotels.searchPlaceholder"
+                        >
+                        <span data-lucide="search" class="search-icon"></span>
+                    </div>
+                    
+                    <!-- Hotels List -->
+                    <div id="service-hotels-list" class="service-hotels-list">
+                        <div class="loading-spinner" data-i18n="serviceHotels.loading">Cargando hoteles...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="close-service-hotels-btn" data-i18n="serviceHotels.close">Cerrar</button>
             </div>
         </div>
     </div>
@@ -846,15 +819,6 @@
                             <h4>Tutorial de Hoteles</h4>
                             <p>Gestión de hoteles, servicios y configuración statusIN</p>
                             <span class="tutorial-duration">⏰ 1-2 minutos</span>
-                        </div>
-                    </button>
-                    
-                    <button class="tutorial-option-btn" data-tutorial="dashboard">
-                        <div class="tutorial-option-icon">📊</div>
-                        <div class="tutorial-option-content">
-                            <h4>Tutorial de Dashboard</h4>
-                            <p>Estadísticas, gráficos y reportes del sistema</p>
-                            <span class="tutorial-duration">⏰ 1 minuto</span>
                         </div>
                     </button>
                     

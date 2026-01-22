@@ -1,6 +1,6 @@
 // Main application logic
 
-let currentView = 'dashboard';
+let currentView = 'hotels';
 
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializar sistema de i18n primero
@@ -38,11 +38,6 @@ function initializeApp() {
   // Add logout button to sidebar
   addLogoutButton();
   
-  // Initialize dashboard metrics
-  updateDashboardMetrics();
-  
-  // Setup periodic updates (every 30 seconds)
-  setInterval(updateDashboardMetrics, 30000);
   
   // Verificar sesión periódicamente (cada 5 minutos)
   setInterval(verifySession, 300000);
@@ -69,7 +64,7 @@ function setupNavigation() {
   
   // Set initial route
   const hash = window.location.hash.substring(1);
-  const initialRoute = hash || 'dashboard';
+  const initialRoute = hash || 'hotels';
   navigateToView(initialRoute, false);
 }
 
@@ -117,9 +112,6 @@ function navigateToView(viewName, pushState = true) {
 
 function initializeCurrentView() {
   switch (currentView) {
-    case 'dashboard':
-      initializeCharts();
-      break;
     case 'hotels':
       initializeHotels();
       break;
@@ -254,36 +246,6 @@ function updatePageTitle() {
   }
 }
 
-function updateDashboardMetrics() {
-  const metrics = getDashboardMetrics();
-  
-  // Update metric values
-  const totalHotelsElement = document.getElementById('total-hotels');
-  const totalNotificationsElement = document.getElementById('total-notifications');
-  const successRateElement = document.getElementById('success-rate');
-  const activeServicesElement = document.getElementById('active-services');
-  
-  if (totalHotelsElement) {
-    animateNumber(totalHotelsElement, metrics.activeHotels);
-  }
-  
-  if (totalNotificationsElement) {
-    animateNumber(totalNotificationsElement, metrics.totalNotifications);
-  }
-  
-  if (successRateElement) {
-    animateNumber(successRateElement, metrics.successRate, '%');
-  }
-  
-  if (activeServicesElement) {
-    animateNumber(activeServicesElement, metrics.activeServices);
-  }
-  
-  // Update charts if we're on the dashboard
-  if (currentView === 'dashboard') {
-    updateDashboardCharts();
-  }
-}
 
 function animateNumber(element, targetValue, suffix = '') {
   const startValue = parseInt(element.textContent) || 0;

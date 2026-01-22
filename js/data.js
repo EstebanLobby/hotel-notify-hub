@@ -295,21 +295,92 @@ async function getServiceUsageAsync({ from, to }) {
 }
 
 async function getDashboardMetricsAsync() {
-  // Intenta obtener datos remotos mínimos para construir métricas
+  // Intenta obtener datos remotos completos para construir métricas
   try {
-    const [hotels, services] = await Promise.all([
-      getHotelsAsync({ limit: 100, offset: 0 }),
-      getServicesAsync()
+    const [hotels, services, serviceUsage] = await Promise.all([
+      getHotelsAsync({ limit: 1000, offset: 0 }),
+      getServicesAsync(),
+      // Intentar obtener uso de servicios del último mes
+      getServiceUsageAsync({
+        from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        to: new Date().toISOString().split('T')[0]
+      }).catch(() => [])
     ]);
+    
+    // Calcular métricas de hoteles
+    const totalHotels = hotels.length;
     const activeHotels = hotels.filter(h => h.active).length;
+    const inactiveHotels = totalHotels - activeHotels;
+    
+    // Calcular métricas de servicios
+    const totalServices = services.length;
     const activeServices = services.filter(s => s.active).length;
-    // Si tu webhook ofrece notificaciones, cámbialo a remoto
-    const totalNotifications = mockNotifications.reduce((sum, n) => sum + n.count, 0);
-    const successRate = 94.5;
-    return { activeHotels, totalNotifications, successRate, activeServices };
+    const inactiveServices = totalServices - activeServices;
+    
+    // Calcular hoteles con servicios activos
+    const hotelsWithServices = hotels.filter(h => h.active_services && h.active_services.length > 0).length;
+    
+    // Calcular total de servicios asignados
+    const totalServiceAssignments = hotels.reduce((sum, h) => sum + (h.active_services?.length || 0), 0);
+    
+    // Calcular notificaciones del mes desde serviceUsage
+    let totalNotifications = 0;
+    let successfulNotifications = 0;
+    let failedNotifications = 0;
+    
+    if (Array.isArray(serviceUsage) && serviceUsage.length > 0) {
+      totalNotifications = serviceUsage.reduce((sum, item) => sum + (item.count || 0), 0);
+      // Si hay datos de éxito/fallo, calcularlos
+      successfulNotifications = serviceUsage.reduce((sum, item) => sum + (item.success || 0), 0);
+      failedNotifications = serviceUsage.reduce((sum, item) => sum + (item.failed || 0), 0);
+    }
+    // Si no hay datos reales, dejar en 0 (no usar mocks)
+    
+    // Calcular tasa de éxito solo si hay datos reales
+    let successRate = 0;
+    if (totalNotifications > 0) {
+      if (successfulNotifications > 0 || failedNotifications > 0) {
+        const total = successfulNotifications + failedNotifications;
+        successRate = total > 0 ? ((successfulNotifications / total) * 100) : 0;
+      } else {
+        // Si hay notificaciones pero no datos de éxito/fallo, no podemos calcular la tasa
+        successRate = 0;
+      }
+    }
+    
+    return {
+      // Métricas principales
+      activeHotels,
+      totalHotels,
+      inactiveHotels,
+      totalNotifications,
+      successRate: Math.round(successRate * 10) / 10, // Redondear a 1 decimal
+      activeServices,
+      totalServices,
+      inactiveServices,
+      // Métricas adicionales
+      hotelsWithServices,
+      totalServiceAssignments,
+      successfulNotifications,
+      failedNotifications
+    };
   } catch (e) {
-    // Fallback a mocks si falla el remoto
-    return getDashboardMetrics();
+    console.error('Error obteniendo métricas del dashboard:', e);
+    // Si falla, retornar valores en 0 (no usar datos mock)
+    return {
+      activeHotels: 0,
+      totalHotels: 0,
+      inactiveHotels: 0,
+      totalNotifications: 0,
+      successRate: 0,
+      activeServices: 0,
+      totalServices: 0,
+      inactiveServices: 0,
+      hotelsWithServices: 0,
+      totalServiceAssignments: 0,
+      successfulNotifications: 0,
+      failedNotifications: 0
+    };
   }
 }
 
@@ -470,19 +541,39 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
   return null;
 }
 
-async function removeHotelServiceAsync(hotelId, serviceId) {
+async function removeHotelServiceAsync(hotelId, serviceId, hotelCode = null) {
   console.log('Quitando servicio del hotel:', hotelId, 'service_id:', serviceId);
   
-  // Obtener el hotel_code desde el cache de hoteles
-  const hotel = hotelsCache.find(h => h.id === hotelId);
-  if (!hotel) {
+  let hotelCodeToUse = hotelCode;
+  
+  // Si no se proporciona hotel_code, intentar obtenerlo
+  if (!hotelCodeToUse) {
+    // Primero intentar desde el cache
+    const hotel = hotelsCache.find(h => h.id === hotelId);
+    if (hotel) {
+      hotelCodeToUse = hotel.hotel_code;
+    } else {
+      // Si no está en cache, obtener desde el backend
+      try {
+        const hotels = await getHotelsAsync({ limit: 1000, offset: 0 });
+        const hotelFromBackend = hotels.find(h => h.id === hotelId);
+        if (hotelFromBackend) {
+          hotelCodeToUse = hotelFromBackend.hotel_code;
+        }
+      } catch (error) {
+        console.error('Error obteniendo hotel desde backend:', error);
+      }
+    }
+  }
+  
+  if (!hotelCodeToUse) {
     throw new Error(`Hotel con ID ${hotelId} no encontrado`);
   }
   
   const res = await fetchWebhook({ 
     func: 'hotels', 
     method: 'remove_service',
-    hotel_code: hotel.hotel_code,
+    hotel_code: hotelCodeToUse,
     service_id: serviceId
   });
   console.log('Respuesta de removeHotelServiceAsync:', res);
