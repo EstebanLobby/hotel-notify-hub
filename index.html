@@ -577,7 +577,6 @@
                                                 <li data-i18n="addService.guestIdNumber">Número de DNI/Pasaporte/Doc. de Identidad</li>
                                                 <li data-i18n="addService.guestPhone">Teléfono</li>
                                                 <li data-i18n="addService.guestEmail">Correo Electrónico</li>
-                                                <li data-i18n="addService.guestBirthdate">Fecha de Nacimiento (Día, Mes, Año)</li>
                                             </ul>
                                         </div>
                                         <div class="field-category">
@@ -636,6 +635,38 @@
                                                     class="field-hide-toggle" 
                                                     data-field="location"
                                                     id="field-location-hide"
+                                                    title="Ocultar/Mostrar campo"
+                                                    aria-label="Ocultar/Mostrar campo"
+                                                >
+                                                    
+                                                    <span class="hide-text" data-i18n="addService.show">Mostrar</span>
+                                                    
+                                                    <span class="show-text" style="display: none;" data-i18n="addService.hide">Ocultar</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fecha de Nacimiento -->
+                                        <div class="field-item-configurable">
+                                            <div class="field-controls-wrapper">
+                                                <label class="field-checkbox-label">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        name="field_birthdate_required" 
+                                                        id="field-birthdate-required"
+                                                        class="field-checkbox"
+                                                        checked
+                                                    >
+                                                    <div class="field-info" data-required-text="Obligatorio" data-optional-text="Opcional">
+                                                        <span class="field-icon">🎂</span>
+                                                        <span class="field-name" data-i18n="addService.birthdate">Fecha de Nacimiento (Día, Mes, Año)</span>
+                                                    </div>
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    class="field-hide-toggle" 
+                                                    data-field="birthdate"
+                                                    id="field-birthdate-hide"
                                                     title="Ocultar/Mostrar campo"
                                                     aria-label="Ocultar/Mostrar campo"
                                                 >

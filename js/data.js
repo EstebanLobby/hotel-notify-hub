@@ -496,6 +496,7 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
       webhookData.field_country_required = serviceData.fields_config.country_required;
       webhookData.field_state_required = serviceData.fields_config.state_required;
       webhookData.field_city_required = serviceData.fields_config.city_required;
+      webhookData.field_birthdate_required = serviceData.fields_config.birthdate_required;
       webhookData.field_comments_required = serviceData.fields_config.comments_required;
       webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
       webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
@@ -503,6 +504,9 @@ async function addHotelServiceAsync(hotelId, serviceCode, serviceData = {}) {
       // Estados de ocultar/mostrar
       if (serviceData.fields_config.location_hidden !== undefined) {
         webhookData.field_location_hidden = serviceData.fields_config.location_hidden;
+      }
+      if (serviceData.fields_config.birthdate_hidden !== undefined) {
+        webhookData.field_birthdate_hidden = serviceData.fields_config.birthdate_hidden;
       }
       if (serviceData.fields_config.comments_hidden !== undefined) {
         webhookData.field_comments_hidden = serviceData.fields_config.comments_hidden;
@@ -619,6 +623,7 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     webhookData.field_country_required = serviceData.fields_config.country_required;
     webhookData.field_state_required = serviceData.fields_config.state_required;
     webhookData.field_city_required = serviceData.fields_config.city_required;
+    webhookData.field_birthdate_required = serviceData.fields_config.birthdate_required;
     webhookData.field_comments_required = serviceData.fields_config.comments_required;
     webhookData.field_guest_documents_required = serviceData.fields_config.guest_documents_required;
     webhookData.field_companion_documents_required = serviceData.fields_config.companion_documents_required;
@@ -626,6 +631,9 @@ async function updateHotelServiceAsync(hotelId, serviceId, serviceData = {}) {
     // Estados de ocultar/mostrar
     if (serviceData.fields_config.location_hidden !== undefined) {
       webhookData.field_location_hidden = serviceData.fields_config.location_hidden;
+    }
+    if (serviceData.fields_config.birthdate_hidden !== undefined) {
+      webhookData.field_birthdate_hidden = serviceData.fields_config.birthdate_hidden;
     }
     if (serviceData.fields_config.comments_hidden !== undefined) {
       webhookData.field_comments_hidden = serviceData.fields_config.comments_hidden;

@@ -1167,6 +1167,7 @@ async function handleAddServiceSubmit(e) {
     
     // Obtener estados de ocultar/mostrar desde los botones toggle
     const locationHidden = document.getElementById('field-location-hide')?.classList.contains('hidden') || false;
+    const birthdateHidden = document.getElementById('field-birthdate-hide')?.classList.contains('hidden') || false;
     const commentsHidden = document.getElementById('field-comments-hide')?.classList.contains('hidden') || false;
     const guestDocsHidden = document.getElementById('field-guest-documents-hide')?.classList.contains('hidden') || false;
     const companionDocsHidden = document.getElementById('field-companion-documents-hide')?.classList.contains('hidden') || false;
@@ -1176,12 +1177,14 @@ async function handleAddServiceSubmit(e) {
       country_required: locationRequired,
       state_required: locationRequired,
       city_required: locationRequired,
+      birthdate_required: formData.field_birthdate_required === true,
       comments_required: formData.field_comments_required === true,
       guest_documents_required: formData.field_guest_documents_required === true,
       companion_documents_required: formData.field_companion_documents_required === true,
       license_plate_required: formData.field_license_plate_required === true,
       // Estados de ocultar/mostrar
       location_hidden: locationHidden,
+      birthdate_hidden: birthdateHidden,
       comments_hidden: commentsHidden,
       guest_documents_hidden: guestDocsHidden,
       companion_documents_hidden: companionDocsHidden,
@@ -1237,6 +1240,7 @@ function loadFieldsConfiguration(service) {
     const countryRequired = service.field_country_required ?? service.fields_config?.country_required ?? true;
     const stateRequired = service.field_state_required ?? service.fields_config?.state_required ?? true;
     const cityRequired = service.field_city_required ?? service.fields_config?.city_required ?? true;
+    const birthdateRequired = service.field_birthdate_required ?? service.fields_config?.birthdate_required ?? true;
     const commentsRequired = service.field_comments_required ?? service.fields_config?.comments_required ?? false;
     const guestDocsRequired = service.field_guest_documents_required ?? service.fields_config?.guest_documents_required ?? false;
     const companionDocsRequired = service.field_companion_documents_required ?? service.fields_config?.companion_documents_required ?? false;
@@ -1248,6 +1252,7 @@ function loadFieldsConfiguration(service) {
     
     // Obtener estados de ocultar/mostrar desde el backend
     const locationHidden = service.field_location_hidden ?? service.fields_config?.location_hidden ?? false;
+    const birthdateHidden = service.field_birthdate_hidden ?? service.fields_config?.birthdate_hidden ?? false;
     const commentsHidden = service.field_comments_hidden ?? service.fields_config?.comments_hidden ?? false;
     const guestDocsHidden = service.field_guest_documents_hidden ?? service.fields_config?.guest_documents_hidden ?? false;
     const companionDocsHidden = service.field_companion_documents_hidden ?? service.fields_config?.companion_documents_hidden ?? false;
@@ -1258,6 +1263,10 @@ function loadFieldsConfiguration(service) {
     if (locationCheckbox) {
       locationCheckbox.checked = locationRequired;
     }
+    const birthdateCheckbox = document.getElementById('field-birthdate-required');
+    if (birthdateCheckbox) {
+      birthdateCheckbox.checked = birthdateRequired === true;
+    }
     document.getElementById('field-comments-required').checked = commentsRequired === true;
     document.getElementById('field-guest-documents-required').checked = guestDocsRequired === true;
     document.getElementById('field-companion-documents-required').checked = companionDocsRequired === true;
@@ -1265,6 +1274,7 @@ function loadFieldsConfiguration(service) {
     
     // Establecer estados de ocultar/mostrar en los botones toggle
     const locationHideBtn = document.getElementById('field-location-hide');
+    const birthdateHideBtn = document.getElementById('field-birthdate-hide');
     const commentsHideBtn = document.getElementById('field-comments-hide');
     const guestDocsHideBtn = document.getElementById('field-guest-documents-hide');
     const companionDocsHideBtn = document.getElementById('field-companion-documents-hide');
@@ -1273,6 +1283,10 @@ function loadFieldsConfiguration(service) {
     if (locationHideBtn) {
       locationHideBtn.classList.toggle('hidden', locationHidden);
       updateHideToggleIcon(locationHideBtn);
+    }
+    if (birthdateHideBtn) {
+      birthdateHideBtn.classList.toggle('hidden', birthdateHidden);
+      updateHideToggleIcon(birthdateHideBtn);
     }
     if (commentsHideBtn) {
       commentsHideBtn.classList.toggle('hidden', commentsHidden);
@@ -1296,6 +1310,7 @@ function loadFieldsConfiguration(service) {
       country: countryRequired,
       state: stateRequired,
       city: cityRequired,
+      birthdate: birthdateRequired,
       comments: commentsRequired,
       guestDocs: guestDocsRequired,
       companionDocs: companionDocsRequired,
@@ -1315,10 +1330,15 @@ function resetFieldsConfiguration() {
     locationCheckbox.checked = true; // Ubicación marcada por defecto
   }
   
+  const birthdateCheckbox = document.getElementById('field-birthdate-required');
+  if (birthdateCheckbox) {
+    birthdateCheckbox.checked = true; // Fecha de Nacimiento marcada por defecto (antes era siempre obligatorio)
+  }
+  
   const allFieldCheckboxes = document.querySelectorAll('.field-checkbox');
   allFieldCheckboxes.forEach(checkbox => {
-    // Mantener ubicación marcada, desmarcar el resto
-    if (checkbox.id !== 'field-location-required') {
+    // Mantener ubicación y fecha de nacimiento marcadas, desmarcar el resto
+    if (checkbox.id !== 'field-location-required' && checkbox.id !== 'field-birthdate-required') {
       checkbox.checked = false;
     }
   });
