@@ -75,6 +75,20 @@ function setupHotelsEventListeners() {
     cancelBtn.addEventListener('click', () => closeModal('hotel-modal'));
   }
 
+  // Hotel code input - convert to lowercase automatically
+  const hotelCodeInput = document.getElementById('hotel-code');
+  if (hotelCodeInput) {
+    hotelCodeInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.toLowerCase();
+    });
+    // Also handle paste events
+    hotelCodeInput.addEventListener('paste', (e) => {
+      setTimeout(() => {
+        e.target.value = e.target.value.toLowerCase();
+      }, 0);
+    });
+  }
+
   // Form submission
   const form = document.getElementById('hotel-form');
   if (form) {
@@ -554,8 +568,8 @@ async function loadServicesCache() {
       servicesCache = [
         { service_code: 'BOENGINE', service_name: 'Booking Engine', description: 'Motor de reservas' },
         { service_code: 'WL', service_name: 'Waitlist', description: 'Lista de espera' },
-        { service_code: 'LATE_IN', service_name: 'Late Check-in', description: 'Check-in tardío' },
-        { service_code: 'LATE_OUT', service_name: 'Late Check-out', description: 'Check-out tardío' },
+        { service_code: 'LATE_IN', service_name: 'Missed Check-In', description: 'Check-in tardío' },
+        { service_code: 'LATE_OUT', service_name: 'Missed Check-Out', description: 'Check-out tardío' },
         { service_code: 'BL', service_name: 'Blacklist', description: 'Lista negra' },
         { service_code: 'SELF_IN', service_name: 'Self Check-in', description: 'Auto check-in' }
       ];
@@ -566,8 +580,8 @@ async function loadServicesCache() {
     servicesCache = [
       { service_code: 'BOENGINE', service_name: 'Booking Engine', description: 'Motor de reservas' },
       { service_code: 'WL', service_name: 'Waitlist', description: 'Lista de espera' },
-      { service_code: 'LATE_IN', service_name: 'Late Check-in', description: 'Check-in tardío' },
-      { service_code: 'LATE_OUT', service_name: 'Late Check-out', description: 'Check-out tardío' },
+      { service_code: 'LATE_IN', service_name: 'Missed Check-In', description: 'Check-in tardío' },
+      { service_code: 'LATE_OUT', service_name: 'Missed Check-Out', description: 'Check-out tardío' },
       { service_code: 'BL', service_name: 'Blacklist', description: 'Lista negra' },
       { service_code: 'SELF_IN', service_name: 'Self Check-in', description: 'Auto check-in' }
     ];
@@ -633,7 +647,7 @@ async function editHotel(id) {
   await loadCountriesSelect();
   
   setFormData('hotel-form', {
-    hotel_code: hotel.hotel_code,
+    hotel_code: hotel.hotel_code ? hotel.hotel_code.toLowerCase() : '',
     hotel_name: hotel.hotel_name,
     email: hotel.email,
     phone: (hotel.phone && hotel.phone !== 'undefined') ? hotel.phone : '',
@@ -651,9 +665,12 @@ async function handleHotelSubmit(e) {
   const formData = getFormData('hotel-form');
   console.log('FormData obtenido:', formData);
   
+  // Normalize hotel code to lowercase
+  formData.hotel_code = formData.hotel_code.toLowerCase().trim();
+  
   // Validation
   if (!validateHotelCode(formData.hotel_code)) {
-    const invalidCodeMsg = window.i18n ? window.i18n.t('hotels.invalidCode') : 'Código de hotel inválido. Debe contener solo letras y números (3-20 caracteres)';
+    const invalidCodeMsg = window.i18n ? window.i18n.t('hotels.invalidCode') : 'Código de hotel inválido. Debe contener solo letras minúsculas y números (3-20 caracteres)';
     showToast(invalidCodeMsg, 'error');
     return;
   }

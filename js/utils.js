@@ -66,8 +66,8 @@ function validateEmail(email) {
 }
 
 function validateHotelCode(code) {
-  // Alphanumeric only, 3-20 characters
-  const re = /^[a-zA-Z0-9]{3,20}$/;
+  // Alphanumeric only, 3-20 characters, lowercase only
+  const re = /^[a-z0-9]{3,20}$/;
   return re.test(code);
 }
 

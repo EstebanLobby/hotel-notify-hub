@@ -156,7 +156,7 @@ describe('Hotel Management Workflow - Integration Tests', () => {
       const mockServices = [
         { service_code: 'BOENGINE', service_name: 'Booking Engine' },
         { service_code: 'WL', service_name: 'Waitlist' },
-        { service_code: 'LATE_IN', service_name: 'Late Check-in' }
+        { service_code: 'LATE_IN', service_name: 'Missed Check-In' }
       ];
       
       // Mock API responses
