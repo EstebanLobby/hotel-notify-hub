@@ -224,8 +224,8 @@ async function renderHotelsTable(query = '') {
     console.log('Hoteles obtenidos del servicio:', hotelsCache);
   } catch (error) {
     console.error('Error obteniendo hoteles del servicio:', error);
-    // Fallback a datos locales si el servicio falla
-    hotelsCache = getHotels();
+    // Si falla el servicio, no usamos datos mock: dejamos la lista vacía
+    hotelsCache = [];
   }
   
   filteredHotels = hotelsCache;

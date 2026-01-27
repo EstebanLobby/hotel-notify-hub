@@ -37,7 +37,8 @@ async function renderServicesTable() {
   try {
     services = await getServicesAsync();
   } catch (_) {
-    services = getServices();
+    // Si falla el backend, dejamos la lista vacía (no usamos mocks)
+    services = [];
   }
   // Si el backend ya devuelve hotels_subscribed, evitamos pedir hoteles
   const hasBackendSubscribed = services.some(s => s && s.hasOwnProperty('hotels_subscribed'));
@@ -45,14 +46,29 @@ async function renderServicesTable() {
     try {
       hotels = await getHotelsAsync({ limit: 1000, offset: 0 });
     } catch (_) {
-      hotels = getHotels();
+      // Si falla el backend, no usamos mocks
+      hotels = [];
     }
   }
   
   // Clear table
   tbody.innerHTML = '';
   
-  // Render services
+  if (!services.length) {
+    const emptyMessage = window.i18n
+      ? window.i18n.t('addService.noServices')
+      : 'No hay servicios disponibles';
+    const emptyRow = document.createElement('tr');
+    emptyRow.innerHTML = `
+      <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        ${emptyMessage}
+      </td>
+    `;
+    tbody.appendChild(emptyRow);
+    return;
+  }
+
+  // Render services cuando hay datos
   services.forEach(service => {
     const subscribedHotels = hasBackendSubscribed
       ? Number(service.hotels_subscribed) || 0
@@ -102,23 +118,6 @@ function createServiceRow(service, subscribedCount) {
   return row;
 }
 
-function toggleService(serviceCode) {
-  const services = getServices();
-  const service = services.find(s => s.service_code === serviceCode);
-  
-  if (!service) return;
-  
-  const action = service.active ? 'desactivar' : 'activar';
-  
-  if (confirm(`¿Estás seguro de que quieres ${action} el servicio "${service.service_name}"?`)) {
-    // Update service status (in a real app, this would be an API call)
-    service.active = !service.active;
-    
-    showToast(`Servicio ${service.active ? 'activado' : 'desactivado'} correctamente`, 'success');
-    renderServicesTable();
-  }
-}
-
 // Variable global para almacenar el código del servicio actual
 let currentServiceCodeForHotels = null;
 
@@ -130,7 +129,7 @@ async function viewServiceHotels(serviceCode) {
   try {
     services = await getServicesAsync();
   } catch (_) {
-    services = getServices();
+    services = [];
   }
   
   const service = services.find(s => s.service_code === serviceCode);
@@ -182,7 +181,8 @@ async function loadServiceHotels(serviceCode) {
     try {
       allHotels = await getHotelsAsync({ limit: 1000, offset: 0 });
     } catch (_) {
-      allHotels = getHotels();
+      // Si falla el backend, no usamos mocks
+      allHotels = [];
     }
     
     // Filtrar hoteles que tienen este servicio
@@ -306,7 +306,7 @@ async function removeHotelFromService(hotelCode, hotelId, serviceCode) {
     const hotels = await getHotelsAsync({ limit: 1000, offset: 0 });
     hotel = hotels.find(h => h.id === hotelId);
   } catch (_) {
-    hotel = getHotels().find(h => h.id === hotelId);
+    hotel = null;
   }
   
   if (!hotel) {
