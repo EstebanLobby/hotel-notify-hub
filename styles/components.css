@@ -4248,6 +4248,24 @@ select:focus {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Badges usados como ayuda dentro de labels de formulario (ej: email/teléfono múltiples) */
+.form-group label .badge {
+  padding: 0.1rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none;
+  border-radius: 999px;
+  margin-left: 0.5rem;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+}
+
+.form-group label .badge.badge-info {
+  border: 1px dashed var(--border-light);
+}
+
 .badge-required {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;

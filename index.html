@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/language-selector.css">
     
-
-    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
@@ -388,11 +386,18 @@
                     <input type="text" id="hotel-name" name="hotel_name" required>
                 </div>
                 <div class="form-group">
-                    <label for="hotel-email"><span data-i18n="hotelForm.email">Email</span> *</label>
-                    <input type="email" id="hotel-email" name="email" required>
+                    <label for="hotel-email">
+                        <span data-i18n="hotelForm.email">Email</span> *
+                        <span class="badge badge-info" data-i18n="hotelForm.emailHint">Puedes agregar múltiples emails separados por coma</span>
+                    </label>
+                    <!-- Usamos type="text" para permitir múltiples emails separados por coma; la validación se hace en JS -->
+                    <input type="text" id="hotel-email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="hotel-phone" data-i18n="hotelForm.phone">Teléfono</label>
+                    <label for="hotel-phone">
+                        <span data-i18n="hotelForm.phone">Teléfono</span>
+                        <span class="badge badge-info" data-i18n="hotelForm.phoneHint">Puedes agregar múltiples teléfonos separados por coma</span>
+                    </label>
                     <input type="tel" id="hotel-phone" name="phone">
                 </div>
                 <div class="form-group">

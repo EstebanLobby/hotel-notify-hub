@@ -175,13 +175,13 @@ function setupHotelsEventListeners() {
   }
 
 
-  // Phone input validation - solo permitir números
+  // Phone input validation - permitir números y comas (para múltiples teléfonos)
   const phoneInput = document.getElementById('hotel-phone');
   if (phoneInput) {
     phoneInput.addEventListener('input', (e) => {
-      // Permitir solo números
+      // Permitir solo números, comas y espacios
       const value = e.target.value;
-      const cleanValue = value.replace(/[^\d]/g, '');
+      const cleanValue = value.replace(/[^\d,\s]/g, '');
       if (value !== cleanValue) {
         e.target.value = cleanValue;
       }
@@ -191,7 +191,7 @@ function setupHotelsEventListeners() {
     phoneInput.addEventListener('paste', (e) => {
       e.preventDefault();
       const paste = (e.clipboardData || window.clipboardData).getData('text');
-      const cleanPaste = paste.replace(/[^\d]/g, '');
+      const cleanPaste = paste.replace(/[^\d,\s]/g, '');
       e.target.value = cleanPaste;
     });
   }
@@ -675,14 +675,16 @@ async function handleHotelSubmit(e) {
     return;
   }
   
-  if (!validateEmail(formData.email)) {
+  // Validación de múltiples emails (separados por coma)
+  if (!validateMultipleEmails(formData.email)) {
     const invalidEmailMsg = window.i18n ? window.i18n.t('hotels.invalidEmail') : 'Email inválido';
     showToast(invalidEmailMsg, 'error');
     return;
   }
   
-  if (formData.phone && !validatePhone(formData.phone)) {
-    const invalidPhoneMsg = window.i18n ? window.i18n.t('hotels.invalidPhone') : 'Teléfono inválido. Solo se permiten números';
+  // Validación de múltiples teléfonos (separados por coma)
+  if (formData.phone && !validateMultiplePhones(formData.phone)) {
+    const invalidPhoneMsg = window.i18n ? window.i18n.t('hotels.invalidPhone') : 'Teléfono inválido. Solo se permiten números y mínimo 8 dígitos';
     showToast(invalidPhoneMsg, 'error');
     return;
   }

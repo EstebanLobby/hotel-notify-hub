@@ -77,6 +77,45 @@ function validatePhone(phone) {
   return re.test(phone);
 }
 
+// Validar múltiples emails separados por coma
+function validateMultipleEmails(emailInput) {
+  if (!emailInput) return false;
+
+  const raw = emailInput.trim();
+  // No permitir coma al principio, al final ni comas dobles ",,"
+  if (raw.startsWith(',') || raw.endsWith(',') || raw.includes(',,')) return false;
+
+  const parts = raw
+    .split(',')
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+  if (parts.length === 0) return false;
+
+  return parts.every(part => validateEmail(part));
+}
+
+// Validar múltiples teléfonos separados por coma, solo números y mínimo 8 dígitos
+function validateMultiplePhones(phoneInput) {
+  if (!phoneInput) return true; // Teléfono es opcional en el formulario
+
+  const raw = phoneInput.trim();
+  // No permitir coma al principio, al final ni comas dobles ",,"
+  if (raw.startsWith(',') || raw.endsWith(',') || raw.includes(',,')) return false;
+
+  const parts = raw
+    .split(',')
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+  if (parts.length === 0) return true;
+
+  return parts.every(part => {
+    const normalized = part.replace(/\s+/g, '');
+    return validatePhone(normalized) && normalized.length >= 8;
+  });
+}
+
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
